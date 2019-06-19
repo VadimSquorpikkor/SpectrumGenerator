@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small_text">10sp</dimen>
+    <dimen name="normal_text">20sp</dimen>
+    <dimen name="big_text">30sp</dimen>
+    <dimen name="huge_text">45sp</dimen>
+    <dimen name="basic_margin">20dp</dimen>
+    <dimen name="small_margin">10dp</dimen>
+    <dimen name="info_margin">2dp</dimen>
+    <dimen name="normal_padding">8dp</dimen>
+    <dimen name="medium_margin">40dp</dimen>
+    <dimen name="big_margin">60dp</dimen>
+    <dimen name="title_battery">9sp</dimen>
+    <dimen name="basic_elevation">2dp</dimen>
+    <dimen name="status_height">45dp</dimen>
+    <dimen name="toolbar_height">55dp</dimen>
+    <dimen name="param_height">60dp</dimen>
+</resources>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/chart_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/status_channel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="K 340" />
+
+            <TextView
+                android:id="@+id/status_energy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="1383 кэВ" />
+
+            <TextView
+                android:id="@+id/status_imp_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="9 имп" />
+
+            <TextView
+                android:id="@+id/status_spectrum_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="вр. 5 с" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/status_channel_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="[0 - 1023]" />
+
+            <TextView
+                android:id="@+id/status_imp_range_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="1712 имп" />
+
+            <TextView
+                android:id="@+id/status_imp_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="338 имп/с" />
+
+            <TextView
+                android:id="@+id/status_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/small_margin"
+                tools:text="23.0°С" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <FrameLayout
+            android:id="@+id/graph_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/main_gradient" />
+
+        <com.fangxu.allangleexpandablebutton.AllAngleExpandableButton
+            android:id="@+id/button_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_margin="@dimen/basic_margin"
+            app:aebAnimDurationMillis="175"
+            app:aebButtonElevation="4dp"
+            app:aebButtonGapDp="60dp"
+            app:aebEndAngleDegree="270"
+            app:aebMainButtonRotateAnimDurationMillis="250"
+            app:aebMainButtonRotateDegree="-135"
+            app:aebMainButtonSizeDp="35dp"
+            app:aebStartAngleDegree="90"
+            app:aebSubButtonSizeDp="35dp" />
+
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>
+
+

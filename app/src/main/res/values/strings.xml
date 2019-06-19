@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SpectrumGenerator</string>
+    <string name="chart_channel">К %s</string>
+    <string name="chart_energy">%d кэВ</string>
+    <string name="chart_imp">%d имп</string>
+    <string name="chart_time">вр. %d с</string>
+    <string name="chart_range">[%1$d - %2$d]</string>
+    <string name="chart_imp_speed">%d имп/с</string>
+    <string name="chart_temperature">%.1f°С</string>
+</resources>
