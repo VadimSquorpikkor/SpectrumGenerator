@@ -6,6 +6,7 @@
     <color name="colorPrimaryDark">#212121</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorChartGrid">#4c4c4c</color>
+    <color name="colorOrange">#FF5722</color>
 
 
 </resources>

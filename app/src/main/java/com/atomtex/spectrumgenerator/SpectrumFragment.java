@@ -13,11 +13,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.chart.CustomLineChartRenderer;
 import com.atomtex.spectrumgenerator.chart.CustomOnChartGestureListener;
@@ -60,6 +63,7 @@ import static com.atomtex.spectrumgenerator.util.Util.unScaleCbr;
  */
 public class SpectrumFragment extends Fragment implements ButtonEventListener, OnChartValueSelectedListener {
 
+    public static final String TAG = "TAGGG!!!";
     /**
      * Fragment argument {@link #mSpecDTO}
      */
@@ -189,6 +193,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     TextView status_temperature_tv;
 
 
+    private String fragmentID;
+
     /**
      * Creates new instance of the class and put given parameters as arguments in it
      *
@@ -211,6 +217,19 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         return fragment;
     }
 
+
+    public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
+            , String[] lineOwners, String fragmentID) {
+        SpectrumFragment fragment = new SpectrumFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_DTO, dto);
+        args.putFloatArray(ARG_PEAKS, peaks);
+        args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
+        args.putStringArray(ARG_LINE_OWNERS, lineOwners);
+        fragment.fragmentID = fragmentID;
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -261,8 +280,18 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
-//        View view = fragmentView(inflater, container);
         ButterKnife.bind(this, view);
+
+        TextView frIDtext = view.findViewById(R.id.fragment_id);
+        frIDtext.setText(fragmentID);
+        /*chViewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Log.e("Tag", "onClick: ");
+//                Toast.makeText(getActivity(), "fragment ID = " + getFragmentID(), Toast.LENGTH_SHORT).show();
+                getFragmentID();
+            }
+        });*/
 
         //Set name of spectrum file as an action bar title
         ActionBar supportActionBar = ((AppCompatActivity) mContext).getSupportActionBar(); //todo было FragmentActivity вместо AppCompatActivity
@@ -622,5 +651,10 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     @Override
     public void onCollapse() {
 
+    }
+
+    public String getFragmentID() {
+//        Log.e(TAG, "getFragmentID: " + fragmentID);
+        return fragmentID;
     }
 }

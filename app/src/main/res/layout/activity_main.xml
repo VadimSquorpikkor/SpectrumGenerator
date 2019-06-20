@@ -21,12 +21,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
-    <Button style="@style/button"
-        android:layout_width="wrap_content"
-        android:text="Загрузить спектр"/>
-    <Button style="@style/button"
-        android:layout_width="wrap_content"
+
+    <Button style="@style/nice_button"
+        android:id="@+id/open_ats"
+        android:text="Загрузить спектр"
+        android:layout_weight="4"/>
+    <Button style="@style/nice_button"
         android:text="Генератор"
+        android:layout_weight="2"
+        />
+    <Button style="@style/nice_button"
+        android:text="Mode"
+        android:layout_weight="1"
+        android:id="@+id/mode_button"
         />
 </LinearLayout>
 </LinearLayout>
