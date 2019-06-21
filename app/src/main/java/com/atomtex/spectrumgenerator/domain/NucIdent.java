@@ -75,11 +75,40 @@ public final class NucIdent {
      */
     private float corSigmaIndex;
 
-    public NucIdent(int chanelNumber, float middleCPSonBKG, int sigmaSearchPeaks,
+    //todo ненужный конструктор
+    /*public NucIdent(int chanelNumber, float middleCPSonBKG, int sigmaSearchPeaks,
                     int sigmaPeakCheck, int sigmaPeakCheckLeft, int sigmaPeakCheckRight,
                     int minEnergy, int scaleInstability, float fltAverBgndCPS, boolean testNullPeak) {
         this.channelNumber = chanelNumber;
         this.middleCPSonBKG = middleCPSonBKG;
+        convolution = new int[chanelNumber];
+        convolutionDisp = new int[chanelNumber];
+        this.sigmaSearchPeaks = sigmaSearchPeaks;
+        this.sigmaPeakCheck = sigmaPeakCheck;
+        this.sigmaPeakCheckLeft = sigmaPeakCheckLeft;
+        this.sigmaPeakCheckRight = sigmaPeakCheckRight;
+        peakExtremum = new int[chanelNumber];
+        this.scaleInstability = scaleInstability;
+        this.testNullPeak = testNullPeak;
+        this.minEnergy = minEnergy;
+        corSigmaIndex = 1;
+        nLine = 0;
+        niCr = 0;
+        uranium = 0;
+        niChannels = new float[MAX_LINE_NUM];
+        deltas = new int[MAX_LINE_NUM];
+        energies = new int[MAX_LINE_NUM];
+        exEnergies = new int[MAX_LINE_NUM];
+        efficiency = new float[chanelNumber];
+        this.fltAverBgndCPS = fltAverBgndCPS;
+    }*/
+
+    //todo сделал конструктор без параметра middleCPSonBKG -- он мне не нужен, при этом тянет за собой ненужный класс Adapter
+    public NucIdent(int chanelNumber, int sigmaSearchPeaks,
+                    int sigmaPeakCheck, int sigmaPeakCheckLeft, int sigmaPeakCheckRight,
+                    int minEnergy, int scaleInstability, float fltAverBgndCPS, boolean testNullPeak) {
+        this.channelNumber = chanelNumber;
+//        this.middleCPSonBKG = middleCPSonBKG;
         convolution = new int[chanelNumber];
         convolutionDisp = new int[chanelNumber];
         this.sigmaSearchPeaks = sigmaSearchPeaks;
