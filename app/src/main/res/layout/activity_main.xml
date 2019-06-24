@@ -27,6 +27,7 @@
         android:text="Загрузить спектр"
         android:layout_weight="4"/>
     <Button style="@style/nice_button"
+        android:id="@+id/gen_button"
         android:text="Генератор"
         android:layout_weight="2"
         />

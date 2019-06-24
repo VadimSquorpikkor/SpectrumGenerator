@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.domain.EnergyLine;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     float[] peakEnergies;
     String[] lineOwners;
     int mode;
-    String pathForAtsFile;
+    String pathForAtsFile = "content://com.android.externalstorage.documents/document/primary%3ACs-137-UNI.ats";
     private int mPrefIdenThreshold;
 
     @Override
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mode = 0;
         findViewById(R.id.mode_button).setOnClickListener(this);
         findViewById(R.id.open_ats).setOnClickListener(this);
+        findViewById(R.id.gen_button).setOnClickListener(this);
 
         manager = getSupportFragmentManager();
             manager.beginTransaction().replace(R.id.fragment_container1, createFragment("Эталонный спектр")).commit();
@@ -90,8 +94,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setDataAndType(selectedUri, "*/*");
                 startActivityForResult(intent, 1);//TODO request code сделать psf
+                break;
+            case R.id.gen_button:
+                SpectrumFragment fragment = ((SpectrumFragment) manager.getFragments().get(0));
+//                fragment.updateID("New ID!!!");
+                SpecDTO dto = AtsReader.parseFile(pathForAtsFile, getApplicationContext());
+                fragment.updateData(dto);
+                manager.beginTransaction().detach(fragment).commitAllowingStateLoss();
+                manager.beginTransaction().attach(fragment).commitAllowingStateLoss();
+                Log.e(TAG, "onClick: " + manager.getFragments().size());
         }
     }
+
+
 
     private void toggleMode() {
         switch (mode) {
@@ -114,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public SpecDTO dtoFromAts() {
+        return AtsReader.parseFile("content://com.android.externalstorage.documents/document/primary%3ACs-137-UNI.ats", getApplicationContext());
+
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (1 == requestCode) {
@@ -122,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (uri != null) {
                     String pathHolder = uri.toString();
                     pathForAtsFile = pathHolder;  //save ats path for specGenerator
+                    Log.e(TAG, "PATH: = " + pathHolder);
                     if (pathHolder.endsWith(".ats")) {
                         openAtsFile(pathHolder);
 //                        Toast.makeText(this, "WWWorks!!!", Toast.LENGTH_SHORT).show();
@@ -137,74 +159,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //todo вынести метод в отдельный класс (Controller)
     private void openAtsFile(String path) {
-        NucIdent nuc;
-//        Intent intentDTO = new Intent("ACTION_FILE_RECEIVED");
         SpecDTO dto = AtsReader.parseFile(path, getApplicationContext());
         if (dto != null) {
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-            Log.e(TAG, "openAtsFile: " + spectrum.length + ", " + energy.length + ", " + sigma.length);
-
-
-/*           "EXTRA_PEAK_POSITIONS" == peakChannels;
-            "EXTRA_PEAK_ENERGIES" == peakEnergies;
-            "EXTRA_LINE_OWNERS" == lineOwners;*/
-
-
-            float[] peaks = mPeakChannels;
-            float[] peakEnergies = mPeakEnergies;
-            String[] lineOwners = mLineOwners;
-//            Intent spectrumIntent = SpectrumActivity.newIntent(mContext, dto, peaks, peakEnergies, lineOwners); //todo как было
-//          startActivity(spectrumIntent);//todo как было
-
-
-
-            /*FragmentManager fragmentManager = getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentByTag(tag);*/
-
-            //            Fragment currentFragment = this.getSupportFragmentManager().findFragmentById(R.id.container);
-
-/*            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container1,createFragment("qqq")).addToBackStack(null).commit();*/
-
-//            manager = getSupportFragmentManager();
-//            manager.beginTransaction().replace(R.id.fragment_container1, createFragment(dto, peaks, peakEnergies, lineOwners, "Эталонный спектр")).commit();
-
-/*            try {
-                nuc = nuclidesIdent(spectrum.length,
-                        spectrum, sigma
-                        , energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }*/
-
-/*            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length,
-                        spectrum, sigma
-                        , energy
-                        , mPrefIdenThreshold
-                );
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }*/
-
-
-
-
-//            processIdenResult(nuc, intentDTO);
+            try { processIdenResult(nuclidesIdent(dto.getSpectrum().length, dto.getSpectrum(), dto.getSigma(), dto.getEnergy(), mPrefIdenThreshold));
+            } catch (ProcessException e) { e.printStackTrace(); Log.e(TAG, "openAtsFile: EXCEPTION"); }
         }
         else makeToast("Не удалось открыть файл");
+
+//        ((SpectrumFragment) manager.getFragments().get(0)).updateData(dto, peaks, peakEnergies, lineOwners);//todo кроме dto всё пустое и не правильное, пока как затычка
+        ((SpectrumFragment) manager.getFragments().get(0)).updateData(dto/*, mPeakChannels, mPeakEnergies, mLineOwners*/);//todo кроме dto всё пустое и не правильное, пока как затычка
+        SpectrumFragment fragment = ((SpectrumFragment) manager.getFragments().get(0));
+        manager.beginTransaction().detach(fragment).commitAllowingStateLoss();
+        manager.beginTransaction().attach(fragment).commitAllowingStateLoss();
     }
 
-    private List<Nuclide> processIdenResult(NucIdent nuc, Intent intent) {
+    private void processIdenResult(NucIdent nuc) {
 
+        Log.e(TAG, "processIdenResult: STARTED ");
         List<Nuclide> nuclides = NucIdent.getNuclides();
         int numLines = nuc.getnLine();
 
+        Log.e(TAG, "processIdenResult: NUMLINES = " + numLines);
+
         if (numLines > 0) {
             float[] peaks = nuc.getNiChannels();
+            Log.e(TAG, "processIdenResult: PEAKS" + peaks.length);
             int[] energies = nuc.getEnergies();
             float[] peakChannels = new float[numLines];
             float[] peakEnergies = new float[numLines];
@@ -235,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             mPeakChannels = peakChannels;
+            Log.e(TAG, "processIdenResult: " + peakChannels.length);
             mPeakEnergies = peakEnergies;
             mLineOwners = lineOwners;
 //            mGlasses.setPeaksData(peakChannels, peakEnergies);
@@ -243,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mPeakChannels = null;
         }
 
-        return nuclides;
+//        return nuclides;
     }
 
     //todo вынести метод в отдельный класс (Controller)
@@ -258,9 +238,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nuc.setSpectrumSigma(sigma);
         nuc.setSpectrumEnergy(energy);
 
-        nuc.detectLines(threshold);
+//        nuc.detectLines(threshold);
 
-        nuc.makeNuclideIdentification(threshold);
+//        nuc.makeNuclideIdentification(threshold);
 
         return nuc;
     }

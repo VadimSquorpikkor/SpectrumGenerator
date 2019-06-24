@@ -1,6 +1,7 @@
 package com.atomtex.spectrumgenerator;
 
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -194,6 +195,10 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
 
     private String fragmentID;
+    SpecDTO dto;
+    float[] peaks;
+    float[] peakEnergies;
+    String[] lineOwners;
 
     /**
      * Creates new instance of the class and put given parameters as arguments in it
@@ -217,6 +222,33 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         return fragment;
     }
 
+    public void updateData(SpecDTO dto/*, float[] peaks, float[] peakEnergies, String[] lineOwners*/) {
+        mSpecDTO = dto;
+  /*      mPeaks = peaks;
+        mPeakEnergies = peakEnergies;
+        mLineOwners = lineOwners;
+  */      Log.e(TAG, "update GET SPECTRUM: " + dto.getSpectrum()[5]);
+        updateChart();
+        updateChartStatus();
+        updatePeakLines();
+        if (mSpecDTO != null) {
+            mEntries = new ArrayList<>();
+            //make chart entry from spectrum data
+            int[] spectrum = mSpecDTO.getSpectrum();
+            for (int i = 0; i < spectrum.length; i++) {
+                mEntries.add(new Entry(i, spectrum[i]));
+            }
+
+        }
+
+    }
+
+    public void updateID(String newID) {
+        fragmentID = newID;
+
+    }
+
+
 
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners, String fragmentID) {
@@ -228,6 +260,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putStringArray(ARG_LINE_OWNERS, lineOwners);
         fragment.fragmentID = fragmentID;
         fragment.setArguments(args);
+//        Log.e(TAG, "newInstance GET SPECTRUM: " + dto.getSpectrum()[5]);
         return fragment;
     }
 
@@ -251,6 +284,16 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             }
         }
     }
+
+/*    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            // Refresh your fragment here
+            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+            Log.i("IsRefresh", "Yes");
+        }
+    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -377,6 +420,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             mSpectrumChart.setOnChartValueSelectedListener(this);
 
             int[] spectrum = mSpecDTO.getSpectrum();
+            Log.e(TAG, "updateChart: " + mSpecDTO.getSpectrum().length);
 
             xAxis.setAxisMaximum(spectrum.length);
 
