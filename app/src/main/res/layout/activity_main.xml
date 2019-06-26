@@ -10,19 +10,52 @@
     android:padding="0dp">
 
 <FrameLayout style="@style/frame_style"
+    android:layout_marginTop="0dp"
     android:id="@+id/fragment_container1">
 </FrameLayout>
+
+
 
 <FrameLayout style="@style/frame_style"
     android:id="@+id/fragment_container2">
 </FrameLayout>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    <LinearLayout style="@style/vertical_layout"
+        android:layout_marginTop="4dp"
+        android:elevation="10dp"
+        android:background="@drawable/my_shape"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:id="@+id/time_layout">
+        <LinearLayout style="@style/horizontal_layout">
+            <TextView style="@style/text_centered"
+                android:gravity="right"
+                android:text="Время набора входного спектра:"
+                android:layout_weight="1"/>
+            <TextView style="@style/text_centered"
+                android:id="@+id/spectrum_time"
+                android:text="20"
+                android:layout_weight="4"
+                android:textSize="17sp"
+                android:textColor="@color/colorOrange"/>
+        </LinearLayout>
+        <LinearLayout style="@style/horizontal_layout">
+            <TextView style="@style/text_centered"
+                android:gravity="right"
+                android:text="Требуемое время выходного спектра:"
+                android:layout_weight="1"/>
+            <TextView style="@style/text_centered"
+                android:id="@+id/requiredTime"
+                android:text="20"
+                android:layout_weight="4"
+                android:textSize="17sp"
+                android:textColor="@color/colorOrange"/>
+        </LinearLayout>
+    </LinearLayout>
 
+<LinearLayout style="@style/horizontal_layout">
     <Button style="@style/nice_button"
+        android:elevation="10dp"
         android:id="@+id/open_ats"
         android:text="Загрузить спектр"
         android:layout_weight="4"/>
@@ -37,4 +70,5 @@
         android:id="@+id/mode_button"
         />
 </LinearLayout>
+
 </LinearLayout>

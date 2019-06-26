@@ -227,19 +227,20 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
   /*      mPeaks = peaks;
         mPeakEnergies = peakEnergies;
         mLineOwners = lineOwners;
-  */      Log.e(TAG, "update GET SPECTRUM: " + dto.getSpectrum()[5]);
-        updateChart();
-        updateChartStatus();
-        updatePeakLines();
+  */
         if (mSpecDTO != null) {
             mEntries = new ArrayList<>();
             //make chart entry from spectrum data
             int[] spectrum = mSpecDTO.getSpectrum();
             for (int i = 0; i < spectrum.length; i++) {
                 mEntries.add(new Entry(i, spectrum[i]));
+                Log.e(TAG, "!!!!!!!!!!!!!!!!!!UPDATE DATA: N = " + i + ", N[i] = " + spectrum[i]);
             }
 
         }
+        updateChart();
+//        updateChartStatus();
+//        updatePeakLines();
 
     }
 
@@ -248,6 +249,9 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
     }
 
+/*    public static SpectrumFragment getInstance() {
+        return getInstance();
+    }*/
 
 
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
@@ -420,7 +424,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             mSpectrumChart.setOnChartValueSelectedListener(this);
 
             int[] spectrum = mSpecDTO.getSpectrum();
-            Log.e(TAG, "updateChart: " + mSpecDTO.getSpectrum().length);
 
             xAxis.setAxisMaximum(spectrum.length);
 

@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
-import com.atomtex.spectrumgenerator.application.App;
 import com.balsikandar.crashreporter.CrashReporter;
 
 import java.io.BufferedReader;
@@ -27,7 +26,7 @@ import java.util.Map;
 
 import androidx.annotation.RequiresApi;
 
-import static com.atomtex.spectrumgenerator.application.App.DIRECTORY;
+import static com.balsikandar.crashreporter.CrashReporter.getContext;
 
 /**
  * Reads the data from a file of type <code>.ats</code>
@@ -39,7 +38,7 @@ import static com.atomtex.spectrumgenerator.application.App.DIRECTORY;
 public class AtsReader {
 
 
-    public static SpecDTO parseFile(String path, Context context) {
+    public static SpecDTO parseFile(String path) {
         Log.e("TAG", "parseFile PATH: " + path);
         List<Charset> charsets = new ArrayList<>();
 
@@ -56,7 +55,7 @@ public class AtsReader {
         for (Charset charset : charsets) {
             try {
                 if (scheme != null && scheme.equals("content")) {
-                    inputStream = context.getContentResolver().openInputStream(uri);
+                    inputStream = getContext().getContentResolver().openInputStream(uri);
                 } else {
                     File file = new File(path);
                     inputStream = new FileInputStream(file);
@@ -79,8 +78,6 @@ public class AtsReader {
 
         return dto;
     }
-
-
 
     static Map<String,String> map = new HashMap<>();
 

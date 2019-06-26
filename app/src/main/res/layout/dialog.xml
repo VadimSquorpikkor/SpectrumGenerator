@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <TextView
+        style="@style/text_centered"
+        android:text="время набора входного спектра всегда > 0" />
+
+    <EditText
+        android:id="@+id/dialog_spectrum_time_text"
+        style="@style/text_centered"
+        android:layout_width="100dp"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:maxLength="5"
+        android:text="100"
+        android:textColor="@color/colorOrange" />
+
+    <TextView
+        style="@style/text_centered"
+        android:text="требуемое время к которому будет приведен выходной спектр" />
+
+    <EditText
+        android:id="@+id/dialog_required_time_text"
+        style="@style/text_centered"
+        android:layout_width="100dp"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:maxLength="5"
+        android:text="100"
+        android:textColor="@color/colorOrange" />
+
+</LinearLayout>

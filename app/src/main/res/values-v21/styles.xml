@@ -14,7 +14,7 @@
 
     <style name="frame_style" parent="base_style">
         <item name="android:padding">4dp</item>
-        <item name="android:elevation">10dp</item>
+        <item name="android:elevation">20dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
@@ -46,6 +46,26 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:background">@drawable/button_shape_selector</item>
     </style>
+
+    <style name="base_match_wrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="vertical_layout" parent="base_match_wrap">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="horizontal_layout" parent="base_match_wrap">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="text_centered" parent="base_match_wrap">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
 
 </resources>
 
