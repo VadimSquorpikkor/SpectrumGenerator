@@ -7,4 +7,6 @@
     <string name="chart_range">[%1$d - %2$d]</string>
     <string name="chart_imp_speed">%d имп/с</string>
     <string name="chart_temperature">%.1f°С</string>
+
+    <string name="should_open_ats_first">Сначала загрузите файл .ats</string>
 </resources>

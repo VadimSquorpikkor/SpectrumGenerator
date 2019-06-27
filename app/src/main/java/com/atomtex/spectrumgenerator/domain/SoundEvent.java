@@ -1,6 +1,5 @@
 package com.atomtex.spectrumgenerator.domain;
 
-
 /**
  * The enum contains all sound events for application.
  * <p>
@@ -10,6 +9,7 @@ package com.atomtex.spectrumgenerator.domain;
  * @author stanislav.kleinikov@gmail.com
  */
 public enum SoundEvent {
+//todo вэтом приложении бесполезный класс, пока как затычка, а вообще -- удалить
 
     //The numbers
     ONE,
