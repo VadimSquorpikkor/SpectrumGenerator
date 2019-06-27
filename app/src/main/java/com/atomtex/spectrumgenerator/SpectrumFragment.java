@@ -196,8 +196,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
 
     private String fragmentID;
-    private String pathForAts;
-    private boolean iCanGenerate;
     SpecDTO dto;
     float[] peaks;
     float[] peakEnergies;
@@ -248,10 +246,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
         args.putStringArray(ARG_LINE_OWNERS, lineOwners);
         args.putString("FR_ID", fragmentID);
-        args.putString("FR_PATH", path);
-//        fragment.fragmentID = fragmentID;
         fragment.setArguments(args);
-        Log.e(TAG, "FRAGMENT " + fragmentID + " newInstance");
         return fragment;
     }
 
@@ -278,10 +273,9 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
                 mLineOwners = arguments.getStringArray(ARG_LINE_OWNERS);
 
                 fragmentID = arguments.getString("FR_ID");
-                pathForAts = arguments.getString("FR_PATH");
+
             }
         }
-        Log.e(TAG, "FRAGMENT " + fragmentID + " onCreate, path is " + pathForAts);
     }
 
 /*    @Override
@@ -695,13 +689,4 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
     }
 
-
-    public boolean canGenerate() {
-        Log.e(TAG, "canGenerate: " + pathForAts);
-        return !TextUtils.isEmpty(pathForAts);// if not empty or not null
-    }
-
-    public String getPathForAts() {
-        return pathForAts;
-    }
 }

@@ -6,23 +6,17 @@ import android.support.annotation.NonNull;
 
 public class MainViewModel extends AndroidViewModel {
 
+    public static final String REFERENCE_SPECTRUM = "Эталонный спектр";
+    public static final String GENERATED_SPECTRUM = "Сгенерированный спектр";
+
     private int spectrumTime = 10;
-    private int RequiredTime;
+    private int RequiredTime = 1;
     private String pathForAts;
-    private int displayMode;
-    private boolean iCanGenerate;
+    private int displayMode = 0;
 
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-    }
-
-    public boolean isiCanGenerate() {
-        return iCanGenerate;
-    }
-
-    public void setiCanGenerate(boolean iCanGenerate) {
-        this.iCanGenerate = iCanGenerate;
     }
 
     public int getSpectrumTime() {
