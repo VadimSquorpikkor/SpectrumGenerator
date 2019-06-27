@@ -94,7 +94,7 @@ public class AtsReader {
             s = s.trim();
 
 
-            Log.e("TAGGG", "parseSpecDTO: " + s);
+//            Log.e("TAGGG", "parseSpecDTO: " + s);
 
             if (s.startsWith("ECALIBRATION")) {
                 splittedLine = s.split("=");

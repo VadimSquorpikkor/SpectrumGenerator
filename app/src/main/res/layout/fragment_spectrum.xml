@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorOrange"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:paddingStart="10dp"
                 android:id="@+id/fragment_id"/>
 
@@ -83,12 +83,12 @@
                     android:layout_marginStart="@dimen/small_margin"
                     tools:text="338 имп/с" />
 
-                <TextView
+<!--                <TextView
                     android:id="@+id/status_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/small_margin"
-                    tools:text="23.0°С" />
+                    tools:text="23.0°С" />-->
 
             </LinearLayout>
 

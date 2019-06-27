@@ -2,6 +2,7 @@ package com.atomtex.spectrumgenerator;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +27,20 @@ import com.atomtex.spectrumgenerator.exception.ProcessException;
 import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
 import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    MainViewModel mViewModel;
+
     SpectrumFragment fragment1;
     SpectrumFragment fragment2;
+/*    Fragment fragment1;
+    Fragment fragment2;*/
+
 
     public static final String TAG = "TAGGG!!!";
 
@@ -52,15 +60,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SpecDTO dto;
 
     int mode;
-    String pathForAtsFile = "content://com.android.externalstorage.documents/document/primary%3ACs-137-UNI.ats";
+    String pathForAtsFile = null;
     private int mPrefIdenThreshold;
+
+    @Override
+    protected void onResume() {
+//        Log.e(TAG, "MAIN ACTIVITY onResume: ");
+        super.onResume();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        Log.e(TAG, "MAIN ACTIVITY onCreate: sTime = " + spectrumTime);
+
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
+
 
         //todo затычки
         dto = new SpecDTO();
@@ -69,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dto.setEnergy(new float[]{0});
         mPrefIdenThreshold = 4;
 
-        spectrumTime = 5;
+        spectrumTime = mViewModel.getSpectrumTime();
+//        spectrumTime = 5;
         requiredTime = 1;
 
         spectrumTimeTV = findViewById(R.id.spectrum_time);
@@ -85,14 +105,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.time_layout).setOnClickListener(this);
 
         manager = getSupportFragmentManager();
+        //Это чтобы при повороте устройства не создавать новый фрагмент:
+        fragment1 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container1);
+        fragment2 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container2);
+
+//        SpectrumFragment fragment2;
         /*manager.beginTransaction().replace(R.id.fragment_container1, createFragment("Эталонный спектр")).commit();
         manager.beginTransaction().replace(R.id.fragment_container2, createFragment("Сгенерированный спектр")).commit();*/
-        if(fragment1==null){fragment1 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр");
-        manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commit();}
+        if (fragment1 == null) {
+            fragment1 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр");
+            manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commit();
+        } else {
+            pathForAtsFile = fragment1.getPathForAts();
+            Log.e(TAG, "onCreate: AVTIVITY PATH = " + pathForAtsFile);
+        }
 
-        if(fragment2==null){fragment2 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
-
-        manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();}
+        if (fragment2 == null) {
+            fragment2 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
+            manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
+        }
 
     }
 
@@ -114,7 +145,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivityForResult(intent, 1);//TODO request code сделать psf
                 break;
             case R.id.gen_button:
-                if(iCanGenerate)generateSpectrum(pathForAtsFile, spectrumTime, requiredTime);
+//                if (fragment1.canGenerate())
+                if (canGenerate())
+//                    generateSpectrum(fragment1.getPathForAts(), spectrumTime, requiredTime);
+                    generateSpectrum(pathForAtsFile, spectrumTime, requiredTime);
                 else makeToast("Сначала загрузите файл .ats");
                 break;
             case R.id.time_layout:
@@ -123,7 +157,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String result;
+    public boolean canGenerate() {
+        Log.e(TAG, "canGenerate: " + pathForAtsFile);
+        return !TextUtils.isEmpty(pathForAtsFile);// if not empty or not null
+    }
 
     private void showDialog() {
         final View view = this.getLayoutInflater().inflate(R.layout.dialog, null);
@@ -137,9 +174,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        editText2.setSelection(editText2.getText().length());
         alert.setPositiveButton("Понял", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
-                spectrumTime = (Integer.parseInt(editText1.getText().toString()));
-                requiredTime = (Integer.parseInt(editText2.getText().toString()));
+                int sp = Integer.parseInt(editText1.getText().toString());
+                int rq = Integer.parseInt(editText2.getText().toString());
+                mViewModel.setSpectrumTime(sp);
+                spectrumTime = sp;
+                requiredTime = rq;
                 setSpectrumTime();
                 setRequiredTime();
                 dialog.cancel();
@@ -177,26 +216,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-/*    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (1 == requestCode) {
-            if (Activity.RESULT_OK == resultCode) {
-                Uri uri = data.getData();
-                if (uri != null) {
-                    String pathHolder = uri.toString();
-                    pathForAtsFile = pathHolder;  //save ats path for specGenerator
-                    Log.e(TAG, "PATH: = " + pathHolder);
-                    if (pathHolder.endsWith(".ats")) {
-                        openAtsFile(pathHolder);
-                        makeToast("Открытие...");
-                    } else {
-                        makeToast("Неверный формат");
-                    }
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -207,12 +226,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Uri uri = data.getData();
                     if (uri != null) {
                         String pathHolder = uri.toString();
-                        pathForAtsFile = pathHolder;  //save ats path for specGenerator
                         Log.e(TAG, "PATH: = " + pathHolder);
                         if (pathHolder.endsWith(".ats")) {
+                            //todo сейчас path хранится в 2-х местах, убрать из фрагмента
+                            pathForAtsFile = pathHolder;  //save ats path for specGenerator
                             openAtsFile(pathHolder);
                             makeToast("Открытие...");
-                            iCanGenerate = true;
+//                            iCanGenerate = true;
+//                            fragment1.nowYouCanGenerate(pathHolder);
                         } else {
                             makeToast("Неверный формат");
                         }
@@ -226,11 +247,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-/*    public void openWeightPicker() {
-        DialogFragment fragment = new WeightDialogFragment();
-        fragment.setTargetFragment(this, REQUEST_WEIGHT);
-        fragment.show(getFragmentManager(), fragment.getClass().getName());
-    }*/
 
     //todo вынести метод в отдельный класс (Controller)
     private void openAtsFile(String path) {
@@ -249,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
-        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр")).commitAllowingStateLoss();
+        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр", path)).commitAllowingStateLoss();
     }
 
     //todo remove path

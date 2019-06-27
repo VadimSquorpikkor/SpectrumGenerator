@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical"
-    android:layout_margin="5dp"
-    android:padding="0dp">
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity"
+android:orientation="vertical"
+android:layout_margin="3dp"
+android:padding="0dp">
 
 <FrameLayout style="@style/frame_style"
     android:layout_marginTop="0dp"
@@ -20,38 +20,38 @@
     android:id="@+id/fragment_container2">
 </FrameLayout>
 
-    <LinearLayout style="@style/vertical_layout"
-        android:layout_marginTop="4dp"
-        android:elevation="10dp"
-        android:background="@drawable/my_shape"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:id="@+id/time_layout">
-        <LinearLayout style="@style/horizontal_layout">
-            <TextView style="@style/text_centered"
-                android:gravity="right"
-                android:text="Время набора входного спектра:"
-                android:layout_weight="1"/>
-            <TextView style="@style/text_centered"
-                android:id="@+id/spectrum_time"
-                android:text="20"
-                android:layout_weight="4"
-                android:textSize="17sp"
-                android:textColor="@color/colorOrange"/>
-        </LinearLayout>
-        <LinearLayout style="@style/horizontal_layout">
-            <TextView style="@style/text_centered"
-                android:gravity="right"
-                android:text="Требуемое время выходного спектра:"
-                android:layout_weight="1"/>
-            <TextView style="@style/text_centered"
-                android:id="@+id/requiredTime"
-                android:text="20"
-                android:layout_weight="4"
-                android:textSize="17sp"
-                android:textColor="@color/colorOrange"/>
-        </LinearLayout>
+<LinearLayout style="@style/vertical_layout"
+    android:layout_marginTop="4dp"
+    android:elevation="10dp"
+    android:background="@drawable/layout_shape_selector"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:id="@+id/time_layout">
+    <LinearLayout style="@style/horizontal_layout">
+        <TextView style="@style/text_centered"
+            android:gravity="right"
+            android:text="Время набора входного спектра:"
+            android:layout_weight="1"/>
+        <TextView style="@style/text_centered"
+            android:id="@+id/spectrum_time"
+            android:text="20"
+            android:layout_weight="4"
+            android:textSize="17sp"
+            android:textColor="@color/colorOrange"/>
     </LinearLayout>
+    <LinearLayout style="@style/horizontal_layout">
+        <TextView style="@style/text_centered"
+            android:gravity="right"
+            android:text="Требуемое время выходного спектра:"
+            android:layout_weight="1"/>
+        <TextView style="@style/text_centered"
+            android:id="@+id/requiredTime"
+            android:text="20"
+            android:layout_weight="4"
+            android:textSize="17sp"
+            android:textColor="@color/colorOrange"/>
+    </LinearLayout>
+</LinearLayout>
 
 <LinearLayout style="@style/horizontal_layout">
     <Button style="@style/nice_button"
@@ -65,6 +65,7 @@
         android:layout_weight="2"
         />
     <Button style="@style/nice_button"
+        android:layout_marginRight="0dp"
         android:text="Mode"
         android:layout_weight="1"
         android:id="@+id/mode_button"

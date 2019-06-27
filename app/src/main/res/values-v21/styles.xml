@@ -19,7 +19,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@drawable/my_shape</item>
-        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginTop">4dp</item>
     </style>
 
     <style name="button" parent="base_style">
@@ -32,15 +32,16 @@
     </style>
 
     <style name="nice_button" parent="Widget.AppCompat.Button">
+
         <item name="android:layout_marginTop">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginRight">2dp</item>
+        <item name="android:textSize">10sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
         <item name="android:elevation">10dp</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
         <item name="android:textColor">@android:color/white</item>

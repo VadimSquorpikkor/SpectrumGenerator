@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -190,11 +191,13 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     TextView status_imp_range_tv;
     @BindView(R.id.status_imp_speed)
     TextView status_imp_speed_tv;
-    @BindView(R.id.status_temperature)
-    TextView status_temperature_tv;
+//    @BindView(R.id.status_temperature)
+//    TextView status_temperature_tv;
 
 
     private String fragmentID;
+    private String pathForAts;
+    private boolean iCanGenerate;
     SpecDTO dto;
     float[] peaks;
     float[] peakEnergies;
@@ -222,38 +225,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         return fragment;
     }
 
-    public void updateData(SpecDTO dto/*, float[] peaks, float[] peakEnergies, String[] lineOwners*/) {
-        mSpecDTO = dto;
-  /*      mPeaks = peaks;
-        mPeakEnergies = peakEnergies;
-        mLineOwners = lineOwners;
-  */
-        if (mSpecDTO != null) {
-            mEntries = new ArrayList<>();
-            //make chart entry from spectrum data
-            int[] spectrum = mSpecDTO.getSpectrum();
-            for (int i = 0; i < spectrum.length; i++) {
-                mEntries.add(new Entry(i, spectrum[i]));
-                Log.e(TAG, "!!!!!!!!!!!!!!!!!!UPDATE DATA: N = " + i + ", N[i] = " + spectrum[i]);
-            }
-
-        }
-        updateChart();
-//        updateChartStatus();
-//        updatePeakLines();
-
-    }
-
-    public void updateID(String newID) {
-        fragmentID = newID;
-
-    }
-
-/*    public static SpectrumFragment getInstance() {
-        return getInstance();
-    }*/
-
-
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners, String fragmentID) {
         SpectrumFragment fragment = new SpectrumFragment();
@@ -262,11 +233,31 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putFloatArray(ARG_PEAKS, peaks);
         args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
         args.putStringArray(ARG_LINE_OWNERS, lineOwners);
-        fragment.fragmentID = fragmentID;
+        args.putString("FR_ID", fragmentID);
+//        fragment.fragmentID = fragmentID;
         fragment.setArguments(args);
-//        Log.e(TAG, "newInstance GET SPECTRUM: " + dto.getSpectrum()[5]);
+        Log.e(TAG, "FRAGMENT " + fragmentID + " newInstance");
         return fragment;
     }
+    public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
+            , String[] lineOwners, String fragmentID, String path) {
+        SpectrumFragment fragment = new SpectrumFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_DTO, dto);
+        args.putFloatArray(ARG_PEAKS, peaks);
+        args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
+        args.putStringArray(ARG_LINE_OWNERS, lineOwners);
+        args.putString("FR_ID", fragmentID);
+        args.putString("FR_PATH", path);
+//        fragment.fragmentID = fragmentID;
+        fragment.setArguments(args);
+        Log.e(TAG, "FRAGMENT " + fragmentID + " newInstance");
+        return fragment;
+    }
+
+/*    public static SpectrumFragment getInstance() {
+        return
+    }*/
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -285,8 +276,12 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
                 mPeaks = arguments.getFloatArray(ARG_PEAKS);
                 mPeakEnergies = arguments.getFloatArray(ARG_PEAKS_ENERGY);
                 mLineOwners = arguments.getStringArray(ARG_LINE_OWNERS);
+
+                fragmentID = arguments.getString("FR_ID");
+                pathForAts = arguments.getString("FR_PATH");
             }
         }
+        Log.e(TAG, "FRAGMENT " + fragmentID + " onCreate, path is " + pathForAts);
     }
 
 /*    @Override
@@ -600,8 +595,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         status_imp_speed_tv.setText(String.format(getString(R.string.chart_imp_speed),
                 (int) ((float) impSum / timeSpectrum)));
 
-        status_temperature_tv.setText(String.format(Locale.US, getString(R.string.chart_temperature)
-                , mSpecDTO.getTemperature()));
+//        status_temperature_tv.setText(String.format(Locale.US, getString(R.string.chart_temperature)
+//                , mSpecDTO.getTemperature()));
     }
 
     /**
@@ -700,8 +695,13 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
     }
 
-    public String getFragmentID() {
-//        Log.e(TAG, "getFragmentID: " + fragmentID);
-        return fragmentID;
+
+    public boolean canGenerate() {
+        Log.e(TAG, "canGenerate: " + pathForAts);
+        return !TextUtils.isEmpty(pathForAts);// if not empty or not null
+    }
+
+    public String getPathForAts() {
+        return pathForAts;
     }
 }
