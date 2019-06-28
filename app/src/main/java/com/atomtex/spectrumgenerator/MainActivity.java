@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String[] mLineOwners;
 
     FragmentManager manager;
-    SpecDTO dto;
 
     private int mPrefIdenThreshold;
 
@@ -62,11 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
-        //todo затычки
-        dto = new SpecDTO();
-        dto.setSpectrum(new int[]{0});
-        dto.setMeasTim(new int[]{0});
-        dto.setEnergy(new float[]{0});
         mPrefIdenThreshold = 4;
 
         setDisplayMode(mViewModel.getDisplayMode());
@@ -88,15 +82,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragment2 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container2);
 
         if (fragment1 == null) {
-            fragment1 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM);
+            fragment1 = SpectrumFragment.newInstance(REFERENCE_SPECTRUM);
             manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commit();
-        } /*else {
-            pathForAtsFile = fragment1.getPathForAts();
-            Log.e(TAG, "onCreate: AVTIVITY PATH = " + pathForAtsFile);
-        }*/
+        }
 
         if (fragment2 == null) {
-            fragment2 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, GENERATED_SPECTRUM);
+            fragment2 = SpectrumFragment.newInstance(GENERATED_SPECTRUM);
             manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
         }
 
@@ -194,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String pathHolder = uri.toString();
                         Log.e(TAG, "PATH: = " + pathHolder);
                         if (pathHolder.endsWith(".ats")) {
-                            //todo сейчас path хранится в 2-х местах, убрать из фрагмента
                             mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
                             openAtsFile(pathHolder);
                             makeToast("Открытие...");
@@ -229,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
-        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр", path)).commitAllowingStateLoss();
+        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
     }
 
     //todo remove path
@@ -237,18 +227,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SpecDTO dto = AtsReader.parseFile(path);
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
         dto.setSpectrum(mSpectrumGenerator.generatedSpectrum(dto.getSpectrum(), spTime, rqTime));
-        if (dto != null) {
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }
-            processIdenResult(nuc);
+        int[] spectrum = dto.getSpectrum();
+        float[] energy = dto.getEnergy();
+        float[] sigma = dto.getSigma();
+        NucIdent nuc = null;
+        try {
+            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
+        } catch (ProcessException e) {
+            e.printStackTrace();
         }
+        processIdenResult(nuc);
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
     }
