@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
-        mPrefIdenThreshold = 4;
+        mPrefIdenThreshold = 3;
 
         setDisplayMode(mViewModel.getDisplayMode());
 
@@ -304,9 +304,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nuc.setSpectrumSigma(sigma);
         nuc.setSpectrumEnergy(energy);
 
-//        nuc.detectLines(threshold);
+        nuc.detectLines(threshold);
 
-//        nuc.makeNuclideIdentification(threshold);
+        nuc.makeNuclideIdentification(threshold);
 
         return nuc;
     }

@@ -63,6 +63,7 @@ import static com.atomtex.spectrumgenerator.util.Util.unScaleCbr;
  *
  * @author stanislav.kleinikov@gmail.com
  */
+
 public class SpectrumFragment extends Fragment implements ButtonEventListener, OnChartValueSelectedListener {
 
     public static final String TAG = "TAGGG!!!";
