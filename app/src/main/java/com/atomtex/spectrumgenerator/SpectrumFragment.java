@@ -63,6 +63,7 @@ import static com.atomtex.spectrumgenerator.util.Util.unScaleCbr;
  *
  * @author stanislav.kleinikov@gmail.com
  */
+
 public class SpectrumFragment extends Fragment implements ButtonEventListener, OnChartValueSelectedListener {
 
     public static final String TAG = "TAGGG!!!";
@@ -245,6 +246,25 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putFloatArray(ARG_PEAKS, peaks);
         args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
         args.putStringArray(ARG_LINE_OWNERS, lineOwners);
+        args.putString("FR_ID", fragmentID);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    public static SpectrumFragment newInstance(String fragmentID) {
+
+        SpectrumFragment fragment = new SpectrumFragment();
+        Bundle args = new Bundle();
+        //todo затычки
+        SpecDTO dto = new SpecDTO();
+        dto = new SpecDTO();
+        dto.setSpectrum(new int[]{0});
+        dto.setMeasTim(new int[]{0});
+        dto.setEnergy(new float[]{0});
+        //
+        args.putParcelable(ARG_DTO, dto);
+        args.putFloatArray(ARG_PEAKS, null);
+        args.putFloatArray(ARG_PEAKS_ENERGY, null);
+        args.putStringArray(ARG_LINE_OWNERS, null);
         args.putString("FR_ID", fragmentID);
         fragment.setArguments(args);
         return fragment;

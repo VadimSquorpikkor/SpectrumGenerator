@@ -13,10 +13,18 @@ public class MainViewModel extends AndroidViewModel {
     private int RequiredTime = 1;
     private String pathForAts;
     private int displayMode = 0;
-
+    private int buttonMode = 0;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
+    }
+
+    public int getButtonMode() {
+        return buttonMode;
+    }
+
+    public void setButtonMode(int buttonMode) {
+        this.buttonMode = buttonMode;
     }
 
     public int getSpectrumTime() {

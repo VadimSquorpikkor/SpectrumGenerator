@@ -7,11 +7,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,7 +34,7 @@ import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
 import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     MainViewModel mViewModel;
 
@@ -47,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String[] mLineOwners;
 
     FragmentManager manager;
-    SpecDTO dto;
 
+    //todo не понятно, для чего нужно
     private int mPrefIdenThreshold;
 
     @Override
@@ -58,18 +62,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
+//        Log.e(TAG, "onCreate: navView = " + findViewById(R.id.nav_view));
+        if (findViewById(R.id.nav_view) != null) {
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+        }
+
         Log.e(TAG, "MAIN ACTIVITY onCreate: sTime = " + mViewModel.getSpectrumTime());
 
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
-        //todo затычки
-        dto = new SpecDTO();
-        dto.setSpectrum(new int[]{0});
-        dto.setMeasTim(new int[]{0});
-        dto.setEnergy(new float[]{0});
-        mPrefIdenThreshold = 4;
+        mPrefIdenThreshold = 3;
 
         setDisplayMode(mViewModel.getDisplayMode());
+        setButtonMode(mViewModel.getButtonMode());
 
         spectrumTimeTV = findViewById(R.id.spectrum_time);
         requiredTimeTV = findViewById(R.id.requiredTime);
@@ -88,15 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragment2 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container2);
 
         if (fragment1 == null) {
-            fragment1 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM);
+            fragment1 = SpectrumFragment.newInstance(REFERENCE_SPECTRUM);
             manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commit();
-        } /*else {
-            pathForAtsFile = fragment1.getPathForAts();
-            Log.e(TAG, "onCreate: AVTIVITY PATH = " + pathForAtsFile);
-        }*/
+        }
 
         if (fragment2 == null) {
-            fragment2 = SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, GENERATED_SPECTRUM);
+            fragment2 = SpectrumFragment.newInstance(GENERATED_SPECTRUM);
             manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
         }
 
@@ -105,25 +108,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.mode_button:
-                Log.e(TAG, "onClick: ");
-                toggleMode();
-                break;
-            case R.id.open_ats:
-                Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setDataAndType(selectedUri, "*/*");
-                startActivityForResult(intent, 1);//TODO request code сделать psf
-                break;
-            case R.id.gen_button:
-//                if (fragment1.canGenerate())
-                if (iCanGenerate()) generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
-                else makeToast("Сначала загрузите файл .ats");
-                break;
-            case R.id.time_layout:
-                showDialog();
-                break;
+            case R.id.mode_button: toggleMode(); break;
+            case R.id.open_ats: openAts(); break;
+            case R.id.gen_button: gen(); break;
+            case R.id.time_layout: showDialog(); break;
         }
+    }
+
+    private void openAts() {
+        Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setDataAndType(selectedUri, "*/*");
+        startActivityForResult(intent, 1);//TODO request code сделать psf
+    }
+
+    private void gen() {
+        if (iCanGenerate())
+            generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
+        else makeToast("Сначала загрузите файл .ats");
     }
 
     public boolean iCanGenerate() {
@@ -160,8 +162,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void toggleMode() {
         int mode = 0;
-        if(mViewModel.getDisplayMode()==0)mode = 1;
-        if(mViewModel.getDisplayMode()==1)mode = 2;
+        if (mViewModel.getDisplayMode() == 0) mode = 1;
+        if (mViewModel.getDisplayMode() == 1) mode = 2;
         mViewModel.setDisplayMode(mode);
         setDisplayMode(mode);
     }
@@ -183,6 +185,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void toggleButtonMode() {
+        int mode = 0;
+        if (mViewModel.getButtonMode() == 0) mode = 1;
+        mViewModel.setButtonMode(mode);
+        setButtonMode(mode);
+    }
+
+    private void setButtonMode(int mode) {
+        switch (mode) {
+            case 0:
+                findViewById(R.id.time_layout).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_layout).setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                findViewById(R.id.time_layout).setVisibility(View.GONE);
+                findViewById(R.id.button_layout).setVisibility(View.GONE);
+                break;
+        }
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -194,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String pathHolder = uri.toString();
                         Log.e(TAG, "PATH: = " + pathHolder);
                         if (pathHolder.endsWith(".ats")) {
-                            //todo сейчас path хранится в 2-х местах, убрать из фрагмента
                             mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
                             openAtsFile(pathHolder);
                             makeToast("Открытие...");
@@ -229,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
-        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Эталонный спектр", path)).commitAllowingStateLoss();
+        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
     }
 
     //todo remove path
@@ -237,18 +259,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SpecDTO dto = AtsReader.parseFile(path);
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
         dto.setSpectrum(mSpectrumGenerator.generatedSpectrum(dto.getSpectrum(), spTime, rqTime));
-        if (dto != null) {
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }
-            processIdenResult(nuc);
+        int[] spectrum = dto.getSpectrum();
+        float[] energy = dto.getEnergy();
+        float[] sigma = dto.getSigma();
+        NucIdent nuc = null;
+        try {
+            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
+        } catch (ProcessException e) {
+            e.printStackTrace();
         }
+        processIdenResult(nuc);
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
     }
@@ -316,15 +336,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         nuc.setSpectrumSigma(sigma);
         nuc.setSpectrumEnergy(energy);
 
-//        nuc.detectLines(threshold);
+        nuc.detectLines(threshold);
 
-//        nuc.makeNuclideIdentification(threshold);
+        nuc.makeNuclideIdentification(threshold);
 
         return nuc;
     }
 
     private void makeToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_open_ats) {
+            openAts();
+        } else if (id == R.id.nav_generate) {
+            gen();
+        } else if (id == R.id.nav_set_time) {
+            showDialog();
+        } else if (id == R.id.nav_toggle_mode) {
+            toggleMode();
+        } else if (id == R.id.nav_toggle_button) {
+            toggleButtonMode();
+        } else if (id == R.id.nav_send) {
+            makeToast("Send");
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 }
