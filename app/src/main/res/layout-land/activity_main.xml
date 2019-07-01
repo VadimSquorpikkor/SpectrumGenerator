@@ -35,49 +35,23 @@
     <LinearLayout style="@style/horizontal_layout">
 
 
-        <LinearLayout
-            android:id="@+id/time_layout"
-            style="@style/vertical_layout"
+        <LinearLayout style="@style/horizontal_layout"
             android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:background="@drawable/layout_shape_selector"
             android:elevation="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-
-            <LinearLayout style="@style/horizontal_layout">
-
-                <TextView
-                    style="@style/text_centered"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Время набора входного спектра:" />
-
-                <TextView
-                    android:id="@+id/spectrum_time"
-                    style="@style/text_centered"
-                    android:layout_weight="4"
-                    android:text="20"
-                    android:textColor="@color/colorOrange"
-                    android:textSize="17sp" />
-            </LinearLayout>
-
-            <LinearLayout style="@style/horizontal_layout">
-
-                <TextView
-                    style="@style/text_centered"
-                    android:layout_weight="1"
-                    android:gravity="right"
-                    android:text="Требуемое время вых спектра:" />
-
-                <TextView
-                    android:id="@+id/requiredTime"
-                    style="@style/text_centered"
-                    android:layout_weight="4"
-                    android:text="20"
-                    android:textColor="@color/colorOrange"
-                    android:textSize="17sp" />
-            </LinearLayout>
+            android:background="@drawable/layout_shape_selector"
+            android:padding="10dp"
+            android:id="@+id/time_layout">
+            <TextView style="@style/text_centered"
+                android:gravity="right"
+                android:text="Время выходного спектра:"
+                android:layout_weight="1"/>
+            <TextView style="@style/text_centered"
+                android:id="@+id/requiredTime"
+                android:text="20"
+                android:layout_weight="4"
+                android:textSize="17sp"
+                android:textColor="@color/colorOrange"/>
         </LinearLayout>
 
         <LinearLayout

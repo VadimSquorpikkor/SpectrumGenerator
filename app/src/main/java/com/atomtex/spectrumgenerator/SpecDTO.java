@@ -3,9 +3,12 @@ package com.atomtex.spectrumgenerator;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Map;
+
+import static com.atomtex.spectrumgenerator.MainActivity.TAG;
 
 /**
  * Holds the information to write into spectrum file
@@ -255,6 +258,14 @@ public class SpecDTO implements Parcelable {
             return new SpecDTO[size];
         }
     };
+
+
+    public void addSpectrumToCurrent(int[] spectrum) {
+        for (int i = 0; i < spectrum.length; i++) {
+            Log.e(TAG, "addSpectrumToCurrent: " + mSpectrum[i]);
+            mSpectrum[i] += spectrum[i];
+        }
+    }
 
     public String getFileName() {
         return fileName;

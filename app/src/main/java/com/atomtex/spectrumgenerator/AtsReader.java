@@ -26,6 +26,7 @@ import java.util.Map;
 
 import androidx.annotation.RequiresApi;
 
+import static com.atomtex.spectrumgenerator.SpectrumFragment.TAG;
 import static com.balsikandar.crashreporter.CrashReporter.getContext;
 
 /**
@@ -79,7 +80,7 @@ public class AtsReader {
         return dto;
     }
 
-    static Map<String,String> map = new HashMap<>();
+//    static Map<String,String> map = new HashMap<>();
 
     private static SpecDTO parseSpecDTO(BufferedReader reader)
             throws IOException, NumberFormatException {
@@ -87,7 +88,7 @@ public class AtsReader {
         String s;
         String[] splittedLine;
 
-        dto.setMeasTim(new int[]{0,0,0});//todo затычка
+//        dto.setMeasTim(new int[]{0,0,0});//todo затычка
 
 
         while ((s = reader.readLine()) != null) {
@@ -134,24 +135,41 @@ public class AtsReader {
                     }
                     dto.setSpectrum(spectrum);
                 }
-            } else {
+            } else if(s.startsWith("TIME")){
                 splittedLine = s.split("=");
-                if (splittedLine.length > 1) map.put(splittedLine[0], splittedLine[1]);
-//                 else map.put(splittedLine[0], "0");
+                int time = 0;
+                if (splittedLine.length == 2 ) time = Integer.parseInt(splittedLine[1].trim()); //(splittedLine.length == 2) т.е. в map записывать только не пустые переменные (только те, которые чему-нибудь равны)
+                dto.setMeasTim(new int[]{time, 1}); //todo вторая переменная просто затычка
             }
+//            Log.e(TAG, "--------------MAP SIZE = " + map.size() );
         }
 
 
-        if(map.containsKey("ACTIVITYRESULT"))dto.setActivityResult(map.get("ACTIVITYRESULT"));
-        if(map.containsKey("NEUTRON_COUNT"))dto.setNeutronCount(Long.parseLong(map.get("NEUTRON_COUNT")));
-//        if(map.containsKey("TIME"))dto.setMeasTim(new int[]{Integer.parseInt(map.get("TIME")),0});
-        int[] arr = new int[]{5,5};
-        if(map.containsKey("TIME"))dto.setMeasTim(arr);
-        if(map.containsKey("TIME"))dto.setIsBGNDSubtracted(Integer.parseInt(map.get("TIME")));//todo remove
 
-        Log.e("TAGGG", "parseSpecDTO: arr[0] = " + arr[0]);
-        Log.e("TAGGG", "parseSpecDTO: time = " + dto.getMeasTim()[0]);
-        Log.e("TAGGG", "parseSpecDTO: time2 = " + dto.getIsBGNDSubtracted());
+/*        else {
+            splittedLine = s.split("=");
+            if (splittedLine.length == 2 ) map.put(splittedLine[0], splittedLine[1]); //(splittedLine.length == 2) т.е. в map записывать только не пустые переменные (только те, которые чему-нибудь равны)
+//                 else map.put(splittedLine[0], "0");
+        }
+        Log.e(TAG, "--------------MAP SIZE = " + map.size() );*/
+
+
+
+//        if(map.containsKey("ACTIVITYRESULT"))dto.setActivityResult(map.get("ACTIVITYRESULT"));
+//        if(map.containsKey("NEUTRON_COUNT"))dto.setNeutronCount(Long.parseLong(map.get("NEUTRON_COUNT")));
+//        if(map.containsKey("TIME"))dto.setMeasTim(new int[]{Integer.parseInt(map.get("TIME")),0});
+//        int[] arr = new int[]{5,5};
+
+
+        ///////////////////////////////////////////////////////////if(map.containsKey("TIME"))dto.setMeasTim(new int[]{Integer.parseInt(map.get("TIME")), 1});
+
+
+//        if(map.containsKey("TIME"))dto.setIsBGNDSubtracted(Integer.parseInt(map.get("TIME")));//todo remove
+
+//        Log.e("TAGGG", "parseSpecDTO: arr[0] = " + arr[0]);
+
+//        Log.e("TAGGG", "parseSpecDTO: time = " + dto.getMeasTim()[0]);
+//        Log.e("TAGGG", "parseSpecDTO: time2 = " + dto.getMeasTim()[1]);
         return dto;
     }
 }

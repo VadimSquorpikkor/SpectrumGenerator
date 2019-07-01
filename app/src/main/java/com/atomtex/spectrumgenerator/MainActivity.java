@@ -7,17 +7,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Chronometer;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +31,13 @@ import com.atomtex.spectrumgenerator.domain.NucIdent;
 import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.atomtex.spectrumgenerator.exception.ProcessException;
 import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
+import com.atomtex.spectrumgenerator.util.SqTimer;
+import com.balsikandar.crashreporter.CrashReporter;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.LogRecord;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
@@ -38,12 +48,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     MainViewModel mViewModel;
 
+    NavigationView navigationView;
+
+//    Handler handler;
+
+    Thread thread;
+
     SpectrumFragment fragment1;
     SpectrumFragment fragment2;
 
     public static final String TAG = "TAG!!!";
 
-    TextView spectrumTimeTV;
+//    TextView spectrumTimeTV;
     TextView requiredTimeTV;
 
     float[] mPeakChannels;
@@ -64,23 +80,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        Log.e(TAG, "onCreate: navView = " + findViewById(R.id.nav_view));
         if (findViewById(R.id.nav_view) != null) {
-            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
         }
-
-        Log.e(TAG, "MAIN ACTIVITY onCreate: sTime = " + mViewModel.getSpectrumTime());
 
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
         mPrefIdenThreshold = 3;
 
+//        handler = new Handler();
+
         setDisplayMode(mViewModel.getDisplayMode());
         setButtonMode(mViewModel.getButtonMode());
 
-        spectrumTimeTV = findViewById(R.id.spectrum_time);
+//        spectrumTimeTV = findViewById(R.id.spectrum_time);
         requiredTimeTV = findViewById(R.id.requiredTime);
 
-        setSpectrumTime();
+//        setSpectrumTime();
         setRequiredTime();
 
         findViewById(R.id.mode_button).setOnClickListener(this);
@@ -115,6 +131,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+/*    SwitchCompat drawerSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_switch).getActionView();
+    drawerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                // do stuff
+            } else {
+                // do other stuff
+            }
+        }
+    });*/
+
+
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            // do stuff
+        } else {
+            // do other stuff
+        }
+    }
+
+
     private void openAts() {
         Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -123,8 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void gen() {
-        if (iCanGenerate())
-            generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
+        if (iCanGenerate()) generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
         else makeToast("Сначала загрузите файл .ats");
     }
 
@@ -136,15 +173,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final View view = this.getLayoutInflater().inflate(R.layout.dialog, null);
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(view);
-        final EditText editText1 = view.findViewById(R.id.dialog_spectrum_time_text);
+//        final EditText editText1 = view.findViewById(R.id.dialog_spectrum_time_text);
         final EditText editText2 = view.findViewById(R.id.dialog_required_time_text);
-        editText1.setText(String.valueOf(mViewModel.getSpectrumTime()));
+//        editText1.setText(String.valueOf(mViewModel.getSpectrumTime()));
         editText2.setText(String.valueOf(mViewModel.getRequiredTime()));
         alert.setPositiveButton("Понял", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                mViewModel.setSpectrumTime(Integer.parseInt(editText1.getText().toString()));
+//                mViewModel.setSpectrumTime(Integer.parseInt(editText1.getText().toString()));
                 mViewModel.setRequiredTime(Integer.parseInt(editText2.getText().toString()));
-                setSpectrumTime();
+//                setSpectrumTime();
                 setRequiredTime();
                 dialog.cancel();
             }
@@ -152,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alert.show();
     }
 
-    private void setSpectrumTime() {
+/*    private void setSpectrumTime() {
         spectrumTimeTV.setText(String.valueOf(mViewModel.getSpectrumTime()));//todo может есть смысл хранить в стринге?
-    }
+    }*/
 
     private void setRequiredTime() {
         requiredTimeTV.setText(String.valueOf(mViewModel.getRequiredTime()));//todo может есть смысл хранить в стринге?
@@ -250,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             processIdenResult(nuc);
         }
+        mViewModel.setSpectrumTime(dto.getMeasTim()[0]);
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
     }
@@ -257,8 +295,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //todo remove path
     private void generateSpectrum(String path, int spTime, int rqTime) {
         SpecDTO dto = AtsReader.parseFile(path);
+        dto.setMeasTim(new int[]{rqTime, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
         dto.setSpectrum(mSpectrumGenerator.generatedSpectrum(dto.getSpectrum(), spTime, rqTime));
+        int[] spectrum = dto.getSpectrum();
+        float[] energy = dto.getEnergy();
+        float[] sigma = dto.getSigma();
+        NucIdent nuc = null;
+        try {
+            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
+        } catch (ProcessException e) {
+            e.printStackTrace();
+        }
+        processIdenResult(nuc);
+        //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
+        manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
+    }
+
+
+    void getDtoFromPath() {//todo масло маслянное...
+        mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
+    }
+    //todo remove path
+    private void generateSpectrumTeak(int spTime, int rqTime) {
+        SpecDTO refDto = AtsReader.parseFile(mViewModel.getPathForAts());
+        SpecDTO dto = mViewModel.getTempDTO();
+        dto.setMeasTim(new int[]{rqTime, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
+        SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
+//        dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
+        dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
         int[] spectrum = dto.getSpectrum();
         float[] energy = dto.getEnergy();
         float[] sigma = dto.getSigma();
@@ -374,12 +439,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.nav_toggle_button) {
             toggleButtonMode();
         } else if (id == R.id.nav_send) {
-            makeToast("Send");
+            getDtoFromPath();
+            mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
+            start();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    Handler handler = new Handler();
+    Runnable runnable;
+    int delay = 250; //Delay. milliseconds.
+
+    void start(){
+        handler.postDelayed( runnable = new Runnable() {
+            public void run() {
+                generateSpectrumTeak(mViewModel.getSpectrumTime()*20, mViewModel.getRequiredTime());
+
+                handler.postDelayed(runnable, delay);
+            }
+        }, delay);
+    }
+
+
 
 }

@@ -9,11 +9,21 @@ public class MainViewModel extends AndroidViewModel {
     public static final String REFERENCE_SPECTRUM = "Эталонный спектр";
     public static final String GENERATED_SPECTRUM = "Сгенерированный спектр";
 
+
+    private SpecDTO tempDTO;
     private int spectrumTime = 10;
     private int RequiredTime = 1;
     private String pathForAts;
     private int displayMode = 0;
     private int buttonMode = 0;
+
+    public SpecDTO getTempDTO() {
+        return tempDTO;
+    }
+
+    public void setTempDTO(SpecDTO tempDTO) {
+        this.tempDTO = tempDTO;
+    }
 
     public MainViewModel(@NonNull Application application) {
         super(application);

@@ -20,29 +20,15 @@
         android:id="@+id/fragment_container2">
     </FrameLayout>
 
-    <LinearLayout style="@style/vertical_layout"
+    <LinearLayout style="@style/horizontal_layout"
         android:layout_marginTop="2dp"
         android:elevation="10dp"
         android:background="@drawable/layout_shape_selector"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="3dp"
         android:id="@+id/time_layout">
-        <LinearLayout style="@style/horizontal_layout">
             <TextView style="@style/text_centered"
                 android:gravity="right"
-                android:text="Время набора входного спектра:"
-                android:layout_weight="1"/>
-            <TextView style="@style/text_centered"
-                android:id="@+id/spectrum_time"
-                android:text="20"
-                android:layout_weight="4"
-                android:textSize="17sp"
-                android:textColor="@color/colorOrange"/>
-        </LinearLayout>
-        <LinearLayout style="@style/horizontal_layout">
-            <TextView style="@style/text_centered"
-                android:gravity="right"
-                android:text="Требуемое время выходного спектра:"
+                android:text="Время выходного спектра:"
                 android:layout_weight="1"/>
             <TextView style="@style/text_centered"
                 android:id="@+id/requiredTime"
@@ -50,7 +36,6 @@
                 android:layout_weight="4"
                 android:textSize="17sp"
                 android:textColor="@color/colorOrange"/>
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout style="@style/horizontal_layout"

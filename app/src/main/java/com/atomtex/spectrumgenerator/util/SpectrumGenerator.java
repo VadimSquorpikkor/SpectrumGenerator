@@ -13,35 +13,17 @@ public class SpectrumGenerator {
     private long spectrum_for_rand[];
     private double spectrum[];
 
-
-
-
-    public int[] generatedSpectrum(
-            int[] pSpectrum,             //входной спектр
-            int spectrumTime,             //время набора входного спектра всегда >0
-            int requiredTime              //требуемое время к которому будет приведен выходной спектр, может быть =0, тогда ко времени     spectrumTime
-    ) {
+    public int[] generatedSpectrum(int[] pSpectrum, int spectrumTime, int requiredTime) {
         int[] pRetSpectrum = new int[pSpectrum.length];
         channels = pSpectrum.length; //сюда надо как то получить количество элементов в pSpectrum
-        double dbl;
-        if (requiredTime == 0)
-            requiredTime = spectrumTime; //todo
-
-        Log.e("TAGGG", "generatedSpectrum: required = " + requiredTime + "; spectrum = " + spectrumTime);
+        if (requiredTime == 0) requiredTime = spectrumTime; //todo
 
         double timecoef = (double) requiredTime / (double) spectrumTime;
-        int f;
-        int tmp;
         for (int i = 0; i < channels; i++) {
-            tmp = pSpectrum[i];
-            /*dbl = pSpectrum[i] * timecoef;                 //приводим каждый эелемент ко времени  //todo что за spectrum????
-            if (dbl < 0) {
-                f = - (poissonRandomGenerator(abs(dbl)));
-            } else
-                f = (poissonRandomGenerator(dbl));*/
-            f = poissonRandomGenerator(pSpectrum[i] * timecoef);
-            pRetSpectrum[i] = (f);                                   //сохраняем в результат
-            Log.e("TAGGG", "generatedSpectrum: OLD = " + tmp + "; NEW = " + f);
+
+            int tmp = pSpectrum[i];
+            pRetSpectrum[i] = poissonRandomGenerator(pSpectrum[i] * timecoef);  //сохраняем в результат
+            Log.e("TAGGG", "generatedSpectrum: OLD = " + tmp + "; NEW = " + poissonRandomGenerator(pSpectrum[i] * timecoef));
         }
         return pRetSpectrum;
     }
