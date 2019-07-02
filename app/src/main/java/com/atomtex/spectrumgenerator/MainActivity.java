@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -61,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //    TextView spectrumTimeTV;
     TextView requiredTimeTV;
+    Button genButton;
+    EditText timeText;
+    EditText delayText;
 
     float[] mPeakChannels;
     float[] mPeakEnergies;
@@ -92,12 +96,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setDisplayMode(mViewModel.getDisplayMode());
         setButtonMode(mViewModel.getButtonMode());
+        setTimeLayoutMode(mViewModel.getTimeLayoutMode());
 
 //        spectrumTimeTV = findViewById(R.id.spectrum_time);
         requiredTimeTV = findViewById(R.id.requiredTime);
+        genButton = findViewById(R.id.gen_button);
+        timeText = findViewById(R.id.dialog_required_time_text);
+        delayText = findViewById(R.id.dialog_delay_text);
 
 //        setSpectrumTime();
         setRequiredTime();
+        setDelayTime();
 
         findViewById(R.id.mode_button).setOnClickListener(this);
         findViewById(R.id.open_ats).setOnClickListener(this);
@@ -126,10 +135,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.mode_button: toggleMode(); break;
             case R.id.open_ats: openAts(); break;
-            case R.id.gen_button: gen(); break;
-            case R.id.time_layout: showDialog(); break;
+            case R.id.gen_button: toggleGenButton(); break;
+            case R.id.time_layout: toggleTimeLayoutMode(); break;
+//            case R.id.time_layout: showDialog(); break;
         }
     }
+
+
 
 /*    SwitchCompat drawerSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_switch).getActionView();
     drawerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -165,6 +177,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else makeToast("Сначала загрузите файл .ats");
     }
 
+    private void genTeak() {
+        getParamFromTimeField();
+        getDtoFromPath();
+        mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
+        start();
+    }
+
     public boolean iCanGenerate() {
         return !TextUtils.isEmpty(mViewModel.getPathForAts());// if not empty or not null
     }
@@ -189,12 +208,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alert.show();
     }
 
+    private void getParamFromTimeField() {
+        mViewModel.setRequiredTime(Integer.parseInt(timeText.getText().toString()));
+        mViewModel.setDelay(Integer.parseInt(delayText.getText().toString()));
+    }
+
 /*    private void setSpectrumTime() {
         spectrumTimeTV.setText(String.valueOf(mViewModel.getSpectrumTime()));//todo может есть смысл хранить в стринге?
     }*/
 
     private void setRequiredTime() {
-        requiredTimeTV.setText(String.valueOf(mViewModel.getRequiredTime()));//todo может есть смысл хранить в стринге?
+        int time = mViewModel.getRequiredTime();
+        requiredTimeTV.setText(String.valueOf(time));//todo может есть смысл хранить в стринге?
+        timeText.setText(String.valueOf(time));
+    }
+
+    private void setDelayTime() {
+        delayText.setText(String.valueOf(mViewModel.getDelay()));
     }
 
     private void toggleMode() {
@@ -222,11 +252,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void toggleTimeLayoutMode() {
+        getParamFromTimeField();
+        setDelayTime();
+        setRequiredTime();
+
+        int mode = 0;
+        if (mViewModel.getTimeLayoutMode() == 0) mode = 1;
+        mViewModel.setTimeLayoutMode(mode);
+        setTimeLayoutMode(mode);
+    }
+
     private void toggleButtonMode() {
         int mode = 0;
         if (mViewModel.getButtonMode() == 0) mode = 1;
         mViewModel.setButtonMode(mode);
         setButtonMode(mode);
+    }
+
+    private void toggleGenButton() {
+        if (iCanGenerate()) {
+            if (mViewModel.isGenButtonIsPressed()) {
+                stop();
+//                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape,0, 0, 0);
+                genButton.setText("Генератор");
+                mViewModel.setGenButtonIsPressed(false);
+            } else {
+                genTeak();
+//                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape_pressed,0, 0, 0);
+//                genButton.setBackgroundColor(getResources().getColor(R.color.colorOrange));
+//                genButton.setBackgroundDrawable(R.drawable.my_button_shape_pressed);
+                genButton.setText("Остановить");
+                mViewModel.setGenButtonIsPressed(true);
+            }
+        } else {
+            makeToast("Сначала загрузите файл .ats");
+        }
+
     }
 
     private void setButtonMode(int mode) {
@@ -242,6 +304,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void setTimeLayoutMode(int mode) {
+        switch (mode) {
+            case 0:
+                findViewById(R.id.time_layout_small).setVisibility(View.VISIBLE);
+                findViewById(R.id.time_layout_big).setVisibility(View.GONE);
+                break;
+            case 1:
+                findViewById(R.id.time_layout_small).setVisibility(View.GONE);
+                findViewById(R.id.time_layout_big).setVisibility(View.VISIBLE);
+                break;
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -317,10 +391,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
     }
     //todo remove path
-    private void generateSpectrumTeak(int spTime, int rqTime) {
+    private void generateSpectrumTeak(int spTime, int rqTime, int count) {
         SpecDTO refDto = AtsReader.parseFile(mViewModel.getPathForAts());
         SpecDTO dto = mViewModel.getTempDTO();
-        dto.setMeasTim(new int[]{rqTime, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
+        dto.setMeasTim(new int[]{count, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
 //        dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
         dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
@@ -442,6 +516,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getDtoFromPath();
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
             start();
+        } else if (id == R.id.nav_stop) {
+            stop();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -450,20 +526,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    Handler handler = new Handler();
+    final Handler handler = new Handler();
     Runnable runnable;
-    int delay = 250; //Delay. milliseconds.
 
     void start(){
-        handler.postDelayed( runnable = new Runnable() {
-            public void run() {
-                generateSpectrumTeak(mViewModel.getSpectrumTime()*20, mViewModel.getRequiredTime());
+            handler.postDelayed(runnable = new Runnable() {
+                int count = 0;
+                public void run() {
+                    if (count++ < mViewModel.getRequiredTime()) {
+                        generateSpectrumTeak(mViewModel.getSpectrumTime(), 1, count);
+                        handler.postDelayed(runnable, mViewModel.getDelay());
+                    } else {
+                        genButton.setText("Генератор");
+                        mViewModel.setGenButtonIsPressed(false);
+                    }
+                }
+            }, 250);
 
-                handler.postDelayed(runnable, delay);
-            }
-        }, delay);
     }
 
+    void stop() {
+        handler.removeCallbacks(runnable);
+    }
 
+/*    Thread thread = new Thread() {
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    sleep(1000);
+                    handler.post(this);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+thread.start();*/
 
 }

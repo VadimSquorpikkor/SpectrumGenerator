@@ -12,10 +12,38 @@ public class MainViewModel extends AndroidViewModel {
 
     private SpecDTO tempDTO;
     private int spectrumTime = 10;
-    private int RequiredTime = 1;
+    private int RequiredTime = 100;
     private String pathForAts;
     private int displayMode = 0;
     private int buttonMode = 0;
+    private int delay = 250;
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public int getTimeLayoutMode() {
+        return timeLayoutMode;
+    }
+
+    public void setTimeLayoutMode(int timeLayoutMode) {
+        this.timeLayoutMode = timeLayoutMode;
+    }
+
+    private int timeLayoutMode = 0;
+    private boolean genButtonIsPressed = false;
+
+    public boolean isGenButtonIsPressed() {
+        return genButtonIsPressed;
+    }
+
+    public void setGenButtonIsPressed(boolean genButtonIsPressed) {
+        this.genButtonIsPressed = genButtonIsPressed;
+    }
 
     public SpecDTO getTempDTO() {
         return tempDTO;
@@ -25,9 +53,6 @@ public class MainViewModel extends AndroidViewModel {
         this.tempDTO = tempDTO;
     }
 
-    public MainViewModel(@NonNull Application application) {
-        super(application);
-    }
 
     public int getButtonMode() {
         return buttonMode;
@@ -67,5 +92,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public void setDisplayMode(int displayMode) {
         this.displayMode = displayMode;
+    }
+
+    public MainViewModel(@NonNull Application application) {
+        super(application);
     }
 }

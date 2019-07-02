@@ -20,4 +20,33 @@
         android:text="100"
         android:textColor="@color/colorOrange" />
 
+    <TextView
+        style="@style/text_centered"
+        android:text="Время выходного спектра" />
+
+    <EditText
+        android:id="@+id/dialog_delay_text"
+        style="@style/text_centered"
+        android:layout_width="100dp"
+        android:digits="0123456789"
+        android:inputType="number"
+        android:maxLength="5"
+        android:text="100"
+        android:textColor="@color/colorOrange" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:max="1000"
+        android:min="50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Посекундный набор" />
+
+
+
 </LinearLayout>
