@@ -25,17 +25,35 @@
         android:elevation="10dp"
         android:background="@drawable/layout_shape_selector"
         android:padding="3dp"
-        android:id="@+id/time_layout">
+        android:id="@+id/time_layout"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        >
         <LinearLayout style="@style/horizontal_layout"
-            android:id="@+id/time_layout_small">
-            <TextView style="@style/text_centered"
+            android:id="@+id/time_layout_small"
+
+            >
+            <TextView style="@style/base_match_wrap"
                 android:gravity="right"
-                android:text="Время выходного спектра:"
+                android:text="Delay: "
                 android:layout_weight="1"/>
-            <TextView style="@style/text_centered"
-                android:id="@+id/requiredTime"
+            <TextView style="@style/base_match_wrap"
+                android:gravity="center"
+                android:id="@+id/delay_time_main"
                 android:text="20"
-                android:layout_weight="4"
+                android:layout_weight="1"
+                android:textSize="17sp"
+                android:textColor="@color/colorOrange"/>
+
+            <TextView style="@style/base_match_wrap"
+                android:gravity="right"
+                android:text="t набора: "
+                android:layout_weight="1"/>
+            <TextView style="@style/base_match_wrap"
+                android:id="@+id/requiredTime"
+                android:gravity="center"
+                android:text="20"
+                android:layout_weight="1"
                 android:textSize="17sp"
                 android:textColor="@color/colorOrange"/>
 
@@ -48,10 +66,15 @@
             android:layout_marginRight="20dp"
             >
 
+            <LinearLayout style="@style/horizontal_layout">
+
+
+            </LinearLayout>
+
             <LinearLayout style="@style/vertical_layout">
                 <TextView
                     style="@style/text_centered"
-                    android:text="Время выходного спектра" />
+                    android:text="Время набора" />
 
                 <EditText
                     android:id="@+id/dialog_required_time_text"
@@ -85,6 +108,7 @@
                 android:id="@+id/seekBar"
                 android:max="1000"
                 android:min="50"
+                android:progress="10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

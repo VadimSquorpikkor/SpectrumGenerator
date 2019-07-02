@@ -17,6 +17,15 @@ public class MainViewModel extends AndroidViewModel {
     private int displayMode = 0;
     private int buttonMode = 0;
     private int delay = 250;
+    private boolean isSecMode = true;
+
+    public boolean isSecMode() {
+        return isSecMode;
+    }
+
+    public void setSecMode(boolean secMode) {
+        isSecMode = secMode;
+    }
 
     public int getDelay() {
         return delay;

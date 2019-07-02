@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +46,7 @@ import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
 import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
 
     MainViewModel mViewModel;
 
@@ -62,9 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //    TextView spectrumTimeTV;
     TextView requiredTimeTV;
+    TextView delayTimeTV;
     Button genButton;
     EditText timeText;
     EditText delayText;
+    Switch switchTV;
 
     float[] mPeakChannels;
     float[] mPeakEnergies;
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        spectrumTimeTV = findViewById(R.id.spectrum_time);
         requiredTimeTV = findViewById(R.id.requiredTime);
+        delayTimeTV = findViewById(R.id.delay_time_main);
         genButton = findViewById(R.id.gen_button);
         timeText = findViewById(R.id.dialog_required_time_text);
         delayText = findViewById(R.id.dialog_delay_text);
@@ -112,6 +116,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.open_ats).setOnClickListener(this);
         findViewById(R.id.gen_button).setOnClickListener(this);
         findViewById(R.id.time_layout).setOnClickListener(this);
+
+        final SeekBar seekBar = findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(this);
+
+        seekBar.setProgress(mViewModel.getDelay());
+
+        switchTV = findViewById(R.id.switch1);
+        if (switchTV != null) switchTV.setOnCheckedChangeListener(this);
+        switchTV.setChecked(true);
+
+
 
         manager = getSupportFragmentManager();
         //Это чтобы при повороте устройства не создавать новый фрагмент:
@@ -158,10 +173,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
-            // do stuff
+            mViewModel.setSecMode(true);
         } else {
-            // do other stuff
+            mViewModel.setSecMode(false);
         }
+
     }
 
 
@@ -178,10 +194,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void genTeak() {
-        getParamFromTimeField();
-        getDtoFromPath();
-        mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
-        start();
+        if (iCanGenerate()){
+            getParamFromTimeField();
+            getDtoFromPath();
+            mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
+            start();
+        }
+        else makeToast("Сначала загрузите файл .ats");
     }
 
     public boolean iCanGenerate() {
@@ -224,7 +243,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setDelayTime() {
-        delayText.setText(String.valueOf(mViewModel.getDelay()));
+        int delay = mViewModel.getDelay();
+        delayTimeTV.setText(String.valueOf(delay));
+        delayText.setText(String.valueOf(delay));
     }
 
     private void toggleMode() {
@@ -271,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void toggleGenButton() {
-        if (iCanGenerate()) {
+        if (mViewModel.isSecMode()) {
             if (mViewModel.isGenButtonIsPressed()) {
                 stop();
 //                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape,0, 0, 0);
@@ -286,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mViewModel.setGenButtonIsPressed(true);
             }
         } else {
-            makeToast("Сначала загрузите файл .ats");
+            gen();
         }
 
     }
@@ -549,20 +570,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         handler.removeCallbacks(runnable);
     }
 
-/*    Thread thread = new Thread() {
-        @Override
-        public void run() {
-            try {
-                while(true) {
-                    sleep(1000);
-                    handler.post(this);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        mViewModel.setDelay(Integer.parseInt(String.valueOf(seekBar.getProgress())));
+    }
 
-thread.start();*/
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        delayText.setText(String.valueOf(seekBar.getProgress()));
+    }
+
+
 
 }
