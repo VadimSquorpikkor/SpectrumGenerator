@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="3dp"
+    android:orientation="vertical"
+    android:padding="0dp"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        style="@style/horizontal_layout"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:id="@+id/fragment_container1"
+            style="@style/frame_style"
+            android:layout_weight="1"
+            android:elevation="25dp"></FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment_container2"
+            style="@style/frame_style"
+            android:layout_weight="1"></FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_layout"
+        style="@style/vertical_layout"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="3dp"
+
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/layout_shape_selector"
+        android:elevation="10dp"
+        android:padding="3dp">
+
+        <LinearLayout
+            android:id="@+id/time_layout_small"
+            style="@style/horizontal_layout"
+
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:text="Delay: " />
+
+            <TextView
+                android:id="@+id/delay_time_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="20"
+                android:textColor="@color/colorOrange"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:text="t набора: " />
+
+            <TextView
+                android:id="@+id/requiredTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="20"
+                android:textColor="@color/colorOrange"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/time_layout_big"
+            style="@style/vertical_layout"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:elevation="10dp">
+
+
+            <LinearLayout style="@style/horizontal_layout">
+                <!--              <TextView
+                                  style="@style/text_centered"
+                                  android:text="Время набора:" />-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/dialog_required_time_text"
+                        style="@style/text_centered"
+                        android:layout_width="65dp"
+                        android:digits="0123456789"
+                        android:inputType="number"
+                        android:maxLength="5"
+                        android:text="100"
+                        android:textColor="@color/colorOrange" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+
+                        android:layout_weight="1"
+                        android:max="101"
+                        android:min="1" />
+
+
+                    <!--                <TextView
+                                        style="@style/text_centered"
+                                        android:text="Delay, ms:" />-->
+
+
+                    <EditText
+                        android:id="@+id/dialog_delay_text"
+                        style="@style/text_centered"
+                        android:layout_width="65dp"
+                        android:digits="0123456789"
+                        android:inputType="number"
+                        android:maxLength="5"
+                        android:text="100"
+                        android:textColor="@color/colorOrange" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+
+                        android:layout_weight="1"
+                        android:max="1001"
+                        android:min="1" />
+
+                    <Switch
+                        android:id="@+id/switch1"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=""
+                        android:layout_width="wrap_content" />
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
+
+            <!--            <Button
+                            android:id="@+id/time_layout_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingRight="40dp"
+                            android:paddingLeft="40dp"
+                            android:elevation="20dp"
+                            android:text="Задать"
+                            android:textSize="10sp"
+                            android:layout_gravity="center"/>-->
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        style="@style/horizontal_layout">
+
+
+        <Button
+            android:id="@+id/open_ats"
+            style="@style/nice_button"
+            android:layout_margin="0dp"
+            android:layout_weight="1"
+            android:elevation="10dp"
+            android:text="Загрузить спектр" />
+
+        <Button
+            android:id="@+id/gen_button"
+            style="@style/nice_button"
+            android:layout_margin="0dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:text="Генератор" />
+
+        <Button
+            android:id="@+id/mode_button"
+            style="@style/nice_button"
+            android:layout_margin="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:text="Mode" />
+    </LinearLayout>
+
+</LinearLayout>

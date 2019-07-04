@@ -270,6 +270,15 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         return fragment;
     }
 
+    public void setNewValues(SpecDTO dto, float[] peaks, float[] peakEnergies
+            , String[] lineOwners) {
+        this.mSpecDTO = dto;
+        this.peaks = peaks;
+        this.peakEnergies = peakEnergies;
+        this.lineOwners = lineOwners;
+    }
+
+
 /*    public static SpectrumFragment getInstance() {
         return
     }*/

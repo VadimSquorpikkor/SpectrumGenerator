@@ -13,7 +13,7 @@ public class MainViewModel extends AndroidViewModel {
     private SpecDTO tempDTO;
     private int spectrumTime = 10;
     private int RequiredTime = 100;
-    private String pathForAts;
+    private String pathForAts = null;
     private int displayMode = 0;
     private int buttonMode = 0;
     private int delay = 250;

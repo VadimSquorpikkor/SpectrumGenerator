@@ -1,5 +1,7 @@
 package com.atomtex.spectrumgenerator;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,6 +11,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.transition.Fade;
+import android.support.transition.Transition;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -41,6 +46,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.LogRecord;
 
+import static android.support.v4.view.ViewCompat.animate;
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
@@ -49,25 +55,20 @@ import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
 
     MainViewModel mViewModel;
-
     NavigationView navigationView;
 
-//    Handler handler;
-
-    Thread thread;
-
-    SpectrumFragment fragment1;
-    SpectrumFragment fragment2;
+    SpectrumFragment fragment1;//todo переместить в ViewModel
+    SpectrumFragment fragment2;//todo переместить в ViewModel
 
     public static final String TAG = "TAG!!!";
 
-//    TextView spectrumTimeTV;
     TextView requiredTimeTV;
     TextView delayTimeTV;
     Button genButton;
     EditText timeText;
     EditText delayText;
     Switch switchTV;
+    Switch drawerSwitch;
 
     float[] mPeakChannels;
     float[] mPeakEnergies;
@@ -85,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-//        Log.e(TAG, "onCreate: navView = " + findViewById(R.id.nav_view));
         if (findViewById(R.id.nav_view) != null) {
             navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
@@ -95,20 +95,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mPrefIdenThreshold = 3;
 
-//        handler = new Handler();
-
         setDisplayMode(mViewModel.getDisplayMode());
         setButtonMode(mViewModel.getButtonMode());
         setTimeLayoutMode(mViewModel.getTimeLayoutMode());
 
-//        spectrumTimeTV = findViewById(R.id.spectrum_time);
         requiredTimeTV = findViewById(R.id.requiredTime);
         delayTimeTV = findViewById(R.id.delay_time_main);
         genButton = findViewById(R.id.gen_button);
         timeText = findViewById(R.id.dialog_required_time_text);
         delayText = findViewById(R.id.dialog_delay_text);
-
-//        setSpectrumTime();
+//        drawerSwitch = (Switch) navigationView.getMenu().findItem(R.id.drawer_switch).getActionView();
+//        drawerSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.drawer_switch).getActionView();
+//        drawerSwitch.setOnCheckedChangeListener;
+//        drawerSwitch = findViewById(R.id.drawer_switch);
         setRequiredTime();
         setDelayTime();
 
@@ -119,12 +118,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         final SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
-
         seekBar.setProgress(mViewModel.getDelay());
+
+        final SeekBar seekBarTime = findViewById(R.id.seekBar2);
+        seekBarTime.setOnSeekBarChangeListener(this);
+        seekBarTime.setProgress(mViewModel.getRequiredTime());
+
 
         switchTV = findViewById(R.id.switch1);
         if (switchTV != null) switchTV.setOnCheckedChangeListener(this);
         switchTV.setChecked(true);
+
+        navigationView.getMenu().findItem(R.id.nav_switch).setActionView(new Switch(this));
+
+        // To set whether switch is on/off use:
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).setChecked(true);
+
+        drawerSwitch = ((Switch) navigationView.getMenu().findItem(R.id.nav_switch).getActionView());
+//        drawerSwitch = (Switch) navigationView.getMenu().findItem(R.id.nav_switch);
+//        Log.e(TAG, "onCreate: " + drawerSwitch);
+
+//        drawerSwitch = (Switch) navigationView.getMenu().findItem(R.id.nav_switch).getActionView();
+//        drawerSwitch = ((Switch) navigationView.getMenu().findItem(R.id.nav_switch).getActionView()).setChecked(true);
+
+        /*drawerSwitch = findViewById(R.id.drawer_switch);
+        if (drawerSwitch != null) drawerSwitch.setOnCheckedChangeListener(this);
+        drawerSwitch.setChecked(true);*/
+
+//        drawerSwitch.setOnCheckedChangeListener(navigationView.getMenu())
+
+       /* drawerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    setButtonMode(1);
+                } else {
+                    setButtonMode(0);
+                }
+            }
+        });*/
 
 
 
@@ -156,30 +188,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
-
-/*    SwitchCompat drawerSwitch = (SwitchCompat) navigationView.getMenu().findItem(R.id.nav_switch).getActionView();
-    drawerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                // do stuff
-            } else {
-                // do other stuff
-            }
-        }
-    });*/
-
-
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-            mViewModel.setSecMode(true);
-        } else {
-            mViewModel.setSecMode(false);
+        if(buttonView.getId()==R.id.switch1) {
+            if (isChecked) mViewModel.setSecMode(true);
+            else mViewModel.setSecMode(false);
         }
-
+        if(buttonView.getId()==R.id.drawer_switch){
+            Log.e(TAG, "onCheckedChanged: ");
+            if (isChecked) setButtonMode(1);
+            else setButtonMode(0);
+        }
     }
-
 
     private void openAts() {
         Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
@@ -292,24 +311,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void toggleGenButton() {
-        if (mViewModel.isSecMode()) {
-            if (mViewModel.isGenButtonIsPressed()) {
-                stop();
-//                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape,0, 0, 0);
-                genButton.setText("Генератор");
-                mViewModel.setGenButtonIsPressed(false);
-            } else {
-                genTeak();
+            if (mViewModel.isSecMode() && iCanGenerate()){
+                if (mViewModel.isGenButtonIsPressed()) {
+                    stop();
+                    genButton.setText("Генератор");
+                    mViewModel.setGenButtonIsPressed(false);
+                } else {
+                    genTeak();
 //                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape_pressed,0, 0, 0);
 //                genButton.setBackgroundColor(getResources().getColor(R.color.colorOrange));
 //                genButton.setBackgroundDrawable(R.drawable.my_button_shape_pressed);
-                genButton.setText("Остановить");
-                mViewModel.setGenButtonIsPressed(true);
-            }
-        } else {
-            gen();
-        }
-
+                    genButton.setText("Остановить");
+                    mViewModel.setGenButtonIsPressed(true);
+                }
+            } else gen();
     }
 
     private void setButtonMode(int mode) {
@@ -383,7 +398,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);
-        //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
     }
 
@@ -403,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         processIdenResult(nuc);
-        //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
     }
 
@@ -431,6 +444,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         processIdenResult(nuc);
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
         manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
+//        fragment2.setNewValues(dto, mPeakChannels, mPeakEnergies, mLineOwners);
+//        manager.beginTransaction().detach(fragment2).attach(fragment2).commitAllowingStateLoss();
+//        manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commitAllowingStateLoss();
+
     }
 
     private void processIdenResult(NucIdent nuc) {
@@ -527,18 +544,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             openAts();
         } else if (id == R.id.nav_generate) {
             gen();
-        } else if (id == R.id.nav_set_time) {
+        } /*else if (id == R.id.nav_set_time) {
             showDialog();
-        } else if (id == R.id.nav_toggle_mode) {
+        }*/ else if (id == R.id.nav_toggle_mode) {
             toggleMode();
-        } else if (id == R.id.nav_toggle_button) {
-            toggleButtonMode();
-        } else if (id == R.id.nav_send) {
-            getDtoFromPath();
-            mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);
-            start();
-        } else if (id == R.id.nav_stop) {
-            stop();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -572,7 +581,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mViewModel.setDelay(Integer.parseInt(String.valueOf(seekBar.getProgress())));
+        if(seekBar.getId()==R.id.seekBar) delayText.setText(String.valueOf(seekBar.getProgress()));
+        if(seekBar.getId()==R.id.seekBar2) timeText.setText(String.valueOf(seekBar.getProgress()));
+
+
+
     }
 
     @Override
@@ -582,7 +595,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        delayText.setText(String.valueOf(seekBar.getProgress()));
+        if(seekBar.getId()==R.id.seekBar) mViewModel.setDelay(Integer.parseInt(String.valueOf(seekBar.getProgress())));
+        if(seekBar.getId()==R.id.seekBar2) mViewModel.setRequiredTime(Integer.parseInt(String.valueOf(seekBar.getProgress())));
     }
 
 
