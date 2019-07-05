@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.RequiresApi;
+//import androidx.annotation.RequiresApi;
 
 import static com.atomtex.spectrumgenerator.SpectrumFragment.TAG;
 import static com.balsikandar.crashreporter.CrashReporter.getContext;
