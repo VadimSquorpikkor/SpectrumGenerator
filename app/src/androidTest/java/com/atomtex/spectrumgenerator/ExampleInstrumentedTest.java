@@ -1,4 +1,4 @@
-package com.squorpikkor.app.spectrumgenerator;
+package com.atomtex.spectrumgenerator;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

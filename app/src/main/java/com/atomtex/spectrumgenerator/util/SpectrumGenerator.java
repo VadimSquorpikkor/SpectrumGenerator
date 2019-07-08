@@ -23,7 +23,7 @@ public class SpectrumGenerator {
 
             int tmp = pSpectrum[i];
             pRetSpectrum[i] = poissonRandomGenerator(pSpectrum[i] * timecoef);  //сохраняем в результат
-            Log.e("TAGGG", "generatedSpectrum: OLD = " + tmp + "; NEW = " + poissonRandomGenerator(pSpectrum[i] * timecoef));
+//            Log.e("TAGGG", "generatedSpectrum: OLD = " + tmp + "; NEW = " + poissonRandomGenerator(pSpectrum[i] * timecoef));
         }
         return pRetSpectrum;
     }

@@ -202,6 +202,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     float[] peakEnergies;
     String[] lineOwners;
 
+    int impSum;
+
     /**
      * Creates new instance of the class and put given parameters as arguments in it
      *
@@ -571,7 +573,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
         int startChannel = 0;
         int endChannel = mEntries.size() - 1;
-        int impSum = 0;
+//        int impSum = 0; //todo так было
+        impSum = 0;
 
         if (mPrevHighlight == null) {
             status_channel_tv.setText(String.format(getString(R.string.chart_channel), "…"));

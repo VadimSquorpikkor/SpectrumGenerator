@@ -1,4 +1,4 @@
-package com.squorpikkor.app.spectrumgenerator;
+package com.atomtex.spectrumgenerator;
 
 import org.junit.Test;
 

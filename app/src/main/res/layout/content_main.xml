@@ -8,8 +8,37 @@
     android:orientation="vertical"
     android:layout_margin="3dp"
     android:padding="0dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_shape"
+        android:id="@+id/ref_spec_layout"
+        android:layout_margin="2dp"
+        android:padding="1dp"
+        android:paddingStart="10dp"
+        android:elevation="30dp"
+        >
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ref_spec_text"
+            android:textColor="@color/colorOrange"
+            android:text="text"
+            android:layout_weight="1"
+
+            />
+
+        <Button
+            android:id="@+id/ref_spec_exp_more_button"
+            style="@style/exp_more_button"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
     <FrameLayout style="@style/frame_style"
         android:elevation="25dp"
+        android:layout_weight="1"
         android:id="@+id/fragment_container1">
 
         <LinearLayout
@@ -17,30 +46,191 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="end">
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end"
-                android:maxWidth="5dp"
-                android:elevation="20dp"
-                android:background="@drawable/baseline_add_white_48dp"
-                />
-            <Button
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="end"
-                android:maxWidth="5dp"
-                android:elevation="20dp"
-                android:background="@drawable/baseline_expand_less_white_48dp"
-                />
+
+            <Button style="@style/add_new_button"
+                android:id="@+id/ref_spec_add_button"/>
+            <Button style="@style/exp_less_button"
+                android:id="@+id/ref_spec_exp_less_button"/>
 
         </LinearLayout>
 
     </FrameLayout>
 
+
+
     <FrameLayout style="@style/frame_style"
-        android:id="@+id/fragment_container2">
+        android:id="@+id/fragment_container2"
+        android:layout_weight="1">
     </FrameLayout>
+
+
+    <!--                MIXER       -->
+   <!-- <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_shape"
+        android:id="@+id/mixer_layout_small"
+        android:layout_margin="2dp"
+        android:padding="1dp"
+        android:paddingStart="10dp"
+        android:elevation="5dp"
+        >
+
+        <TextView
+            android:id="@+id/mixer_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Миксер"
+            android:textColor="@color/colorOrange"
+            android:textSize="18sp"
+
+            />
+
+        <Button
+            android:id="@+id/mixer_exp_more_button"
+            style="@style/exp_more_button"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>-->
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/my_shape"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+
+            <Switch
+                android:id="@+id/mixer_switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/mixer_button1"
+                style="@style/add_new_button" />
+
+            <TextView
+                android:id="@+id/mixer_text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source" />
+
+            <SeekBar
+                android:id="@+id/mixer_seek1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <EditText
+                android:id="@+id/mixer_edit1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/mixer_switch2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/mixer_button2"
+                style="@style/add_new_button" />
+
+            <TextView
+                android:id="@+id/mixer_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source" />
+
+            <SeekBar
+                android:id="@+id/mixer_seek2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <EditText
+                android:id="@+id/mixer_edit2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+<!--    ***********************FRAME LAYOUT**********************-->
+<!--    <FrameLayout style="@style/frame_style"
+        android:id="@+id/mixer_layout_big"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        &lt;!&ndash;<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="0dp"
+            android:paddingStart="10dp">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Миксер"
+                android:textColor="@color/colorOrange"
+                android:textSize="18sp" />
+
+            <Button
+
+                android:id="@+id/mixer_exp_less_button"
+                style="@style/exp_less_button" />
+
+
+        </LinearLayout>
+&ndash;&gt;
+
+&lt;!&ndash;
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+
+        </LinearLayout>
+&ndash;&gt;
+
+    </FrameLayout>-->
+<!--    ***********************FRAME LAYOUT**********************-->
+
+
+
 
     <LinearLayout style="@style/vertical_layout"
         android:layout_marginTop="2dp"
@@ -73,11 +263,11 @@
                 android:textColor="@color/colorOrange"/>
 
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:gravity="right"
-                android:text="t набора: "
-                android:layout_weight="2"/>
+                android:text="t набора: " />
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -98,27 +288,23 @@
             >
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-
-
-            </LinearLayout>
 
             <LinearLayout style="@style/vertical_layout">
-                <LinearLayout style="@style/horizontal_layout">
+<!--                <LinearLayout style="@style/horizontal_layout">
                     <TextView
                         style="@style/text_centered"
                         android:text="Время набора:"
                         />
 
-                </LinearLayout>
+                </LinearLayout>-->
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
                     <EditText
                         android:id="@+id/dialog_required_time_text"
                         style="@style/text_centered"
@@ -132,20 +318,29 @@
                     <SeekBar
                         android:layout_gravity="center_vertical"
                         android:id="@+id/seekBar2"
-                        android:max="101"
+                        android:max="1001"
                         android:min="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Время набора"/>
+
                 </LinearLayout>
 
 
-                <TextView
+<!--                <TextView
                     style="@style/text_centered"
-                    android:text="Delay, ms:" />
+                    android:text="Delay, ms:" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
                     <EditText
                         android:id="@+id/dialog_delay_text"
                         style="@style/text_centered"
@@ -161,8 +356,13 @@
                         android:id="@+id/seekBar"
                         android:max="1001"
                         android:min="1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delay, ms"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -172,9 +372,10 @@
 
             <Switch
                 android:id="@+id/switch1"
-                android:layout_width="match_parent"
+                android:layout_gravity="right"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Посекундный набор" />
+                android:text="Посекундный набор   " />
 
         </LinearLayout>
     </LinearLayout>
