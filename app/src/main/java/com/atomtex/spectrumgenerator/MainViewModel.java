@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
@@ -198,7 +199,6 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
     }
-
 
 
 

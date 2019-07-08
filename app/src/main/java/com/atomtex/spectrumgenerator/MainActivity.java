@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String[] mLineOwners;
 
     FragmentManager manager;
+    Toggler toggler;
 
     //todo не понятно, для чего нужно
     private int mPrefIdenThreshold;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        toggler = new Toggler(this);
 
         if (findViewById(R.id.nav_view) != null) {
             navigationView = findViewById(R.id.nav_view);
@@ -198,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.gen_button: toggleGenButton(); break;
             case R.id.time_layout: toggleTimeLayoutMode(); break;
             case R.id.ref_spec_add_button: openAts(); break;
-            case R.id.ref_spec_exp_less_button: setRefLayoutMode(1); break;
+            case R.id.ref_spec_exp_less_button: toggler.setRefLayoutMode(1); break;
             case R.id.ref_spec_exp_more_button: setRefLayoutMode(0); break;
             case R.id.mixer_button1: openAts(0); break;
             case R.id.mixer_button2: openAts(1); break;
