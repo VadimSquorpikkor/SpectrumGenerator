@@ -40,7 +40,6 @@ public class AtsReader {
 
 
     public static SpecDTO parseFile(String path) {
-        Log.e("TAG", "parseFile PATH: " + path);
         List<Charset> charsets = new ArrayList<>();
 
         //charsets to parse data

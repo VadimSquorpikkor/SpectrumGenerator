@@ -34,13 +34,15 @@
             android:id="@+id/mixer_seek1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:max="100"
+            android:min="0"/>
 
         <EditText
             android:id="@+id/mixer_edit1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="100%" />
+            android:text="100" />
 
     </LinearLayout>
 
@@ -75,10 +77,9 @@
             android:id="@+id/mixer_edit2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="100%" />
-
-
+            android:text="100" />
     </LinearLayout>
+
 
 
 </LinearLayout>

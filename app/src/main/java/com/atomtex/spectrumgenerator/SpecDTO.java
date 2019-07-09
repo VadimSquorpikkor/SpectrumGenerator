@@ -262,7 +262,7 @@ public class SpecDTO implements Parcelable {
 
     public void addSpectrumToCurrent(int[] spectrum) {
         for (int i = 0; i < spectrum.length; i++) {
-            Log.e(TAG, "addSpectrumToCurrent: " + mSpectrum[i]);
+//            Log.e(TAG, "addSpectrumToCurrent: " + mSpectrum[i]);
             mSpectrum[i] += spectrum[i];
         }
     }

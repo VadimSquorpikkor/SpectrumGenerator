@@ -237,7 +237,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putString("FR_ID", fragmentID);
 //        fragment.fragmentID = fragmentID;
         fragment.setArguments(args);
-        Log.e(TAG, "FRAGMENT " + fragmentID + " newInstance");
         return fragment;
     }
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies

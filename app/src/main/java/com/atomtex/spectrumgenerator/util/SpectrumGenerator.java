@@ -2,6 +2,7 @@ package com.atomtex.spectrumgenerator.util;
 
 import android.util.Log;
 
+import static com.atomtex.spectrumgenerator.MainActivity.TAG;
 import static java.lang.Math.abs;
 import static java.lang.Math.random;
 
@@ -17,6 +18,8 @@ public class SpectrumGenerator {
         int[] pRetSpectrum = new int[pSpectrum.length];
         channels = pSpectrum.length; //сюда надо как то получить количество элементов в pSpectrum
         if (requiredTime == 0) requiredTime = spectrumTime; //todo
+
+        Log.e(TAG, "generatedSpectrum: " + spectrumTime + ", " + requiredTime);
 
         double timecoef = (double) requiredTime / (double) spectrumTime;
         for (int i = 0; i < channels; i++) {
