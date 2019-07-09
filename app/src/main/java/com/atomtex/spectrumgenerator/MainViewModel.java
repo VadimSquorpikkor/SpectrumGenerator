@@ -2,17 +2,8 @@ package com.atomtex.spectrumgenerator;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.SparseArray;
-import android.view.View;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -21,7 +12,7 @@ public class MainViewModel extends AndroidViewModel {
 
 
     private int[] percentArr = new int[]{100,100,100,100,100};
-    private String[] nameArr = new String[5];
+    private String[] nameArr = new String[]{"Empty", "Empty", "Empty", "Empty", "Empty"};
     private boolean[] isChecked = new boolean[5];
     private SpecDTO[] dtoArr = new SpecDTO[5];
     private int sourcesItemsCount = 2; //размер ListView для источников
@@ -65,8 +56,6 @@ public class MainViewModel extends AndroidViewModel {
     private String pathForAts = null;
     private int displayMode = 0;
     private int buttonMode = 0;
-    private SpecDTO[] specArr = new SpecDTO[2];
-    private int mixerMode = 0;
     private int delay = 1;
     private boolean isSecMode = true;
 
@@ -76,19 +65,6 @@ public class MainViewModel extends AndroidViewModel {
 
     public void setSourcesItemsCount(int sourcesItemsCount) {
         this.sourcesItemsCount = sourcesItemsCount;
-    }
-
-
-    public SpecDTO[] getSpecArr() {
-        return specArr;
-    }
-
-    public int getMixerMode() {
-        return mixerMode;
-    }
-
-    public void setMixerMode(int mixerMode) {
-        this.mixerMode = mixerMode;
     }
 
     public SpecDTO getReferenceDTO() {

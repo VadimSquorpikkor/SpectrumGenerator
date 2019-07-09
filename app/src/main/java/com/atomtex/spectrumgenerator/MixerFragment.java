@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.Objects;
 
@@ -37,6 +38,8 @@ public class MixerFragment extends Fragment implements View.OnClickListener, See
     EditText ed2;
     Switch sw1;
     Switch sw2;
+    TextView tw1;
+    TextView tw2;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class MixerFragment extends Fragment implements View.OnClickListener, See
 
         ed1 = v.findViewById(R.id.mixer_edit1);
         ed2 = v.findViewById(R.id.mixer_edit2);
+        tw1 = v.findViewById(R.id.mixer_text1);
+        tw2 = v.findViewById(R.id.mixer_text2);
 
         v.findViewById(R.id.mixer_button1).setOnClickListener(this);
         v.findViewById(R.id.mixer_button2).setOnClickListener(this);
@@ -66,11 +71,13 @@ public class MixerFragment extends Fragment implements View.OnClickListener, See
         seekBar1.setProgress(mViewModel.getPercentArr()[0]);
         seekBar2.setProgress(mViewModel.getPercentArr()[1]);
 
-
-
-
         return v;
 
+    }
+
+    public void updateText() {
+        tw1.setText(mViewModel.getNameArr()[0]);
+        tw2.setText(mViewModel.getNameArr()[1]);
     }
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
