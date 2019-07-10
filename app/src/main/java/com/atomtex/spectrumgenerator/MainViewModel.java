@@ -4,6 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -58,6 +61,28 @@ public class MainViewModel extends AndroidViewModel {
     private int buttonMode = 0;
     private int delay = 1;
     private boolean isSecMode = true;
+    private List<SpecMixerParcel> sourceList = new ArrayList<>();
+
+
+
+
+
+    public List<SpecMixerParcel> getSourceList() {
+        return sourceList;
+    }
+
+    public void addNewSpectrum(SpecDTO dto, String name) {
+        sourceList.add(new SpecMixerParcel(dto, name));
+    }
+
+    public void setPercentParcel(int position, int percent) {
+        sourceList.get(position).setPercent(percent);
+//        ((MixerListFragment) fragment4).updateAdapter();
+    }
+
+    public void setIsCheckedParcel(int position, boolean isChecked) {
+        sourceList.get(position).setChecked(isChecked);
+    }
 
     public int getSourcesItemsCount() {
         return sourcesItemsCount;

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     SpectrumFragment fragment1;//todo переместить в ViewModel
     SpectrumFragment fragment2;//todo переместить в ViewModel
-    Fragment fragment3;//todo переместить в ViewModel
+//    Fragment fragment3;//todo переместить в ViewModel
+    Fragment fragment4;//todo переместить в ViewModel
 
     public static final String TAG = "TAG!!!";
 
@@ -131,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Это чтобы при повороте устройства не создавать новый фрагмент:
         fragment1 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container1);
         fragment2 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container2);
-        fragment3 = manager.findFragmentById(R.id.mixer_fragment);
+//        fragment3 = manager.findFragmentById(R.id.mixer_fragment);
+        fragment4 = manager.findFragmentById(R.id.mixer_fragment_list_view);
 
         if (fragment1 == null) {
             fragment1 = SpectrumFragment.newInstance(REFERENCE_SPECTRUM);
@@ -143,9 +146,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
         }
 
-        if (fragment3 == null) {
+/*        if (fragment3 == null) {
             fragment3 = MixerFragment.newInstance();
             manager.beginTransaction().replace(R.id.mixer_fragment, fragment3).commit();
+        }*/
+
+        if (fragment4 == null) {
+            fragment4 = MixerListFragment.newInstance();
+            manager.beginTransaction().replace(R.id.mixer_fragment_list_view, fragment4).commit();
         }
 
 //        ((MixerFragment) fragment3).updateText();
@@ -279,11 +287,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //todo вынести метод в отдельный класс (Controller)
     private void openAtsFile(int pos, String path) {
-        mViewModel.addName(pos, makeName(path));
+//        mViewModel.addName(pos, makeName(path));
         SpecDTO dto = AtsReader.parseFile(path);
-        mViewModel.setReferenceDTO(dto);//todo
-        mViewModel.addDtoArr(pos, dto);
-        ((MixerFragment) fragment3).updateText();
+//        mViewModel.setReferenceDTO(dto);//todo
+//        mViewModel.addDtoArr(pos, dto);
+        mViewModel.addNewSpectrum(dto, makeName(path));
+//        ((MixerFragment) fragment3).updateText();
+        ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
         Log.e(TAG, "-------------openAtsFile: " + mViewModel.getDtoArr()[0] + ", " + mViewModel.getDtoArr()[1]);
 
         if (dto != null) {
@@ -511,10 +521,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             SpecDTO dto;
             public void run() {
                 if (count++ < mViewModel.getRequiredTime()) {
-                    for (int i = 0; i<mViewModel.getSourcesItemsCount(); i++) {
+                    /*for (int i = 0; i<mViewModel.getSourcesItemsCount(); i++) {
                       if(mViewModel.getDtoArr()[i]!=null&&mViewModel.getIsChecked()[i]) {dto = mViewModel.getDtoArr()[i];//&&parcelList.get(i).isChecked()
                       generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / mViewModel.getPercentArr()[i] , 1, count);} //* (101-mViewModel.getPercentArr()[i])
-                    }
+                    }*/
+
+                    for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
+                        if(parcel.isChecked()) {
+                            dto = parcel.getReferenceDTO();
+                            generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / parcel.getPercent(), 1, count);
+                        }
+                        }
+
+
+
                     handler.postDelayed(runnable, mViewModel.getDelay());
                 } else {
                     genButton.setText("Генератор");

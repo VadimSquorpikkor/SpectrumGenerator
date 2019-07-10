@@ -76,6 +76,7 @@ public class MixerFragment extends Fragment implements View.OnClickListener, See
     }
 
     public void updateText() {
+        Log.e(TAG, "updateText: " + mViewModel.getNameArr().length);
         tw1.setText(mViewModel.getNameArr()[0]);
         tw2.setText(mViewModel.getNameArr()[1]);
     }

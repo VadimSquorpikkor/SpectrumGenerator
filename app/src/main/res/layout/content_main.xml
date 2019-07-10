@@ -64,16 +64,23 @@
     </FrameLayout>
 
 
-    <FrameLayout style="@style/frame_style"
+<!--    <FrameLayout style="@style/frame_style"
         android:id="@+id/mixer_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="15dp"
         >
 
+    </FrameLayout>-->
+
+    <FrameLayout style="@style/frame_style"
+        android:id="@+id/mixer_fragment_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="15dp"
+        >
+
     </FrameLayout>
-
-
 
     <LinearLayout style="@style/vertical_layout"
         android:layout_marginTop="2dp"
