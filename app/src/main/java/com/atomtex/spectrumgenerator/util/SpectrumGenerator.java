@@ -19,14 +19,12 @@ public class SpectrumGenerator {
         channels = pSpectrum.length; //сюда надо как то получить количество элементов в pSpectrum
         if (requiredTime == 0) requiredTime = spectrumTime; //todo
 
-        Log.e(TAG, "generatedSpectrum: " + spectrumTime + ", " + requiredTime);
 
         double timecoef = (double) requiredTime / (double) spectrumTime;
         for (int i = 0; i < channels; i++) {
 
             int tmp = pSpectrum[i];
             pRetSpectrum[i] = poissonRandomGenerator(pSpectrum[i] * timecoef);  //сохраняем в результат
-//            Log.e("TAGGG", "generatedSpectrum: OLD = " + tmp + "; NEW = " + poissonRandomGenerator(pSpectrum[i] * timecoef));
         }
         return pRetSpectrum;
     }

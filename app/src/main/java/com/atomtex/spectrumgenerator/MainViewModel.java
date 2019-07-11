@@ -14,45 +14,8 @@ public class MainViewModel extends AndroidViewModel {
     public static final String GENERATED_SPECTRUM = "Сгенерированный спектр";
 
 
-    private int[] percentArr = new int[]{100,100,100,100,100};
-    private String[] nameArr = new String[]{"Empty", "Empty", "Empty", "Empty", "Empty"};
-    private boolean[] isChecked = new boolean[5];
-    private SpecDTO[] dtoArr = new SpecDTO[5];
-    private int sourcesItemsCount = 2; //размер ListView для источников
-
-    public int[] getPercentArr() {
-        return percentArr;
-    }
-
-    public void addPercent(int pos, int percent) {
-        percentArr[pos] = percent;
-    }
-
-    public String[] getNameArr() {
-        return nameArr;
-    }
-
-    public void addName(int pos, String name) {
-        nameArr[pos] = name;
-    }
-
-    public boolean[] getIsChecked() {
-        return isChecked;
-    }
-
-    public void addIsCheched(int pos, boolean isCh) {
-        isChecked[pos] = isCh;
-    }
-
-    public SpecDTO[] getDtoArr() {
-        return dtoArr;
-    }
-
-    public void addDtoArr(int pos, SpecDTO dto) {
-        dtoArr[pos] = dto;
-    }
-
-    private SpecDTO tempDTO;
+//    private SpecDTO tempDTO = new SpecDTO(1024);//todo сделать для любой длины, не только 1024
+    private SpecDTO tempDTO = new SpecDTO();
     private SpecDTO referenceDTO;
     private int spectrumTime = 10;
     private int RequiredTime = 100;
@@ -82,14 +45,6 @@ public class MainViewModel extends AndroidViewModel {
 
     public void setIsCheckedParcel(int position, boolean isChecked) {
         sourceList.get(position).setChecked(isChecked);
-    }
-
-    public int getSourcesItemsCount() {
-        return sourcesItemsCount;
-    }
-
-    public void setSourcesItemsCount(int sourcesItemsCount) {
-        this.sourcesItemsCount = sourcesItemsCount;
     }
 
     public SpecDTO getReferenceDTO() {

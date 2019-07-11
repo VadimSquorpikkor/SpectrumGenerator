@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layout_margin="3dp"
     android:padding="0dp">
-    <LinearLayout
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/my_shape"
@@ -35,7 +35,7 @@
             style="@style/exp_more_button"
             android:layout_gravity="center_vertical"/>
 
-    </LinearLayout>
+    </LinearLayout>-->
     <FrameLayout style="@style/frame_style"
         android:elevation="25dp"
         android:layout_weight="1"
@@ -49,8 +49,8 @@
 
 <!--            <Button style="@style/add_new_button"
                 android:id="@+id/ref_spec_add_button"/>-->
-            <Button style="@style/exp_less_button"
-                android:id="@+id/ref_spec_exp_less_button"/>
+<!--            <Button style="@style/exp_less_button"
+                android:id="@+id/ref_spec_exp_less_button"/>-->
 
         </LinearLayout>
 
@@ -78,6 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="15dp"
+
         >
 
     </FrameLayout>
@@ -163,7 +164,8 @@
                         android:inputType="number"
                         android:maxLength="5"
                         android:text="100"
-                        android:textColor="@color/colorOrange" />
+                        android:textColor="@color/colorOrange"
+                        />
 
                     <SeekBar
                         android:layout_gravity="center_vertical"

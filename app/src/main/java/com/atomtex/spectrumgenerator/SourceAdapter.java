@@ -3,6 +3,7 @@ package com.atomtex.spectrumgenerator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -24,17 +26,20 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
     private int layout;
     private List<SpecMixerParcel> sourceList;
     private MainViewModel mViewModel;
+    private Fragment fragment;
 
     private Switch sw;
     private TextView tw;
     private SeekBar sb;
+    private ImageButton ib;
 
-    SourceAdapter(Context context, int resource, List<SpecMixerParcel> sourceList, MainViewModel mViewModel) {
+    SourceAdapter(Context context, int resource, List<SpecMixerParcel> sourceList, MainViewModel mViewModel, Fragment fragment) {
         super(context, resource, sourceList);
         this.sourceList = sourceList;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
         this.mViewModel = mViewModel;
+        this.fragment = fragment;
     }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -47,6 +52,7 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
         sw = view.findViewById(R.id.mixer_item_switch);
         tw = view.findViewById(R.id.mixer_item_text);
         sb = view.findViewById(R.id.mixer_item_seek);
+        ib = view.findViewById(R.id.mixer_item_delete);
         final EditText et = view.findViewById(R.id.mixer_item_edit);
 
         SpecMixerParcel state = sourceList.get(position);
@@ -79,6 +85,13 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mViewModel.setIsCheckedParcel(position, isChecked);
+            }
+        });
+
+        ib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MixerListFragment)fragment).deleteDialog(position);
             }
         });
 

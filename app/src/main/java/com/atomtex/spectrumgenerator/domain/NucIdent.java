@@ -1,6 +1,8 @@
 package com.atomtex.spectrumgenerator.domain;
 
 
+import android.util.Log;
+
 import com.atomtex.spectrumgenerator.domain.Nuclide.State;
 import com.atomtex.spectrumgenerator.exception.ProcessException;
 
@@ -175,7 +177,6 @@ public final class NucIdent {
                 spectrumSigma[i] = 0.01f;
             }
         }
-
         this.spectrumSigma = spectrumSigma;
     }
 

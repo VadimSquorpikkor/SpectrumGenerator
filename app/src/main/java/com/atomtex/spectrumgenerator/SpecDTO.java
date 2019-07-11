@@ -213,6 +213,12 @@ public class SpecDTO implements Parcelable {
 
     }
 
+    public SpecDTO(int length) {
+        this.setSpectrum(new int[length]);
+        this.setSigma(new float[length]);
+        this.setEnergy(new float[length]);
+    }
+
     private SpecDTO(Parcel in) {
         fileName = in.readString();
         mSpectrum = in.createIntArray();
@@ -262,7 +268,6 @@ public class SpecDTO implements Parcelable {
 
     public void addSpectrumToCurrent(int[] spectrum) {
         for (int i = 0; i < spectrum.length; i++) {
-//            Log.e(TAG, "addSpectrumToCurrent: " + mSpectrum[i]);
             mSpectrum[i] += spectrum[i];
         }
     }

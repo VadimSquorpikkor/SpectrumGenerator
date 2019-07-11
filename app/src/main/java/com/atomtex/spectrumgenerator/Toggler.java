@@ -27,10 +27,14 @@ public class Toggler {
         }
     }
 
-
-    public void setRefLayoutMode(int mode) {
-        toggleStuff(R.id.fragment_container1, R.id.ref_spec_layout, mode);
+    private void toggleStuff(int res_1, boolean isOn) {
+        if (isOn) ((Activity) context).findViewById(res_1).setVisibility(View.VISIBLE);
+        else ((Activity) context).findViewById(res_1).setVisibility(View.GONE);
     }
+
+/*    public void setRefLayoutMode(int mode) {
+        toggleStuff(R.id.fragment_container1, R.id.ref_spec_layout, mode);
+    }*/
 
     public void toggleMode() {
         int mode = 0;
@@ -57,22 +61,30 @@ public class Toggler {
         }
     }
 
-    public void setButtonMode(int mode) {
-        switch (mode) {
-            case 0:
-                ((Activity)context).findViewById(R.id.time_layout).setVisibility(View.VISIBLE);
-                ((Activity)context).findViewById(R.id.button_layout).setVisibility(View.VISIBLE);
-                break;
-            case 1:
-                ((Activity)context).findViewById(R.id.time_layout).setVisibility(View.GONE);
-                ((Activity)context).findViewById(R.id.button_layout).setVisibility(View.GONE);
-                break;
-        }
-    }
 
     public void setTimeLayoutMode(int mode) {
         toggleStuff(R.id.time_layout_small, R.id.time_layout_big, mode);
+
     }
 
+    public void setReferenceFragmentMode(boolean isOn) {
+        toggleStuff(R.id.fragment_container1, isOn);
+    }
+
+    public void setMixerMode(boolean isOn) {
+        toggleStuff(R.id.mixer_fragment_list_view, isOn);
+    }
+
+    public void setTimeMode(boolean isOn) {
+        toggleStuff(R.id.time_layout, isOn);
+    }
+
+    public void setButtonsMode(boolean isOn) {
+        toggleStuff(R.id.button_layout, isOn);
+    }
+
+    public void setMatrixMode(boolean isOn) {
+
+    }
 
 }

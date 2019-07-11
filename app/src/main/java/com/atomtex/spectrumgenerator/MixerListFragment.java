@@ -1,11 +1,14 @@
 package com.atomtex.spectrumgenerator;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +44,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
 
         // создаем адаптер
         sourceAdapter = new SourceAdapter(getActivity(),
-                R.layout.mixer_list_item, mViewModel.getSourceList(), mViewModel);
+                R.layout.mixer_list_item, mViewModel.getSourceList(), mViewModel, this);
 
         // присваиваем адаптер списку
         lvMain.setAdapter(sourceAdapter);
@@ -70,20 +73,33 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-//            6mixer_button1: ((MainActivity)getActivity()).openAts(0) ;break;
-            case R.id.add_new_spectrum:
-/*                mViewModel.addNewSpectrum();
-                lvMain.setAdapter(sourceAdapter);//обновить адаптер после добавления новых элементов*/
-
-                ((MainActivity)getActivity()).openAts(0);
-            break;
-        }
+        //((MainActivity)getActivity()).openAts(0) ;break;
+        if (v.getId() == R.id.add_new_spectrum)((MainActivity) getActivity()).openAts();
     }
 
     public void updateAdapter() {
         lvMain.setAdapter(sourceAdapter);//обновить адаптер после добавления новых элементов*/
     }
 
+    void deleteDialog(final int position) {
+        final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle("Удаление");
+        alert.setIcon(R.drawable.baseline_delete_forever_white_48dp);
+        alert.setMessage("Удалить " + mViewModel.getSourceList().get(position).getName() + " из списка?");
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mViewModel.getSourceList().remove(position);
+                updateAdapter();
+                dialog.cancel();
+            }
+        });
+        alert.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
+    }
 
 }

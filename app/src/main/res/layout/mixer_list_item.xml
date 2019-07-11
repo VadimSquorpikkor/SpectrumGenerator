@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:padding="2dp"
-    tools:context=".MixerFragment"
+    tools:context=".MixerListFragment"
     >
 
         <Switch
@@ -32,14 +32,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:max="100"
-            android:min="0"/>
+            android:min="1"/>
 
         <EditText
 
             android:id="@+id/mixer_item_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="100" />
+            android:text="100"
+            android:background="@android:color/transparent"
+            />
 
+        <ImageButton style="@style/delete_button"
+            android:layout_marginLeft="3dp"
+            android:id="@+id/mixer_item_delete"
+            />
 
 </LinearLayout>
