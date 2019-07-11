@@ -20,15 +20,62 @@ public class MainViewModel extends AndroidViewModel {
     private int spectrumTime = 10;
     private int RequiredTime = 100;
     private String pathForAts = null;
-    private int displayMode = 0;
-    private int buttonMode = 0;
     private int delay = 1;
     private boolean isSecMode = true;
+    public boolean isFirstTime = true;
+
+
+//----------------VISIBILITIES----------------------------------------------------------------------
+
+    private boolean refVisibility = true;
+    private boolean mixerVisibility = true;
+    private boolean timeVisibility = true;
+    private boolean buttonVisibility = true;
+    private boolean matrixVisibility = true;
+
+    public boolean isRefVisible() {
+        return refVisibility;
+    }
+
+    public void setRefVisibility(boolean refVisibility) {
+        this.refVisibility = refVisibility;
+    }
+
+    public boolean isMixerVisible() {
+        return mixerVisibility;
+    }
+
+    public void setMixerVisibility(boolean mixerVisibility) {
+        this.mixerVisibility = mixerVisibility;
+    }
+
+    public boolean isTimeVisible() {
+        return timeVisibility;
+    }
+
+    public void setTimeVisibility(boolean timeVisibility) {
+        this.timeVisibility = timeVisibility;
+    }
+
+    public boolean isButtonVisible() {
+        return buttonVisibility;
+    }
+
+    public void setButtonVisibility(boolean buttonVisibility) {
+        this.buttonVisibility = buttonVisibility;
+    }
+
+    public boolean isMatrixVisible() {
+        return matrixVisibility;
+    }
+
+    public void setMatrixVisibility(boolean matrixVisibility) {
+        this.matrixVisibility = matrixVisibility;
+    }
+
+//----------------MIXER PARCEL----------------------------------------------------------------------
+
     private List<SpecMixerParcel> sourceList = new ArrayList<>();
-
-
-
-
 
     public List<SpecMixerParcel> getSourceList() {
         return sourceList;
@@ -46,6 +93,8 @@ public class MainViewModel extends AndroidViewModel {
     public void setIsCheckedParcel(int position, boolean isChecked) {
         sourceList.get(position).setChecked(isChecked);
     }
+
+//--------------------------------------------------------------------------------------------------
 
     public SpecDTO getReferenceDTO() {
         return referenceDTO;
@@ -98,15 +147,6 @@ public class MainViewModel extends AndroidViewModel {
         this.tempDTO = tempDTO;
     }
 
-
-    public int getButtonMode() {
-        return buttonMode;
-    }
-
-    public void setButtonMode(int buttonMode) {
-        this.buttonMode = buttonMode;
-    }
-
     public int getSpectrumTime() {
         return spectrumTime;
     }
@@ -129,14 +169,6 @@ public class MainViewModel extends AndroidViewModel {
 
     public void setPathForAts(String pathForAts) {
         this.pathForAts = pathForAts;
-    }
-
-    public int getDisplayMode() {
-        return displayMode;
-    }
-
-    public void setDisplayMode(int displayMode) {
-        this.displayMode = displayMode;
     }
 
     public MainViewModel(@NonNull Application application) {

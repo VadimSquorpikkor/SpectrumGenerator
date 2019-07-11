@@ -36,13 +36,13 @@ public class Toggler {
         toggleStuff(R.id.fragment_container1, R.id.ref_spec_layout, mode);
     }*/
 
-    public void toggleMode() {
+/*    public void toggleMode() {
         int mode = 0;
         if (mViewModel.getDisplayMode() == 0) mode = 1;
         if (mViewModel.getDisplayMode() == 1) mode = 2;
         mViewModel.setDisplayMode(mode);
         setDisplayMode(mode);
-    }
+    }*/
 
     public void setDisplayMode(int mode) {
         switch (mode) {
@@ -64,27 +64,42 @@ public class Toggler {
 
     public void setTimeLayoutMode(int mode) {
         toggleStuff(R.id.time_layout_small, R.id.time_layout_big, mode);
-
     }
+
+//--------------------------------------------------------------------------------------------------
 
     public void setReferenceFragmentMode(boolean isOn) {
         toggleStuff(R.id.fragment_container1, isOn);
+        mViewModel.setRefVisibility(isOn);
     }
 
     public void setMixerMode(boolean isOn) {
         toggleStuff(R.id.mixer_fragment_list_view, isOn);
+        mViewModel.setMixerVisibility(isOn);
     }
 
     public void setTimeMode(boolean isOn) {
         toggleStuff(R.id.time_layout, isOn);
+        mViewModel.setTimeVisibility(isOn);
     }
 
     public void setButtonsMode(boolean isOn) {
         toggleStuff(R.id.button_layout, isOn);
+        mViewModel.setButtonVisibility(isOn);
     }
 
     public void setMatrixMode(boolean isOn) {
 
     }
+
+    public void setAllVisibilities() {
+        toggleStuff(R.id.fragment_container1, mViewModel.isRefVisible());
+        toggleStuff(R.id.mixer_fragment_list_view, mViewModel.isMixerVisible());
+        toggleStuff(R.id.time_layout, mViewModel.isTimeVisible());
+        toggleStuff(R.id.button_layout, mViewModel.isButtonVisible());
+//        toggleStuff(R.id.fragment_container1, mViewModel.isRefVisible());
+    }
+
+//--------------------------------------------------------------------------------------------------
 
 }

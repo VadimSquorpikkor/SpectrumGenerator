@@ -10,7 +10,8 @@
     android:padding="0dp">
     <LinearLayout style="@style/vertical_layout"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        >
         <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -249,31 +250,20 @@
 
 
 
-        <LinearLayout style="@style/horizontal_layout"
+        <LinearLayout
             android:id="@+id/button_layout"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            >
-            <!-- <Button style="@style/nice_button"
-                 android:elevation="10dp"
-                 android:id="@+id/open_ats"
-                 android:text="Загрузить спектр"
-                 android:layout_weight="4"/>-->
-            <Button style="@style/nice_button"
-                android:layout_marginTop="2dp"
-                android:layout_width="match_parent"
+            style="@style/horizontal_layout"
+            android:layout_margin="2dp"
+            android:paddingTop="2dp">
+
+            <Button
                 android:id="@+id/gen_button"
-                android:text="Генератор"
-                android:layout_height="30dp"
-                />
-            <!--        <Button style="@style/nice_button"
-                        android:layout_marginRight="0dp"
-                        android:text="Mode"
-                        android:layout_weight="1"
-                        android:id="@+id/mode_button"
-                        />-->
+                style="@style/nice_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="0dp"
+                android:text="Генератор" />
+
         </LinearLayout>
     </LinearLayout>
 

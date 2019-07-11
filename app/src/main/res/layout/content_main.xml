@@ -4,77 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical"
     android:layout_margin="3dp"
-    android:padding="0dp">
-<!--    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/my_shape"
-        android:id="@+id/ref_spec_layout"
-        android:layout_margin="2dp"
-        android:padding="1dp"
-        android:paddingStart="10dp"
-        android:elevation="30dp"
-        >
-        <TextView
-            android:layout_gravity="center_vertical"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:padding="0dp"
+    tools:context=".MainActivity">
+    <!--    <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ref_spec_text"
-            android:textColor="@color/colorOrange"
-            android:text="text"
-            android:layout_weight="1"
+            android:background="@drawable/my_shape"
+            android:id="@+id/ref_spec_layout"
+            android:layout_margin="2dp"
+            android:padding="1dp"
+            android:paddingStart="10dp"
+            android:elevation="30dp"
+            >
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ref_spec_text"
+                android:textColor="@color/colorOrange"
+                android:text="text"
+                android:layout_weight="1"
 
-            />
+                />
 
-        <Button
-            android:id="@+id/ref_spec_exp_more_button"
-            style="@style/exp_more_button"
-            android:layout_gravity="center_vertical"/>
+            <Button
+                android:id="@+id/ref_spec_exp_more_button"
+                style="@style/exp_more_button"
+                android:layout_gravity="center_vertical"/>
 
-    </LinearLayout>-->
-    <FrameLayout style="@style/frame_style"
-        android:elevation="25dp"
+        </LinearLayout>-->
+    <FrameLayout
+        android:id="@+id/fragment_container1"
+        style="@style/frame_style"
         android:layout_weight="1"
-        android:id="@+id/fragment_container1">
+        android:elevation="25dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="end">
+            android:layout_gravity="end"
+            android:orientation="horizontal">
 
-<!--            <Button style="@style/add_new_button"
-                android:id="@+id/ref_spec_add_button"/>-->
-<!--            <Button style="@style/exp_less_button"
-                android:id="@+id/ref_spec_exp_less_button"/>-->
+            <!--            <Button style="@style/add_new_button"
+                            android:id="@+id/ref_spec_add_button"/>-->
+            <!--            <Button style="@style/exp_less_button"
+                            android:id="@+id/ref_spec_exp_less_button"/>-->
 
         </LinearLayout>
 
     </FrameLayout>
 
 
-
-    <FrameLayout style="@style/frame_style"
+    <FrameLayout
         android:id="@+id/fragment_container2"
-        android:layout_weight="1">
-    </FrameLayout>
+        style="@style/frame_style"
+        android:layout_weight="1"></FrameLayout>
 
 
-<!--    <FrameLayout style="@style/frame_style"
-        android:id="@+id/mixer_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="15dp"
-        >
+    <!--    <FrameLayout style="@style/frame_style"
+            android:id="@+id/mixer_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="15dp"
+            >
 
-    </FrameLayout>-->
+        </FrameLayout>-->
 
-    <FrameLayout style="@style/frame_style"
+    <FrameLayout
         android:id="@+id/mixer_fragment_list_view"
+        style="@style/frame_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="15dp"
@@ -83,35 +84,38 @@
 
     </FrameLayout>
 
-    <LinearLayout style="@style/vertical_layout"
-        android:layout_marginTop="2dp"
-        android:elevation="10dp"
-        android:background="@drawable/layout_shape_selector"
-        android:padding="3dp"
+    <LinearLayout
         android:id="@+id/time_layout"
+        style="@style/vertical_layout"
         android:layout_marginLeft="3dp"
+        android:layout_marginTop="2dp"
         android:layout_marginRight="3dp"
-        >
-        <LinearLayout style="@style/horizontal_layout"
+        android:background="@drawable/layout_shape_selector"
+        android:elevation="10dp"
+        android:padding="3dp">
+
+        <LinearLayout
             android:id="@+id/time_layout_small"
+            style="@style/horizontal_layout"
 
             >
+
             <TextView
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:gravity="right"
-                android:text="Delay: "
+                android:layout_height="wrap_content"
                 android:layout_weight="2"
-                />
+                android:gravity="right"
+                android:text="Delay: " />
+
             <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="center"
                 android:id="@+id/delay_time_main"
-                android:text="20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="17sp"
-                android:textColor="@color/colorOrange"/>
+                android:gravity="center"
+                android:text="20"
+                android:textColor="@color/colorOrange"
+                android:textSize="17sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -119,43 +123,43 @@
                 android:layout_weight="2"
                 android:gravity="right"
                 android:text="t набора: " />
+
             <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/requiredTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:text="20"
-                android:layout_weight="1"
-                android:textSize="17sp"
-                android:textColor="@color/colorOrange"/>
+                android:textColor="@color/colorOrange"
+                android:textSize="17sp" />
 
         </LinearLayout>
 
-        <LinearLayout style="@style/vertical_layout"
+        <LinearLayout
             android:id="@+id/time_layout_big"
-            android:elevation="10dp"
+            style="@style/vertical_layout"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            >
-
-
+            android:elevation="10dp">
 
 
             <LinearLayout style="@style/vertical_layout">
-<!--                <LinearLayout style="@style/horizontal_layout">
-                    <TextView
-                        style="@style/text_centered"
-                        android:text="Время набора:"
-                        />
+                <!--                <LinearLayout style="@style/horizontal_layout">
+                                    <TextView
+                                        style="@style/text_centered"
+                                        android:text="Время набора:"
+                                        />
 
-                </LinearLayout>-->
+                                </LinearLayout>-->
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
                     <EditText
                         android:id="@+id/dialog_required_time_text"
                         style="@style/text_centered"
@@ -164,34 +168,34 @@
                         android:inputType="number"
                         android:maxLength="5"
                         android:text="100"
-                        android:textColor="@color/colorOrange"
-                        />
+                        android:textColor="@color/colorOrange" />
 
                     <SeekBar
-                        android:layout_gravity="center_vertical"
                         android:id="@+id/seekBar2"
-                        android:max="1001"
-                        android:min="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:max="1001"
+                        android:min="1" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Время набора"/>
+                        android:text="Время набора" />
 
                 </LinearLayout>
 
 
-<!--                <TextView
-                    style="@style/text_centered"
-                    android:text="Delay, ms:" />-->
+                <!--                <TextView
+                                    style="@style/text_centered"
+                                    android:text="Delay, ms:" />-->
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/dialog_delay_text"
@@ -204,57 +208,47 @@
                         android:textColor="@color/colorOrange" />
 
                     <SeekBar
-                        android:layout_gravity="center_vertical"
                         android:id="@+id/seekBar"
-                        android:max="1001"
-                        android:min="1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:max="1001"
+                        android:min="1" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Delay, ms"/>
+                        android:text="Delay, ms" />
                 </LinearLayout>
 
             </LinearLayout>
 
 
-
-
             <Switch
                 android:id="@+id/switch1"
-                android:layout_gravity="right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:text="Посекундный набор   " />
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout style="@style/horizontal_layout"
+    <LinearLayout
         android:id="@+id/button_layout"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginBottom="2dp"
-        >
-       <!-- <Button style="@style/nice_button"
-            android:elevation="10dp"
-            android:id="@+id/open_ats"
-            android:text="Загрузить спектр"
-            android:layout_weight="4"/>-->
-        <Button style="@style/nice_button"
-            android:layout_width="match_parent"
+        style="@style/horizontal_layout"
+        android:layout_margin="2dp"
+        android:paddingTop="2dp">
+
+        <Button
             android:id="@+id/gen_button"
-            android:text="Генератор"
-            android:layout_height="30dp"
-            />
-<!--        <Button style="@style/nice_button"
-            android:layout_marginRight="0dp"
-            android:text="Mode"
-            android:layout_weight="1"
-            android:id="@+id/mode_button"
-            />-->
+            style="@style/nice_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="0dp"
+            android:text="Генератор" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -3,6 +3,10 @@ package com.atomtex.spectrumgenerator;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -10,6 +14,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,6 +39,7 @@ import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.atomtex.spectrumgenerator.exception.ProcessException;
 import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Fragment fragment4;//todo переместить в ViewModel
 
     public static final String TAG = "TAG!!!";
+    public static final String SHARED_PREFFERENCES = "sPref";
 
     TextView requiredTimeTV;
     TextView delayTimeTV;
@@ -69,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FragmentManager manager;
     Toggler toggler;
 
+    SaveLoad saveLoad;
+
     //todo не понятно, для чего нужно
     private int mPrefIdenThreshold;
 
@@ -76,9 +85,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.e(TAG, "onCreate: ");
+
+        saveLoad = new SaveLoad(this);
 
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         toggler = new Toggler(this, mViewModel);
+
+        //если приложение только запустилось
+        ////////////////////if(mViewModel.isFirstTime) loadVars();
 
         if (findViewById(R.id.nav_view) != null) {
             navigationView = findViewById(R.id.nav_view);
@@ -89,9 +104,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mPrefIdenThreshold = 3;
 
-        toggler.setDisplayMode(mViewModel.getDisplayMode());
+//        toggler.setDisplayMode(mViewModel.getDisplayMode());
 //        toggler.setButtonMode(mViewModel.getButtonMode());
         toggler.setTimeLayoutMode(mViewModel.getTimeLayoutMode());
+        toggler.setAllVisibilities();
 
         requiredTimeTV = findViewById(R.id.requiredTime);
         delayTimeTV = findViewById(R.id.delay_time_main);
@@ -139,6 +155,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_4).getActionView()).setOnCheckedChangeListener(this);
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setOnCheckedChangeListener(this);
 
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_1).getActionView()).setChecked(mViewModel.isRefVisible());
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_2).getActionView()).setChecked(mViewModel.isMixerVisible());
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_3).getActionView()).setChecked(mViewModel.isTimeVisible());
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_4).getActionView()).setChecked(mViewModel.isButtonVisible());
+        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setChecked(mViewModel.isMatrixVisible());
+
 
 
         manager = getSupportFragmentManager();
@@ -163,6 +185,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             manager.beginTransaction().replace(R.id.mixer_fragment_list_view, fragment4).commit();
         }
 
+    }
+
+    private void loadVars() {
+        ArrayList<Boolean> b = saveLoad.loadBooleanArray(SHARED_PREFFERENCES);
+        mViewModel.setRefVisibility(b.get(0));
+        mViewModel.setMixerVisibility(b.get(1));
+        mViewModel.setTimeVisibility(b.get(2));
+        mViewModel.setButtonVisibility(b.get(3));
+        mViewModel.setMatrixVisibility(b.get(4));
+    }
+
+    private void saveVars() {
+        ArrayList<Boolean> list = new ArrayList<>();
+        list.add(mViewModel.isRefVisible());
+        list.add(mViewModel.isMixerVisible());
+        list.add(mViewModel.isTimeVisible());
+        list.add(mViewModel.isButtonVisible());
+        list.add(mViewModel.isMatrixVisible());
+        saveLoad.saveBooleanArray(list, SHARED_PREFFERENCES);
     }
 
     @Override
@@ -254,13 +295,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mViewModel.isSecMode() && iCanGenerate()){
             if (mViewModel.isGenButtonIsPressed()) {
                 stop();
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Drawable drawable = getDrawable(R.drawable.button_shape_selector);
+                    genButton.setBackground(drawable);
+                }
                 genButton.setText("Генератор");
                 mViewModel.setGenButtonIsPressed(false);
             } else {
                 genMixer();
-//                genButton.setCompoundDrawablesWithIntrinsicBounds( R.drawable.my_button_shape_pressed,0, 0, 0);
-//                genButton.setBackgroundColor(getResources().getColor(R.color.colorOrange));
-//                genButton.setBackgroundDrawable(R.drawable.my_button_shape_pressed);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    Drawable drawable = getDrawable(R.drawable.my_shape_pressed);
+                    genButton.setBackground(drawable);
+                }
+
                 genButton.setText("Остановить");
                 mViewModel.setGenButtonIsPressed(true);
             }
@@ -492,6 +539,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     genButton.setText("Генератор");
                     mViewModel.setGenButtonIsPressed(false);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        Drawable drawable = getDrawable(R.drawable.button_shape_selector);
+                        genButton.setBackground(drawable);
+                    }
                 }
             }
         }, 1);
@@ -520,6 +571,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(seekBar.getId()==R.id.seekBar2) mViewModel.setRequiredTime(Integer.parseInt(String.valueOf(seekBar.getProgress())));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause: ");
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.e(TAG, "onRestart: ");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume: ");
+        mViewModel.isFirstTime = false;
+    }
 }
