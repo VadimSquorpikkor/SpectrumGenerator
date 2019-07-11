@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toggler = new Toggler(this, mViewModel);
 
         //если приложение только запустилось
-        ////////////////////if(mViewModel.isFirstTime) loadVars();
+        if(mViewModel.isFirstTime) loadVars();
 
         if (findViewById(R.id.nav_view) != null) {
             navigationView = findViewById(R.id.nav_view);
@@ -135,9 +135,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        toggler.setRefLayoutMode(0);
 
+/*
         switchTV = findViewById(R.id.switch1);
         if (switchTV != null) switchTV.setOnCheckedChangeListener(this);
         switchTV.setChecked(true);
+*/
 
 
 //        Switch sw = findViewById(R.id.nav_switch_1);
@@ -148,6 +150,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.getMenu().findItem(R.id.nav_switch_3).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_4).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_5).setActionView(new Switch(this));
+
+        ((Switch) findViewById(R.id.switch1)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) mViewModel.setSecMode(true);
+                else mViewModel.setSecMode(false);
+            }
+        });
+        ((Switch) findViewById(R.id.switch1)).setChecked(true);
+
 
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_1).getActionView()).setOnCheckedChangeListener(this);
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_2).getActionView()).setOnCheckedChangeListener(this);
@@ -160,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_3).getActionView()).setChecked(mViewModel.isTimeVisible());
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_4).getActionView()).setChecked(mViewModel.isButtonVisible());
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setChecked(mViewModel.isMatrixVisible());
+
 
 
 
@@ -189,11 +202,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadVars() {
         ArrayList<Boolean> b = saveLoad.loadBooleanArray(SHARED_PREFFERENCES);
-        mViewModel.setRefVisibility(b.get(0));
-        mViewModel.setMixerVisibility(b.get(1));
-        mViewModel.setTimeVisibility(b.get(2));
-        mViewModel.setButtonVisibility(b.get(3));
-        mViewModel.setMatrixVisibility(b.get(4));
+        if(b.size()>0){
+            mViewModel.setRefVisibility(b.get(0));
+            mViewModel.setMixerVisibility(b.get(1));
+            mViewModel.setTimeVisibility(b.get(2));
+            mViewModel.setButtonVisibility(b.get(3));
+            mViewModel.setMatrixVisibility(b.get(4));
+        }
     }
 
     private void saveVars() {
@@ -217,15 +232,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(buttonView.getId()==R.id.switch1) {
+        /*if(buttonView.getId()==R.id.switch1) {
             if (isChecked) mViewModel.setSecMode(true);
             else mViewModel.setSecMode(false);
-        }
+        }*/
         if(buttonView.getId()==R.id.nav_switch_1) toggler.setReferenceFragmentMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_2) toggler.setMixerMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_3) toggler.setTimeMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_4) toggler.setButtonsMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_5) toggler.setMatrixMode(isChecked);
+
+        saveVars();
     }
 
     public void openAts() {

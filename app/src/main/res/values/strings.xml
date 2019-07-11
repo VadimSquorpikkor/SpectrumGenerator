@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SpectrumGenerator</string>
+    <string name="app_name">Spectrum Generator</string>
     <string name="chart_channel">К %s</string>
     <string name="chart_energy">%d кэВ</string>
     <string name="chart_imp">%d имп</string>

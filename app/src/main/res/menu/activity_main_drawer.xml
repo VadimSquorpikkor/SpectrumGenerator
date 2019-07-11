@@ -8,8 +8,8 @@
         <item
             android:id="@+id/nav_open_ats"
             android:title="Добавить спектр"
-            android:icon="@drawable/baseline_queue_white_48dp"
             />
+            <!--android:icon="@drawable/baseline_queue_white_48dp"-->
         <item
             android:id="@+id/nav_generate"
             android:title="Сгенерировать спектр"
@@ -26,22 +26,27 @@
             android:id="@+id/nav_switch_2"
             android:title="Миксер"
             app:actionLayout="@layout/layout_switch"
-            android:icon="@drawable/baseline_list_white_48dp"/>
+
+        />
+            <!--android:icon="@drawable/baseline_list_white_48dp"-->
         <item
             android:id="@+id/nav_switch_3"
             android:title="Время набора"
             app:actionLayout="@layout/layout_switch"
-            android:icon="@drawable/baseline_query_builder_white_48dp"/>
+        />
+            <!--android:icon="@drawable/baseline_query_builder_white_48dp"-->
         <item
             android:id="@+id/nav_switch_4"
             android:title="Показывать кнопки"
             app:actionLayout="@layout/layout_switch"
-            android:icon="@drawable/baseline_dashboard_white_48dp"/>
+        />
+            <!--android:icon="@drawable/baseline_dashboard_white_48dp"-->
         <item
             android:id="@+id/nav_switch_5"
             android:title="Матрица"
             app:actionLayout="@layout/layout_switch"
-            android:icon="@drawable/baseline_dashboard_white_48dp"/>
+        />
+            <!--android:icon="@drawable/baseline_dashboard_white_48dp"-->
 
 
     </group>
