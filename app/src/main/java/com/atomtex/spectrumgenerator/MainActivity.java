@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     float[] mPeakChannels;
     float[] mPeakEnergies;
     String[] mLineOwners;
+    String nameForMixer = "";
 
     FragmentManager manager;
     Toggler toggler;
@@ -375,16 +376,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private String makeName(String path) {
-        String name;
-        name = path.substring(path.length() - 10);
+        String name = "Unknown";
+//        name = path.substring(path.length() - 10);
+        if(!nameForMixer.equals(""))name = nameForMixer;
         return name;
     }
 
 
     //todo вынести метод в отдельный класс (Controller)
     private void openAtsFile(String path) {//todo убрать pos
+
         SpecDTO dto = AtsReader.parseFile(path);
-        mViewModel.addNewSpectrum(dto, makeName(path));
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
         if (dto != null) {
@@ -399,6 +401,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             processIdenResult(nuc);
         }
+
+        mViewModel.addNewSpectrum(dto, makeName(path));
+        nameForMixer = ""; //сброс
+//        Log.e(TAG, "openSpeFile: " + mLineOwners[1]);
 //        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
         manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
@@ -408,7 +414,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //todo объединить с ats
     private void openSpeFile(String path) {//todo убрать pos
         SpecDTO dto = SpeReader.parseFile(path);
-        mViewModel.addNewSpectrum(dto, makeName(path));
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
         if (dto != null) {
@@ -423,6 +428,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             processIdenResult(nuc);
         }
+        mViewModel.addNewSpectrum(dto, makeName(path));
+            nameForMixer = ""; //сброс
 //        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
         manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
@@ -549,6 +556,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 && line.getFactorsNoShield() > 0
                                 && line.getFactorsShield() > 0) {
                             lineOwners[index] = nuclide.getName() + " " + nuclide.getNumStr();
+                            if(nameForMixer.equals(""))nameForMixer = lineOwners[index];
                         }
                     }
                 }
