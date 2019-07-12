@@ -84,7 +84,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     void deleteDialog(final int position) {
         final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
         alert.setTitle("Удаление");
-/////////////////////////////////////////////////////////////////////        alert.setIcon(R.drawable.baseline_delete_forever_white_48dp);
+        alert.setIcon(R.drawable.baseline_delete_forever_white_48dp);
         alert.setMessage("Удалить " + mViewModel.getSourceList().get(position).getName() + " из списка?");
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {

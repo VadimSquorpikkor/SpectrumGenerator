@@ -131,7 +131,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     /**
      * Contains spectrum data
      */
-    private SpecDTO mSpecDTO;
+    public SpecDTO mSpecDTO;//todo private
 
     /**
      * Chart for showing spectrum
@@ -146,17 +146,17 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     /**
      * Array of peaks over the spectrum
      */
-    private float[] mPeaks;
+    public float[] mPeaks;//todo private
 
     /**
      * Energies of the {@link #mPeaks}
      */
-    private float[] mPeakEnergies;
+    public float[] mPeakEnergies;//todo private
 
     /**
      * describes the nuclides to which {@link #mPeaks} belong
      */
-    private String[] mLineOwners;
+    public String[] mLineOwners;//todo private
 
     /**
      * Position on the chart that was marked by user
@@ -198,22 +198,31 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
     private String fragmentID;
     SpecDTO dto;
-    float[] peaks;
+/*    float[] peaks;
     float[] peakEnergies;
-    String[] lineOwners;
+    String[] lineOwners;*/
 
     int impSum;
 
+    /*    */
+
     /**
      * Creates new instance of the class and put given parameters as arguments in it
+     * <p>
+     * //     * @param dto          contains spectrum data
+     * //     * @param peaks        array of peaks on the spectrum
+     * //     * @param peakEnergies energies of the peaks
+     * //     * @param lineOwners   describes the nuclides to which these lines belong
      *
-     * @param dto          contains spectrum data
-     * @param peaks        array of peaks on the spectrum
-     * @param peakEnergies energies of the peaks
-     * @param lineOwners   describes the nuclides to which these lines belong
      * @return new instance of the class with arguments
      * @see SpecDTO
      */
+
+    public SpectrumFragment() {
+        Log.e(TAG, "new SpecFragment " + this + " created");
+    }
+
+
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners) {
         Bundle args = new Bundle();
@@ -239,6 +248,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         fragment.setArguments(args);
         return fragment;
     }
+
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners, String fragmentID, String path) {
         SpectrumFragment fragment = new SpectrumFragment();
@@ -251,16 +261,21 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         fragment.setArguments(args);
         return fragment;
     }
+
     public static SpectrumFragment newInstance(String fragmentID) {
 
         SpectrumFragment fragment = new SpectrumFragment();
         Bundle args = new Bundle();
         //todo затычки
         SpecDTO dto = new SpecDTO();
-        dto = new SpecDTO();
         dto.setSpectrum(new int[]{0});
         dto.setMeasTim(new int[]{0});
         dto.setEnergy(new float[]{0});
+
+/*
+        fragment.mSpecDTO = dto;
+        fragment.fragmentID = fragmentID;
+*/
         //
         args.putParcelable(ARG_DTO, dto);
         args.putFloatArray(ARG_PEAKS, null);
@@ -268,21 +283,51 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         args.putStringArray(ARG_LINE_OWNERS, null);
         args.putString("FR_ID", fragmentID);
         fragment.setArguments(args);
+
+
         return fragment;
     }
 
     public void setNewValues(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners) {
-        this.mSpecDTO = dto;
-        this.peaks = peaks;
-        this.peakEnergies = peakEnergies;
-        this.lineOwners = lineOwners;
+        mSpecDTO = dto;
+        mPeaks = peaks;
+        mPeakEnergies = peakEnergies;
+        mLineOwners = lineOwners;
+    }
+
+    public void update() {
+
+        mEntries = new ArrayList<>();
+        //make chart entry from spectrum data
+        int[] spectrum = mSpecDTO.getSpectrum();
+        for (int i = 0; i < spectrum.length; i++) {
+            mEntries.add(new Entry(i, spectrum[i]));
+        }
+
+        updateChart();
     }
 
 
-/*    public static SpectrumFragment getInstance() {
-        return
-    }*/
+
+
+
+    public void updateInstance(SpectrumFragment fragment, SpecDTO dto, float[] peaks, float[] peakEnergies
+            , String[] lineOwners, String fragmentID) {
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_DTO, dto);
+        args.putFloatArray(ARG_PEAKS, peaks);
+        args.putFloatArray(ARG_PEAKS_ENERGY, peakEnergies);
+        args.putStringArray(ARG_LINE_OWNERS, lineOwners);
+        args.putString("FR_ID", fragmentID);
+//        fragment.fragmentID = fragmentID;
+        fragment.setArguments(args);
+    }
+
+
+    public SpectrumFragment getInstance() {
+        return this;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -304,11 +349,12 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
                 fragmentID = arguments.getString("FR_ID");
 
+
             }
         }
     }
 
-/*    @Override
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
@@ -316,7 +362,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             getFragmentManager().beginTransaction().detach(this).attach(this).commit();
             Log.i("IsRefresh", "Yes");
         }
-    }*/
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -398,15 +444,21 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
         buttonControls.setButtonEventListener(this);
 
+        //todo delete
+
         updateChart();
 
         return view;
     }
 
+
+
     /**
      * Creates a chart and draw the spectrum data on it.
      */
     private void updateChart() {
+//        mSpectrumChart = null;
+//        if (mSpectrumChart != null)mSpectrumChart.clear();
         if (mSpectrumChart == null) {
             mSpectrumChart = new LineChart(getContext());
             XAxis xAxis = mSpectrumChart.getXAxis();
@@ -429,7 +481,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             yAxis.setGridColor(getResources().getColor(R.color.colorChartGrid));
             //enable acceleration
             mSpectrumChart.setHardwareAccelerationEnabled(true);
-            graphContainer.addView(mSpectrumChart);
+            graphContainer.addView(mSpectrumChart);//todo THIS ONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Description description = new Description();
             description.setEnabled(false);
             mSpectrumChart.setDescription(description);

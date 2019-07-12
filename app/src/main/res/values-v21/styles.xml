@@ -59,7 +59,7 @@
     </style>
 
     <style name="delete_button" parent="small_button">
-        <!--<item name="android:background">@drawable/baseline_delete_outline_white_48dp</item>-->
+        <item name="android:background">@drawable/baseline_delete_outline_white_48dp</item>
     </style>
 
     <style name="exp_more_button" parent="small_button">

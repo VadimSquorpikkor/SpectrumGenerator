@@ -44,6 +44,10 @@ import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
+import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_DTO;
+import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_LINE_OWNERS;
+import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_PEAKS;
+import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_PEAKS_ENERGY;
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
 import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
@@ -252,18 +256,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intent, 1);//TODO request code сделать psf
     }
 
-    private void gen() {
+    /*private void gen() {   //////////old
         if (iCanGenerate()) generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
         else makeToast("Сначала загрузите файл .ats");
+    }*/
+
+//    mViewModel.getRequiredTime()
+
+    private void gen() {
+        if (iCanGenerate()) {
+            getParamFromTimeField();
+            mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
+            startMixer(mViewModel.getRequiredTime()-1, mViewModel.getRequiredTime());
+        }else makeToast("Сначала загрузите файл .ats");
     }
 
     private void genMixer() {
         if (iCanGenerate()){
             getParamFromTimeField();
-            mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
+            ////////////////////////////////////////
+            // mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
+//            mViewModel.setTempDTO(SpeReader.parseFile(mViewModel.getPathForAts()));
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
 //            mViewModel.getTempDTO().setSpectrum(new int[1024]);//todo ??????
-            startMixer();
+            startMixer(0, 1);
         }
         else makeToast("Сначала загрузите файл .ats");
     }
@@ -341,9 +357,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Log.e(TAG, "PATH: = " + pathHolder);
                         if (pathHolder.endsWith(".ats")) {
                             mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
+                            mViewModel.setTempDTO(AtsReader.parseFile(pathHolder));
                             openAtsFile(pathHolder);
                             makeToast("Открытие...");
-                        } else {
+                        }
+                        else if (pathHolder.endsWith(".spe")) {
+                            mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
+                            mViewModel.setTempDTO(SpeReader.parseFile(pathHolder));
+                            openSpeFile(pathHolder);
+                            makeToast("Открытие...");
+                        }
+                        else {
                             makeToast("Неверный формат");
                         }
                     }
@@ -381,10 +405,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //todo объединить с ats
+    private void openSpeFile(String path) {//todo убрать pos
+        SpecDTO dto = SpeReader.parseFile(path);
+        mViewModel.addNewSpectrum(dto, makeName(path));
+        ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
+
+        if (dto != null) {
+            int[] spectrum = dto.getSpectrum();
+            float[] energy = dto.getEnergy();
+            float[] sigma = dto.getSigma();
+            NucIdent nuc = null;
+            try {
+                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
+            } catch (ProcessException e) {
+                e.printStackTrace();
+            }
+            processIdenResult(nuc);
+        }
+//        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
+        mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
+        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
+
+    }
+
     //todo remove path, удалить после того как переделаю spectrumTeak и для gen и для genMixer
     //метод только для мгновенной (не посекундной) генерации
     private void generateSpectrum(String path, int spTime, int rqTime) {
-        SpecDTO dto = AtsReader.parseFile(path);
+        SpecDTO dto = null;
+        if(path.endsWith("ats")) dto = AtsReader.parseFile(path);
+        if(path.endsWith("spe")) dto = SpeReader.parseFile(path);
 //        SpecDTO dto = mViewModel.getReferenceDTO();
         dto.setMeasTim(new int[]{rqTime, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
@@ -423,9 +473,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         processIdenResult(nuc);
         //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
+//        Log.e(TAG, "generateSpectrumTeak: " + fragment2);
+//        Log.e(TAG, "generateSpectrumTeak: instance = " + fragment2.getInstance());
         manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-//        fragment2.setNewValues(dto, mPeakChannels, mPeakEnergies, mLineOwners);
-//        manager.beginTransaction().detach(fragment2).attach(fragment2).commitAllowingStateLoss();
+
+        //fragment2.updateInstance(fragment2, tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
+
+
+
+
+/*        Bundle args = new Bundle();
+        args.putParcelable(ARG_DTO, tempDto);
+        args.putFloatArray(ARG_PEAKS, mPeakChannels);
+        args.putFloatArray(ARG_PEAKS_ENERGY, mPeakEnergies);
+        args.putStringArray(ARG_LINE_OWNERS, mLineOwners);
+        args.putString("FR_ID", "11111");
+        fragment2.setArguments(args);*/
+
+//        manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
+
+        /////////////////fragment2.setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
+        /////////////////fragment2.update();
+
+
+/*        Log.e(TAG, "---------------------generateSpectrumTeak  spectrum: " + spectrum.length + ", -- " + count);
+        Log.e(TAG, "---------------------generateSpectrumTeak:   energy" + energy.length + ", -- " + count);
+        Log.e(TAG, "---------------------generateSpectrumTeak:  sigma" + sigma.length + ", -- " + count);*/
+
+        Log.e(TAG, "------------------------------count: " + count + " --------------------------------");
+        if(fragment2.mLineOwners!=null)Log.e(TAG, "---------------------generateSpectrumTeak lineOwners = " + fragment2.mLineOwners.length);
+        if(fragment2.mPeaks!=null)Log.e(TAG, "---------------------generateSpectrumTeak peaks = " + fragment2.mPeaks.length);
+        if(fragment2.mPeakEnergies!=null)Log.e(TAG, "---------------------generateSpectrumTeak peaksEnergies = " + fragment2.mPeakEnergies.length);
+        if(fragment2.mSpecDTO.getSpectrum()!=null)Log.e(TAG, "---------------------generateSpectrumTeak spectrum = " + fragment2.mSpecDTO.getSpectrum().length);
+
+
+        /////fragment2 = SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
+
+//        manager.beginTransaction().replace(R.id.fragment_container2, fragment2.getInstance()).commitAllowingStateLoss();
+
+
+///        manager.beginTransaction().detach(fragment2).attach(fragment2.getInstance()).commitAllowingStateLoss();
 //        manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commitAllowingStateLoss();
 
     }
@@ -518,9 +605,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             openAts();
         } else if (id == R.id.nav_generate) {
             toggleGenButton();
-        } /*else if (id == R.id.nav_toggle_mode) {
-            toggler.toggleMode();
-        }*/
+        } else if (id == R.id.nav_switch_5) {
+            fragment2.update();
+            Log.e(TAG, "onNavigationItemSelected: ");
+        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -531,13 +619,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final Handler handler = new Handler();
     Runnable runnable;
 
-    void startMixer(){
+    void startMixer(final int firstNum, final int rqTimeOne){
         Log.e(TAG, "startMixer: SPECTRUM = " + mViewModel.getTempDTO().getSpectrum().length + ", SIGMA = " + mViewModel.getTempDTO().getSigma().length + ", ENERGY = " + mViewModel.getTempDTO().getEnergy().length);
 //        mViewModel.getTempDTO().setSpectrum(new int[1024]);//не влияет
 //        mViewModel.getTempDTO().setSigma(new float[1024]);//не определяются нуклиды
 //        mViewModel.getTempDTO().setEnergy(new float[1024]);//будут 0.0 на энергиях на графиках (зеленые цифры)
         handler.postDelayed(runnable = new Runnable() {
-            int count = 0;
+            int count = firstNum;
             SpecDTO dto;
             public void run() {
                 if (count++ < mViewModel.getRequiredTime()) {
@@ -549,7 +637,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
                         if(parcel.isChecked()) {
                             dto = parcel.getReferenceDTO();
-                            generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / parcel.getPercent(), 1, count);
+                            generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / parcel.getPercent(), rqTimeOne, count);
                         }
                         }
                     handler.postDelayed(runnable, mViewModel.getDelay());

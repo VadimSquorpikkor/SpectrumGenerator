@@ -1,6 +1,7 @@
 package com.atomtex.spectrumgenerator;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -39,18 +40,36 @@ import static com.balsikandar.crashreporter.CrashReporter.getContext;
 public class AtsReader {
 
 
+//    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static SpecDTO parseFile(String path) {
         List<Charset> charsets = new ArrayList<>();
 
         //charsets to parse data
         charsets.add(Charset.forName("UTF-16LE"));
-//        charsets.add(Charset.forName("windows-1251"));
+        charsets.add(Charset.forName("UTF-8"));
+        charsets.add(Charset.forName("windows-1251"));
 
         Uri uri = Uri.parse(path);
         String scheme = uri.getScheme();
 
         InputStream inputStream = null;
         SpecDTO dto = null;
+
+        /*for (Charset charset : charsets) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+
+                            new FileInputStream(new File(path)), charset))) {
+                dto = parseSpecDTO(reader);
+                if (dto == null) {
+                    continue;
+                }
+                dto.setFileName(new File(path).getName());
+                break;
+            } catch (IOException | NumberFormatException e) {
+                CrashReporter.logException(e);
+            }
+        }*/
 
         for (Charset charset : charsets) {
             try {
@@ -64,6 +83,8 @@ public class AtsReader {
                 CrashReporter.logException(e);
             }
 
+
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     inputStream, charset));
             try {
@@ -73,7 +94,9 @@ public class AtsReader {
             }
             if (dto != null) {
                 dto.setFileName(path);
+                if(dto.getSpectrum()!=null)break;
             }
+
         }
 
         return dto;
