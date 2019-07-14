@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
@@ -12,20 +13,85 @@
     </style>
 
     <style name="frame_style" parent="base_style">
-        <item name="android:padding">0dp</item>
-        <item name="android:layout_weight">1</item>
+        <item name="android:padding">4dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:drawable">@drawable/my_shape</item>
+        <item name="android:background">@drawable/my_shape</item>
+        <item name="android:layout_margin">2dp</item>
     </style>
 
     <style name="button" parent="base_style">
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:background">@drawable/my_shape</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="nice_button" parent="Widget.AppCompat.Button">
+
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginRight">2dp</item>
         <item name="android:textSize">10sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
-        <item name="android:padding">5dp</item>
-</style>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/button_shape_selector</item>
+    </style>
+
+    <style name="small_button">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:gravity">end</item>
+
+    </style>
+
+    <style name="add_new_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_add_white_48dp</item>
+    </style>
+
+    <style name="delete_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_delete_outline_white_48dp</item>
+    </style>
+
+    <style name="exp_more_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_expand_more_white_48dp</item>
+    </style>
+
+    <style name="exp_less_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_expand_less_white_48dp</item>
+    </style>
+
+    <style name="nice_button_without" parent="nice_button">
+        <item name="android:background">@drawable/my_shape</item>
+    </style>
+
+    <style name="base_match_wrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="vertical_layout" parent="base_match_wrap">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="horizontal_layout" parent="base_match_wrap">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="text_centered" parent="base_match_wrap">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
 
 </resources>
+
+
+

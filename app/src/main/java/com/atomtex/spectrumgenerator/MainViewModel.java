@@ -15,7 +15,8 @@ public class MainViewModel extends AndroidViewModel {
 
 
 //    private SpecDTO tempDTO = new SpecDTO(1024);//todo сделать для любой длины, не только 1024
-    private SpecDTO tempDTO = new SpecDTO();
+    private SpecDTO tempDTO = new SpecDTO(1024);
+
     private SpecDTO referenceDTO;
     private int spectrumTime = 10;
     private int RequiredTime = 100;

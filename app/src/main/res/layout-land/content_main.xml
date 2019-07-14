@@ -60,10 +60,6 @@
 
         </FrameLayout>
 
-
-
-
-
         <FrameLayout style="@style/frame_style"
             android:id="@+id/fragment_container2"
             android:layout_weight="1">
@@ -71,29 +67,20 @@
 
     </LinearLayout>
 
-
-
-
-
-
-
     <LinearLayout style="@style/vertical_layout"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_height="match_parent"
         >
-
 
         <FrameLayout style="@style/frame_style"
             android:id="@+id/mixer_fragment_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:elevation="15dp"
-            android:layout_weight="1"
+android:layout_weight="1"
             >
 
         </FrameLayout>
-
-
 
         <LinearLayout style="@style/vertical_layout"
             android:layout_marginTop="2dp"
@@ -181,7 +168,7 @@
                         <SeekBar
                             android:layout_gravity="center_vertical"
                             android:id="@+id/seekBar2"
-                            android:max="1001"
+                            android:max="500"
                             android:min="1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -242,13 +229,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
-
-
-
-
-
-
 
         <LinearLayout
             android:id="@+id/button_layout"

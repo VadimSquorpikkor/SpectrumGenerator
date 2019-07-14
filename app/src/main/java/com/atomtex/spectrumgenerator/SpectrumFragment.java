@@ -267,11 +267,12 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         SpectrumFragment fragment = new SpectrumFragment();
         Bundle args = new Bundle();
         //todo затычки
-        SpecDTO dto = new SpecDTO();
-        dto.setSpectrum(new int[]{0});
-        dto.setMeasTim(new int[]{0});
-        dto.setEnergy(new float[]{0});
-
+//        SpecDTO dto = AtsReader.parseFile("content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats");
+        SpecDTO dto = new SpecDTO(1024);
+        dto.setSpectrum(new int[1024]);
+        dto.setMeasTim(new int[]{1,1});
+        dto.setEnergy(new float[1024]);
+//content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats
 /*
         fragment.mSpecDTO = dto;
         fragment.fragmentID = fragmentID;

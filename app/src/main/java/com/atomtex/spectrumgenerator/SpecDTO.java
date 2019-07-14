@@ -217,6 +217,8 @@ public class SpecDTO implements Parcelable {
         this.setSpectrum(new int[length]);
         this.setSigma(new float[length]);
         this.setEnergy(new float[length]);
+        this.setMeasTim(new int[]{1,1});
+
     }
 
     private SpecDTO(Parcel in) {
@@ -269,6 +271,7 @@ public class SpecDTO implements Parcelable {
     public void addSpectrumToCurrent(int[] spectrum) {
         for (int i = 0; i < spectrum.length; i++) {
             mSpectrum[i] += spectrum[i];
+
         }
     }
 
