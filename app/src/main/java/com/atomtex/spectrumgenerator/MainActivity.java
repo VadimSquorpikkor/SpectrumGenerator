@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 genMixer();
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    Drawable drawable = getDrawable(R.drawable.my_shape_pressed);
+                    Drawable drawable = getDrawable(R.drawable.my_button_shape_pressed);
                     genButton.setBackground(drawable);
                 }
 
