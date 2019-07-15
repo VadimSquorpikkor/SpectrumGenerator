@@ -58,8 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MainViewModel mViewModel;
     NavigationView navigationView;
 
-    SpectrumFragment fragment1;//todo переместить в ViewModel
-    SpectrumFragment fragment2;//todo переместить в ViewModel
+//    SpectrumFragment fragment1;//todo переместить в ViewModel
+//    SpectrumFragment fragment2;//todo переместить в ViewModel
+
 //    Fragment fragment3;//todo переместить в ViewModel
     Fragment fragment4;//todo переместить в ViewModel
 
@@ -183,20 +184,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         manager = getSupportFragmentManager();
         //Это чтобы при повороте устройства не создавать новый фрагмент:
-        fragment1 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container1);
-        fragment2 = (SpectrumFragment) manager.findFragmentById(R.id.fragment_container2);
+//        mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
+//        mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
 //        fragment3 = manager.findFragmentById(R.id.mixer_fragment);
         fragment4 = manager.findFragmentById(R.id.mixer_fragment_list_view);
 
-        if (fragment1 == null) {
-            fragment1 = SpectrumFragment.newInstance(REFERENCE_SPECTRUM);
-            manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commit();
-        }
+        if (mViewModel.getReferenceFragment() == null) {
+            mViewModel.setReferenceFragment(SpectrumFragment.newInstance(REFERENCE_SPECTRUM));
+            manager.beginTransaction().replace(R.id.fragment_container1, mViewModel.getReferenceFragment()).commit();
+        } else mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
 
-        if (fragment2 == null) {
-            fragment2 = SpectrumFragment.newInstance(GENERATED_SPECTRUM);
-            manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
-        }
+        if (mViewModel.getGeneratedFragment() == null) {
+            Log.e(TAG, "---------------------onCreate: MEW GEN FRAGMENT CREATED");
+            mViewModel.setGeneratedFragment(SpectrumFragment.newInstance(GENERATED_SPECTRUM));
+            manager.beginTransaction().replace(R.id.fragment_container2, mViewModel.getGeneratedFragment()).commit();
+        } else mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
 
         if (fragment4 == null) {
             fragment4 = MixerListFragment.newInstance();
@@ -446,35 +448,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    //todo remove path, удалить после того как переделаю spectrumTeak и для gen и для genMixer
-    //метод только для мгновенной (не посекундной) генерации
-    private void generateSpectrum(String path, int spTime, int rqTime) {
-        SpecDTO dto = null;
-        if(path.endsWith("ats")) dto = AtsReader.parseFile(path);
-        if(path.endsWith("spe")) dto = SpeReader.parseFile(path);
-//        SpecDTO dto = mViewModel.getReferenceDTO();
-        dto.setMeasTim(new int[]{rqTime, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
-        SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
-        dto.setSpectrum(mSpectrumGenerator.generatedSpectrum(dto.getSpectrum(), spTime, rqTime));
-        int[] spectrum = dto.getSpectrum();
-        float[] energy = dto.getEnergy();
-        float[] sigma = dto.getSigma();
-        NucIdent nuc = null;
-        try {
-            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-        } catch (ProcessException e) {
-            e.printStackTrace();
-        }
-        processIdenResult(nuc);
-        manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-    }
-
     //todo remove path
     private void generateSpectrumTeak(SpecDTO refDto, SpecDTO tempDto, int spTime, int rqTime, int count, boolean isDrawable) {
-//        SpecDTO refDto = AtsReader.parseFile(mViewModel.getPathForAts());
-        //        SpecDTO refDto = mViewModel.getReferenceDTO();//  :(((
-//        SpecDTO tempDto = mViewModel.getTempDTO();
-//        Log.e(TAG, "generateSpectrumTeak: " + );
         tempDto.setMeasTim(new int[]{count, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
         SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
 //        dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
@@ -489,58 +464,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         processIdenResult(nuc);
-        //todo сделать не через новый инстанс, а через модификацию уже существующего объекта
-//        Log.e(TAG, "generateSpectrumTeak: " + fragment2);
-//        Log.e(TAG, "generateSpectrumTeak: instance = " + fragment2.getInstance());
-        //////////////////////////if(isDrawable)manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-        //manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-
-        //fragment2.updateInstance(fragment2, tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
-
         if(isDrawable) {
-            fragment2.setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
-            fragment2.update();
+            mViewModel.getGeneratedFragment().setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
+            mViewModel.getGeneratedFragment().update();
         }
-
-//        manager.beginTransaction().replace(R.id.fragment_container2, fragment2).commit();
-
-/*        Log.e(TAG, "---------------------generateSpectrumTeak  spectrum: " + spectrum.length + ", -- " + count);
-        Log.e(TAG, "---------------------generateSpectrumTeak:   energy" + energy.length + ", -- " + count);
-        Log.e(TAG, "---------------------generateSpectrumTeak:  sigma" + sigma.length + ", -- " + count);*/
-
-        Log.e(TAG, "------------------------------count: " + count + " --------------------------------");
-        if(fragment2.mLineOwners!=null)Log.e(TAG, "---------------------generateSpectrumTeak lineOwners = " + fragment2.mLineOwners.length);
-        if(fragment2.mPeaks!=null)Log.e(TAG, "---------------------generateSpectrumTeak peaks = " + fragment2.mPeaks.length);
-        if(fragment2.mPeakEnergies!=null)Log.e(TAG, "---------------------generateSpectrumTeak peaksEnergies = " + fragment2.mPeakEnergies.length);
-        if(fragment2.mSpecDTO.getSpectrum()!=null)Log.e(TAG, "---------------------generateSpectrumTeak spectrum = " + fragment2.mSpecDTO.getSpectrum().length);
-
-
-        /////fragment2 = SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр");
-
-//        manager.beginTransaction().replace(R.id.fragment_container2, fragment2.getInstance()).commitAllowingStateLoss();
-
-
-///        manager.beginTransaction().detach(fragment2).attach(fragment2.getInstance()).commitAllowingStateLoss();
-//        manager.beginTransaction().replace(R.id.fragment_container1, fragment1).commitAllowingStateLoss();
-
-    }
-
-    //todo remove path
-    private void referenceSpectrumTeak(SpecDTO refDto, SpecDTO tempDto, int spTime, int rqTime, int count, boolean isDrawable) {
-        tempDto.setMeasTim(new int[]{count, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
-        SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
-        tempDto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
-        int[] spectrum = tempDto.getSpectrum();
-        float[] energy = tempDto.getEnergy();
-        float[] sigma = tempDto.getSigma();
-        NucIdent nuc = null;
-        try {
-            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-        } catch (ProcessException e) {
-            e.printStackTrace();
-        }
-        processIdenResult(nuc);
-        if(isDrawable)manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(tempDto, mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
     }
 
     private void processIdenResult(NucIdent nuc) {
@@ -633,8 +560,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.nav_generate) {
             toggleGenButton();
         } else if (id == R.id.nav_switch_5) {
-            fragment2.update();
-            Log.e(TAG, "onNavigationItemSelected: ");
+
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -654,7 +580,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int count = 0;//cnt;
             public void run() {
                 if (count++ < mViewModel.getRequiredTime()) {
-                    mixerPreTeak(count, 1, true);
+//                    mixerPreTeak(count, 1, true);
+                    mixerPreTeak2(count, 1, true);
                     handler.postDelayed(runnable, mViewModel.getDelay());
                 } else {
 //                    mViewModel.setTempDTO(new SpecDTO(1024));
@@ -681,21 +608,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void preferenceMixer() {
-        SpecDTO emptyDto = new SpecDTO(1024);
+    private void mixerPreTeak2(int count, int rqTimeOne, boolean isDrawable) {
+        generateSpectrumTeak(emptyDto, mViewModel.getTempDTO(), emptyDto.getMeasTim()[0], rqTimeOne, count, isDrawable);
+    }
+
+    SpecDTO emptyDto;
+
+    public void preferenceMixer() {
+        emptyDto = new SpecDTO(1024);
 //        emptyDto.setMeasTim(new int[]{1,1});
         for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
             if(parcel.isChecked()) {
                 SpecDTO dto = parcel.getReferenceDTO();
-                emptyDto.addSpectrumToCurrent(dto.getSpectrum());
+                emptyDto.addSpectrumToCurrent(dto.getSpectrum(), parcel.getPercent());
                 if(dto.getMeasTim()[0]>emptyDto.getMeasTim()[0])emptyDto.setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
-                /////emptyDto.setMeasTim(new int[]{emptyDto.getMeasTim()[0]+dto.getMeasTim()[0],1});//в meas сохраняется сумма времен всех спектров
+                //emptyDto.setMeasTim(new int[]{emptyDto.getMeasTim()[0]+dto.getMeasTim()[0],1});//в meas сохраняется сумма времен всех спектров
 //                dto.getMeasTim()[0] * 100 / parcel.getPercent());
                 manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
 //                manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
+//                    mViewModel.getReferenceFragment().setNewValues(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners);
+//                    mViewModel.getReferenceFragment().update();
             }
         }
     }
+
+
 
     void startQuickMixer()
     {
@@ -709,8 +646,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 genButton.setBackground(drawable);
         }
 //        manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-            fragment2.setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
-            fragment2.update();
+            mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
+            mViewModel.getGeneratedFragment().update();
     }
 
     void stop() {

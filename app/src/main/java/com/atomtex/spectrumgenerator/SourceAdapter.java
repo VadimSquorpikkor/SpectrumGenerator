@@ -78,6 +78,7 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
             public void onStopTrackingTouch(SeekBar seekBar) {
                 et.setText("" + seekBar.getProgress());
                 mViewModel.setPercentParcel(position, Integer.parseInt(toString().valueOf(seekBar.getProgress())));
+                ((MixerListFragment)fragment).updateRefFragment();
             }
         });
 
@@ -85,6 +86,7 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mViewModel.setIsCheckedParcel(position, isChecked);
+                ((MixerListFragment)fragment).updateRefFragment();
             }
         });
 

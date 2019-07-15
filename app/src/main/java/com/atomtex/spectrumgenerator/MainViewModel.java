@@ -3,6 +3,7 @@ package com.atomtex.spectrumgenerator;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,25 @@ public class MainViewModel extends AndroidViewModel {
     private boolean isSecMode = true;
     public boolean isFirstTime = true;
 
+//----------------FRAGMENTS-------------------------------------------------------------------------
+    private SpectrumFragment referenceFragment;
+    private SpectrumFragment generatedFragment;
+
+    public SpectrumFragment getReferenceFragment() {
+        return referenceFragment;
+    }
+
+    public void setReferenceFragment(SpectrumFragment referenceFragment) {
+        this.referenceFragment = referenceFragment;
+    }
+
+    public SpectrumFragment getGeneratedFragment() {
+        return generatedFragment;
+    }
+
+    public void setGeneratedFragment(SpectrumFragment generatedFragment) {
+        this.generatedFragment = generatedFragment;
+    }
 
 //----------------VISIBILITIES----------------------------------------------------------------------
 

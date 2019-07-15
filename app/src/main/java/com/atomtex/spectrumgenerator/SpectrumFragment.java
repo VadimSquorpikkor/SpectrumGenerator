@@ -197,10 +197,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
 
     private String fragmentID;
-    SpecDTO dto;
-/*    float[] peaks;
-    float[] peakEnergies;
-    String[] lineOwners;*/
 
     int impSum;
 
@@ -306,6 +302,14 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             mEntries.add(new Entry(i, spectrum[i]));
         }
 
+        //todo затычка для отображения в логарифме при апдейте графика. почему без затычки график сбрасывается в линейный -- хз
+        if (mStates[BUTTON_DATA_MODE]) {
+            mSpectrumChart.getAxisLeft().setGranularity(0.15f);
+            for (Entry entry : mEntries) {
+                entry.setY(scaleCbr(entry.getY()));
+            }
+        }
+
         updateChart();
     }
 
@@ -397,14 +401,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
         TextView frIDtext = view.findViewById(R.id.fragment_id);
         frIDtext.setText(fragmentID);
-        /*chViewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Log.e("Tag", "onClick: ");
-//                Toast.makeText(getActivity(), "fragment ID = " + getFragmentID(), Toast.LENGTH_SHORT).show();
-                getFragmentID();
-            }
-        });*/
 
         //Set name of spectrum file as an action bar title
         ActionBar supportActionBar = ((AppCompatActivity) mContext).getSupportActionBar(); //todo было FragmentActivity вместо AppCompatActivity
@@ -444,8 +440,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         buttonControls.setButtonDatas(buttonDataList);
 
         buttonControls.setButtonEventListener(this);
-
-        //todo delete
 
         updateChart();
 
@@ -736,6 +730,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         }
 
         if (i == BUTTON_DATA_MODE) {
+            Log.e(TAG, "onButtonClicked: ");
             if (mStates[BUTTON_DATA_MODE]) {
                 mSpectrumChart.getAxisLeft().setGranularity(0.15f);
                 for (Entry entry : mEntries) {

@@ -275,6 +275,12 @@ public class SpecDTO implements Parcelable {
         }
     }
 
+    public void addSpectrumToCurrent(int[] spectrum, int percent) {
+        for (int i = 0; i < spectrum.length; i++) {
+            mSpectrum[i] += spectrum[i]*percent/100;
+        }
+    }
+
     public String getFileName() {
         return fileName;
     }
