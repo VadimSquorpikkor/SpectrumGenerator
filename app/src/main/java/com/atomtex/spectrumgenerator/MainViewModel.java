@@ -25,6 +25,16 @@ public class MainViewModel extends AndroidViewModel {
     private int delay = 1;
     private boolean isSecMode = true;
     public boolean isFirstTime = true;
+    SpecDTO emptyDto;
+
+    public SpecDTO getEmptyDto() {
+        return emptyDto;
+    }
+
+    public void setEmptyDto(SpecDTO emptyDto) {
+        this.emptyDto = emptyDto;
+    }
+
 
 //----------------FRAGMENTS-------------------------------------------------------------------------
     private SpectrumFragment referenceFragment;
@@ -94,6 +104,29 @@ public class MainViewModel extends AndroidViewModel {
         this.matrixVisibility = matrixVisibility;
     }
 
+//----------------MODES-----------------------------------------------------------------------------
+
+    private int mixerMode = 0;
+    private int timeLayoutMode = 0;
+
+    public int getMixerMode() {
+        return mixerMode;
+    }
+
+    public void setMixerMode(int mixerMode) {
+        this.mixerMode = mixerMode;
+    }
+
+    public int getTimeLayoutMode() {
+        return timeLayoutMode;
+    }
+
+    public void setTimeLayoutMode(int timeLayoutMode) {
+        this.timeLayoutMode = timeLayoutMode;
+    }
+
+
+
 //----------------MIXER PARCEL----------------------------------------------------------------------
 
     private List<SpecMixerParcel> sourceList = new ArrayList<>();
@@ -141,15 +174,7 @@ public class MainViewModel extends AndroidViewModel {
         this.delay = delay;
     }
 
-    public int getTimeLayoutMode() {
-        return timeLayoutMode;
-    }
 
-    public void setTimeLayoutMode(int timeLayoutMode) {
-        this.timeLayoutMode = timeLayoutMode;
-    }
-
-    private int timeLayoutMode = 0;
     private boolean genButtonIsPressed = false;
 
     public boolean isGenButtonIsPressed() {

@@ -3,36 +3,67 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center"
 
+    >
 
-    <LinearLayout style="@style/horizontal_layout"
-        android:gravity="center_vertical">
+<!--    <Button
+        android:id="@+id/hide_mixer_button"
+        style="@style/down_arrow"/>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mixer"
-            android:layout_weight="1"
-            android:textColor="@color/colorOrange"
-            android:textSize="18sp">
-        </TextView>
+        <LinearLayout
+            android:id="@+id/name"
+            style="@style/horizontal_layout"
+            android:gravity="center_vertical">
 
-        <TextView android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Добавить спектр"
-            >
-        </TextView>
+<!--            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:text="Mixer"
+                android:textColor="@color/colorOrange"
+                android:textSize="18sp">
 
-        <Button style="@style/add_new_button"
-            android:id="@+id/add_new_spectrum"/>
+            </TextView>-->
+            <Button
+                android:id="@+id/hide_time_image"
+                style="@style/exp_more_button"/>
 
-    </LinearLayout>
+            <TextView
 
-    <ListView
-        android:id="@+id/my_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Свернуть"
+                android:id="@+id/hide_mixer_button"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Добавить спектр"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:layout_marginRight="5dp">
+
+            </TextView>
+
+            <Button
+                android:id="@+id/add_new_spectrum"
+                style="@style/add_new_button"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/my_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/name"
+            android:layout_marginTop="0dp">
+
+        </ListView>
+
 
 </LinearLayout>

@@ -31,7 +31,7 @@ public class Toggler {
         if (isOn) ((Activity) context).findViewById(res_1).setVisibility(View.VISIBLE);
         else ((Activity) context).findViewById(res_1).setVisibility(View.GONE);
     }
-
+//--------------------------------------------------------------------------------------------------
 /*    public void setRefLayoutMode(int mode) {
         toggleStuff(R.id.fragment_container1, R.id.ref_spec_layout, mode);
     }*/
@@ -64,6 +64,10 @@ public class Toggler {
 
     public void setTimeLayoutMode(int mode) {
         toggleStuff(R.id.time_layout_small, R.id.time_layout_big, mode);
+    }
+
+    public void setMixerLayoutMode(int mode) {
+        toggleStuff(R.id.mixer_fragment_list_view_big, R.id.mixer_fragment_list_view_small, mode);
     }
 
 //--------------------------------------------------------------------------------------------------
@@ -101,5 +105,7 @@ public class Toggler {
     }
 
 //--------------------------------------------------------------------------------------------------
+
+
 
 }

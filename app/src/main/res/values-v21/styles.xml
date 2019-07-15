@@ -70,6 +70,20 @@
         <item name="android:background">@drawable/baseline_expand_less_white_48dp</item>
     </style>
 
+    <style name="show_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_visibility_white_48dp</item>
+    </style>
+
+    <style name="hide_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_visibility_off_white_48dp</item>
+    </style>
+
+    <style name="down_arrow" parent="small_button">
+        <item name="android:background">@drawable/baseline_arrow_drop_down_white_short</item>
+        <item name="android:layout_width">116dp</item>
+        <item name="android:layout_height">11dp</item>
+    </style>
+
     <style name="nice_button_without" parent="nice_button">
         <item name="android:background">@drawable/my_shape</item>
     </style>

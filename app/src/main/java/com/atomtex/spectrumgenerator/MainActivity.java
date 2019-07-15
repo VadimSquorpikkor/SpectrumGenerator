@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        toggler.setButtonMode(mViewModel.getButtonMode());
         toggler.setTimeLayoutMode(mViewModel.getTimeLayoutMode());
         toggler.setAllVisibilities();
+        toggler.setMixerLayoutMode(mViewModel.getMixerMode());
 
         requiredTimeTV = findViewById(R.id.requiredTime);
         delayTimeTV = findViewById(R.id.delay_time_main);
@@ -128,8 +129,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.gen_button).setOnClickListener(this);
         findViewById(R.id.time_layout).setOnClickListener(this);
-//        findViewById(R.id.ref_spec_exp_more_button).setOnClickListener(this);
-//        findViewById(R.id.ref_spec_exp_less_button).setOnClickListener(this);
+        findViewById(R.id.mixer_fragment_list_view).setOnClickListener(this);
+        findViewById(R.id.hide_time_button).setOnClickListener(this);
+        findViewById(R.id.add_new_spectrum_2).setOnClickListener(this);
 
         final SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
@@ -138,18 +140,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final SeekBar seekBarTime = findViewById(R.id.seekBar2);
         seekBarTime.setOnSeekBarChangeListener(this);
         seekBarTime.setProgress(mViewModel.getRequiredTime());
-
-//        toggler.setRefLayoutMode(0);
-
-/*
-        switchTV = findViewById(R.id.switch1);
-        if (switchTV != null) switchTV.setOnCheckedChangeListener(this);
-        switchTV.setChecked(true);
-*/
-
-
-//        Switch sw = findViewById(R.id.nav_switch_1);
-//        sw.setChecked(true);
 
         navigationView.getMenu().findItem(R.id.nav_switch_1).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_2).setActionView(new Switch(this));
@@ -187,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
 //        mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
 //        fragment3 = manager.findFragmentById(R.id.mixer_fragment);
-        fragment4 = manager.findFragmentById(R.id.mixer_fragment_list_view);
+        fragment4 = manager.findFragmentById(R.id.mixer_fragment_list_view_big);
 
         if (mViewModel.getReferenceFragment() == null) {
             mViewModel.setReferenceFragment(SpectrumFragment.newInstance(REFERENCE_SPECTRUM));
@@ -202,8 +192,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (fragment4 == null) {
             fragment4 = MixerListFragment.newInstance();
-            manager.beginTransaction().replace(R.id.mixer_fragment_list_view, fragment4).commit();
+            manager.beginTransaction().replace(R.id.mixer_fragment_list_view_big, fragment4).commit();
         }
+
+//        hideButtonMixer();
 
     }
 
@@ -232,17 +224,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.gen_button: toggleGenButton(); break;
-            case R.id.time_layout: toggleTimeLayoutMode(); break;
-//            case R.id.ref_spec_exp_less_button: toggler.setRefLayoutMode(1); break;
-//            case R.id.ref_spec_exp_more_button: toggler.setRefLayoutMode(0); break;
+            case R.id.time_layout: toggler.setTimeLayoutMode(1); break;
+            case R.id.hide_time_button: toggler.setTimeLayoutMode(0); break;
+            case R.id.mixer_fragment_list_view: toggler.setMixerLayoutMode(0); break;
+            case R.id.add_new_spectrum_2: openFile(); break;
+        }
+    }
+
+    public void hideMixer() {
+        Log.e(TAG, "hideMixer: ");
+        toggler.setMixerLayoutMode(1);
+    }
+
+    public void hideButtonMixer() {
+        if(mViewModel.getSourceList().size()==0) {
+            ((MixerListFragment) fragment4).getView().findViewById(R.id.hide_mixer_button).setVisibility(View.GONE);
+            ((MixerListFragment) fragment4).getView().findViewById(R.id.hide_time_image).setVisibility(View.GONE);
         }
     }
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        /*if(buttonView.getId()==R.id.switch1) {
-            if (isChecked) mViewModel.setSecMode(true);
-            else mViewModel.setSecMode(false);
-        }*/
         if(buttonView.getId()==R.id.nav_switch_1) toggler.setReferenceFragmentMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_2) toggler.setMixerMode(isChecked);
         if(buttonView.getId()==R.id.nav_switch_3) toggler.setTimeMode(isChecked);
@@ -252,19 +253,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         saveVars();
     }
 
-    public void openAts() {
+    public void openFile() {
         Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setDataAndType(selectedUri, "*/*");
         startActivityForResult(intent, 1);//TODO request code сделать psf
     }
-
-    /*private void gen() {   //////////old
-        if (iCanGenerate()) generateSpectrum(mViewModel.getPathForAts(), mViewModel.getSpectrumTime(), mViewModel.getRequiredTime());
-        else makeToast("Сначала загрузите файл .ats");
-    }*/
-
-//    mViewModel.getRequiredTime()
 
     private void gen() {
         if (iCanGenerate()) {
@@ -556,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
 
         if (id == R.id.nav_open_ats) {
-            openAts();
+            openFile();
         } else if (id == R.id.nav_generate) {
             toggleGenButton();
         } else if (id == R.id.nav_switch_5) {
@@ -609,27 +603,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void mixerPreTeak2(int count, int rqTimeOne, boolean isDrawable) {
-        generateSpectrumTeak(emptyDto, mViewModel.getTempDTO(), emptyDto.getMeasTim()[0], rqTimeOne, count, isDrawable);
+        generateSpectrumTeak(mViewModel.getEmptyDto(), mViewModel.getTempDTO(), mViewModel.getEmptyDto().getMeasTim()[0], rqTimeOne, count, isDrawable);
     }
 
-    SpecDTO emptyDto;
+
 
     public void preferenceMixer() {
-        emptyDto = new SpecDTO(1024);
+        mViewModel.setEmptyDto(new SpecDTO(1024));
+/*        mPeakChannels = new float[]{0};
+        mPeakEnergies = new float[]{0};
+        mLineOwners = new String[]{""};*/
 //        emptyDto.setMeasTim(new int[]{1,1});
         for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
             if(parcel.isChecked()) {
                 SpecDTO dto = parcel.getReferenceDTO();
-                emptyDto.addSpectrumToCurrent(dto.getSpectrum(), parcel.getPercent());
-                if(dto.getMeasTim()[0]>emptyDto.getMeasTim()[0])emptyDto.setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
+                mViewModel.getEmptyDto().addSpectrumToCurrent(dto.getSpectrum(), parcel.getPercent());
+                if(dto.getMeasTim()[0]>mViewModel.getEmptyDto().getMeasTim()[0])mViewModel.getEmptyDto().setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
                 //emptyDto.setMeasTim(new int[]{emptyDto.getMeasTim()[0]+dto.getMeasTim()[0],1});//в meas сохраняется сумма времен всех спектров
 //                dto.getMeasTim()[0] * 100 / parcel.getPercent());
-                manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
 //                manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
 //                    mViewModel.getReferenceFragment().setNewValues(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners);
 //                    mViewModel.getReferenceFragment().update();
             }
         }
+                manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
     }
 
 

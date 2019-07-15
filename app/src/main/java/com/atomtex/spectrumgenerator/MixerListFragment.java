@@ -22,6 +22,8 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     SourceAdapter sourceAdapter;
     Button bt;
     ListView lvMain;
+    Toggler toggler;
+    Button hide_time;
 
     public static MixerListFragment newInstance() {
         return new MixerListFragment();
@@ -49,6 +51,17 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
                 Log.e(TAG, "onItemClick: " + (int)id);
             }
         });
+
+        v.findViewById(R.id.hide_mixer_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).hideMixer();
+            }
+        });
+
+
+
+
     }
 
     @Override
@@ -66,12 +79,18 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         //((MainActivity)getActivity()).openAts(0) ;break;
-        if (v.getId() == R.id.add_new_spectrum)((MainActivity) getActivity()).openAts();
+        Log.e(TAG, "onClick: ");
+        if (v.getId() == R.id.add_new_spectrum)((MainActivity) getActivity()).openFile();
+
+//        if (v.getId() == R.id.hide_mixer_button) Log.e(TAG, "onClick: ");
     }
 
     public void updateAdapter() {
+        ((MainActivity) getActivity()).hideButtonMixer();
         lvMain.setAdapter(sourceAdapter);//обновить адаптер после добавления новых элементов*/
     }
+
+
 
     void deleteDialog(final int position) {
         final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
