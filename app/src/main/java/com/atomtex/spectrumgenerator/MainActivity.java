@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.e(TAG, "onCreate: ");
 
         saveLoad = new SaveLoad(this);
 
@@ -185,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
 
         if (mViewModel.getGeneratedFragment() == null) {
-            Log.e(TAG, "---------------------onCreate: MEW GEN FRAGMENT CREATED");
             mViewModel.setGeneratedFragment(SpectrumFragment.newInstance(GENERATED_SPECTRUM));
             manager.beginTransaction().replace(R.id.fragment_container2, mViewModel.getGeneratedFragment()).commit();
         } else mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
@@ -232,15 +230,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void hideMixer() {
-        Log.e(TAG, "hideMixer: ");
         toggler.setMixerLayoutMode(1);
     }
 
-    public void hideButtonMixer() {
-        if(mViewModel.getSourceList().size()==0) {
-            ((MixerListFragment) fragment4).getView().findViewById(R.id.hide_mixer_button).setVisibility(View.GONE);
-            ((MixerListFragment) fragment4).getView().findViewById(R.id.hide_time_image).setVisibility(View.GONE);
-        }
+    public void mixerButonMode() {
+//        if(mViewModel.getSourceList().size()<1) fragment4.getView().findViewById(R.id.hide_mixer_button).setVisibility(View.GONE);
+//        else fragment4.getView().findViewById(R.id.hide_mixer_button).setVisibility(View.VISIBLE);
+
+        toggler.setMixerLayoutMode(0);
     }
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -282,11 +279,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else makeToast("Сначала загрузите файл спектра");
     }
 
-    private void genReferenceMixer() {
+/*    private void genReferenceMixer() {
             getParamFromTimeField();
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
             mixerPreTeak(mViewModel.getRequiredTime()-1, mViewModel.getRequiredTime(), true);
-    }
+    }*/
 
     public boolean iCanGenerate() {
 //        return !TextUtils.isEmpty(mViewModel.getPathForAts());// if not empty or not null
@@ -310,15 +307,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         delayText.setText(String.valueOf(delay));
     }
 
-    public void toggleTimeLayoutMode() {
+    public void setTimeLayoutMode(int mode) {
         getParamFromTimeField();
         setDelayTime();
         setRequiredTime();
-
-        int mode = 0;
+        toggler.setTimeLayoutMode(mode);
+        /*int mode = 0;
         if (mViewModel.getTimeLayoutMode() == 0) mode = 1;
         mViewModel.setTimeLayoutMode(mode);
-        toggler.setTimeLayoutMode(mode);
+        toggler.setTimeLayoutMode(mode);*/
     }
 
 
@@ -379,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private String makeName(String path) {
+    private String makeName() {
         String name = "Unknown";
 //        name = path.substring(path.length() - 10);
         if(!nameForMixer.equals(""))name = nameForMixer;
@@ -390,6 +387,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //todo вынести метод в отдельный класс (Controller)
     private void openAtsFile(String path) {//todo убрать pos
 
+        nameForMixer = ""; //сброс
         SpecDTO dto = AtsReader.parseFile(path);
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
@@ -406,7 +404,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
 
-        mViewModel.addNewSpectrum(dto, makeName(path));
+        mViewModel.addNewSpectrum(dto, makeName());
+        Log.e(TAG, "-------------------openAtsFile MANE FOR MIXER: " + nameForMixer);
         nameForMixer = ""; //сброс
 //        Log.e(TAG, "openSpeFile: " + mLineOwners[1]);
 //        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
@@ -416,8 +415,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void identificateNucl(SpecDTO dto) {
+//        dto.setMeasTim(new int[]{count, 1});
+        if (dto != null) {
+            int[] spectrum = dto.getSpectrum();
+            float[] energy = dto.getEnergy();
+            float[] sigma = dto.getSigma();
+
+/*            Log.e(TAG, "generateSpectrumTeak: ----------------- SPECTRUM = " + spectrum.length);
+            Log.e(TAG, "generateSpectrumTeak: ----------------- ENERGY = " + energy.length);
+            Log.e(TAG, "generateSpectrumTeak: ----------------- SIGMA = " + sigma.length);*/
+
+            NucIdent nuc = null;
+            try {
+                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
+            } catch (ProcessException e) {
+                e.printStackTrace();
+            }
+            processIdenResult(nuc);
+        }
+
+    }
+
     //todo объединить с ats
     private void openSpeFile(String path) {//todo убрать pos
+        nameForMixer = ""; //сброс
         SpecDTO dto = SpeReader.parseFile(path);
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
@@ -433,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             processIdenResult(nuc);
         }
-        mViewModel.addNewSpectrum(dto, makeName(path));
+        mViewModel.addNewSpectrum(dto, makeName());
             nameForMixer = ""; //сброс
 //        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
@@ -451,6 +473,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int[] spectrum = tempDto.getSpectrum();
         float[] energy = tempDto.getEnergy();
         float[] sigma = tempDto.getSigma();
+/*        Log.e(TAG, "generateSpectrumTeak: ----------------- SPECTRUM = " + spectrum.length);
+        Log.e(TAG, "generateSpectrumTeak: ----------------- ENERGY = " + energy.length);
+        Log.e(TAG, "generateSpectrumTeak: ----------------- SIGMA = " + sigma.length);*/
         NucIdent nuc = null;
         try {
             nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
@@ -458,6 +483,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         processIdenResult(nuc);
+
+
+
         if(isDrawable) {
             mViewModel.getGeneratedFragment().setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
             mViewModel.getGeneratedFragment().update();
@@ -468,6 +496,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         List<Nuclide> nuclides = NucIdent.getNuclides();
         int numLines = nuc.getnLine();
+
+        Log.e(TAG, "processIdenResult: NUM_LINES = " + numLines);
 
         if (numLines > 0) {
             float[] peaks = nuc.getNiChannels();
@@ -504,8 +534,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mPeakChannels = peakChannels;
             mPeakEnergies = peakEnergies;
             mLineOwners = lineOwners;
+            Log.e(TAG, "identMixer: ch = " + mPeakChannels.length + ", ener = " + mPeakEnergies.length + ", lines = " + mLineOwners.length);
         } else {
-            mPeakChannels = null;
+            mPeakChannels = null;//todo было включено, но с включенной не определяется нуклид в методе identificateNucl, но определяется при генерации. нужно разобраться  и сделать так, чтобы работало при включенной
         }
 
 //        return nuclides;
@@ -555,6 +586,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             toggleGenButton();
         } else if (id == R.id.nav_switch_5) {
 
+        } else if (id == R.id.nav_iden) {
+//            identificateNucl(mViewModel.getEmptyDto());
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -592,15 +625,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void mixerPreTeak(int count, int rqTimeOne, boolean isDrawable) {
-//        if(mViewModel.getSourceList().size()==0)manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(REFERENCE_SPECTRUM)).commitAllowingStateLoss();
+    //старая версия для раздельного складывания спектров -- в новой версии складываются доли уже сложенного спектра
+    /*private void mixerPreTeak(int count, int rqTimeOne, boolean isDrawable) {
+///////        if(mViewModel.getSourceList().size()==0)manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(REFERENCE_SPECTRUM)).commitAllowingStateLoss();
         for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
             if(parcel.isChecked()) {
                 SpecDTO dto = parcel.getReferenceDTO();
                 generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / parcel.getPercent(), rqTimeOne, count, isDrawable);
             }
         }
-    }
+    }*/
 
     private void mixerPreTeak2(int count, int rqTimeOne, boolean isDrawable) {
         generateSpectrumTeak(mViewModel.getEmptyDto(), mViewModel.getTempDTO(), mViewModel.getEmptyDto().getMeasTim()[0], rqTimeOne, count, isDrawable);
@@ -610,6 +644,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void preferenceMixer() {
         mViewModel.setEmptyDto(new SpecDTO(1024));
+//        mViewModel.getEmptyDto();
+//        dto.setSpectrum(new int[1024]);
+//        dto.setMeasTim(new int[]{1,1});
+//        dto.setEnergy(new float[1024]);
 /*        mPeakChannels = new float[]{0};
         mPeakEnergies = new float[]{0};
         mLineOwners = new String[]{""};*/
@@ -626,15 +664,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    mViewModel.getReferenceFragment().update();
             }
         }
-                manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
+
+
+
+
+
+
+//        Log.e(TAG, "--------------------preferenceMixer: GET ENERGY length = " + mViewModel.getEmptyDto().getEnergy().length);
+        identificateNucl(mViewModel.getEmptyDto());
+
+/*        mViewModel.getReferenceFragment().setNewValues(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners);
+        mViewModel.getReferenceFragment().update();*/
+//        Log.e(TAG, "preferenceMixer: " + mPeakChannels.length + mPeakEnergies.length + mLineOwners.length);
+        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
     }
-
-
 
     void startQuickMixer()
     {
         for (int count = 0; count < mViewModel.getRequiredTime(); count++) {
-            mixerPreTeak(count, 1, false);
+            mixerPreTeak2(count, 1, false);
         }
         genButton.setText("Генератор");
         mViewModel.setGenButtonIsPressed(false);
@@ -671,19 +719,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause: ");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.e(TAG, "onRestart: ");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume: ");
         mViewModel.isFirstTime = false;
     }
 }

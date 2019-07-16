@@ -25,7 +25,7 @@ public class MainViewModel extends AndroidViewModel {
     private int delay = 1;
     private boolean isSecMode = true;
     public boolean isFirstTime = true;
-    SpecDTO emptyDto;
+    SpecDTO emptyDto = new SpecDTO(1024);
 
     public SpecDTO getEmptyDto() {
         return emptyDto;

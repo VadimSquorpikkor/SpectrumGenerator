@@ -27,32 +27,56 @@
                 android:textSize="18sp">
 
             </TextView>-->
-            <Button
-                android:id="@+id/hide_time_image"
-                style="@style/exp_more_button"/>
 
-            <TextView
-
+            <LinearLayout
+                android:id="@+id/hide_mixer_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Свернуть"
-                android:id="@+id/hide_mixer_button"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Добавить спектр"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:layout_marginRight="5dp">
+                <ImageView
+                    android:id="@+id/hide_time_image"
+                    style="@style/exp_more_button"/>
 
-            </TextView>
+                <TextView
 
-            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="Свернуть" />
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
                 android:id="@+id/add_new_spectrum"
-                style="@style/add_new_button"
-                />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Добавить спектр"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:layout_marginRight="5dp">
+
+                </TextView>
+
+                <ImageView
+                    style="@style/add_new_button"
+                    />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

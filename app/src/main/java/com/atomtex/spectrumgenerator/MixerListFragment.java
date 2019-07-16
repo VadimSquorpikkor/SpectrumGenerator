@@ -69,8 +69,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_mixer_list, null);
         mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);//todo in newInstance?
-        bt = v.findViewById(R.id.add_new_spectrum);
-        bt.setOnClickListener(this);
+        v.findViewById(R.id.add_new_spectrum).setOnClickListener(this);
         return v;
 
 
@@ -86,7 +85,8 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     }
 
     public void updateAdapter() {
-        ((MainActivity) getActivity()).hideButtonMixer();
+//        ((MainActivity) getActivity()).identificateNuc(mViewModel.getEmptyDto());
+        ((MainActivity) getActivity()).preferenceMixer();
         lvMain.setAdapter(sourceAdapter);//обновить адаптер после добавления новых элементов*/
     }
 
@@ -115,6 +115,8 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     }
 
     public void updateRefFragment() {
+
         ((MainActivity)getActivity()).preferenceMixer();
+//        ((MainActivity) getActivity()).identificateNuc(mViewModel.getEmptyDto());
     }
 }

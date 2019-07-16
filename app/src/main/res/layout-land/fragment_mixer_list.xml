@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+
+    >
+
+    <!--    <Button
+            android:id="@+id/hide_mixer_button"
+            style="@style/down_arrow"/>-->
+
+    <LinearLayout
+        android:id="@+id/name"
+        style="@style/horizontal_layout"
+        android:gravity="center_vertical">
+
+        <!--            <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:text="Mixer"
+                        android:textColor="@color/colorOrange"
+                        android:textSize="18sp">
+
+                    </TextView>-->
+
+        <LinearLayout
+            android:id="@+id/hide_mixer_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/hide_time_image"
+                style="@style/exp_more_button"/>
+
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:id="@+id/add_new_spectrum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+
+            >
+
+            <ImageView
+                style="@style/add_new_button"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/my_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/name"
+        android:layout_marginTop="0dp">
+
+    </ListView>
+
+
+</LinearLayout>
