@@ -20,7 +20,9 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -120,6 +122,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         genButton = findViewById(R.id.gen_button);
         timeText = findViewById(R.id.dialog_required_time_text);
         delayText = findViewById(R.id.dialog_delay_text);
+
+        timeText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                setRequiredTime();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                setRequiredTime();
+            }
+        });
+
+        delayText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                setDelayTime();
+                Log.e(TAG, "onTextChanged: ");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                setDelayTime();
+                Log.e(TAG, "afterTextChanged: ");
+            }
+        });
 
         setRequiredTime();
         setDelayTime();
@@ -259,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void gen() {
         if (iCanGenerate()) {
-            getParamFromTimeField();
+            //getParamFromTimeField();
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
 //            mixerPreTeak(mViewModel.getRequiredTime()-1, mViewModel.getRequiredTime());
             startQuickMixer();
@@ -268,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void genMixer() {
         if (iCanGenerate()){
-            getParamFromTimeField();
+            //getParamFromTimeField();
             ////////////////////////////////////////
             // mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
 //            mViewModel.setTempDTO(SpeReader.parseFile(mViewModel.getPathForAts()));
@@ -290,27 +328,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return mViewModel.getSourceList().size()>0;
     }
 
-    public void getParamFromTimeField() {
+    /*public void getParamFromTimeField() {
         mViewModel.setRequiredTime(Integer.parseInt(timeText.getText().toString()));
         mViewModel.setDelay(Integer.parseInt(delayText.getText().toString()));
+    }*/
+
+    private void setDelayAndReqTime() {
+        requiredTimeTV.setText(String.valueOf(mViewModel.getRequiredTime()));
+        delayTimeTV.setText(String.valueOf(mViewModel.getDelay()));
     }
 
     private void setRequiredTime() {
-        int time = mViewModel.getRequiredTime();
-        requiredTimeTV.setText(String.valueOf(time));//todo может есть смысл хранить в стринге?
-        timeText.setText(String.valueOf(time));
+        requiredTimeTV.setText(String.valueOf(mViewModel.getRequiredTime()));
     }
 
     private void setDelayTime() {
-        int delay = mViewModel.getDelay();
-        delayTimeTV.setText(String.valueOf(delay));
-        delayText.setText(String.valueOf(delay));
+        delayTimeTV.setText(String.valueOf(mViewModel.getDelay()));
     }
 
     public void setTimeLayoutMode(int mode) {
-        getParamFromTimeField();
-        setDelayTime();
-        setRequiredTime();
+//        getParamFromTimeField();
+//        setDelayTime();
+//        setRequiredTime();
         toggler.setTimeLayoutMode(mode);
         /*int mode = 0;
         if (mViewModel.getTimeLayoutMode() == 0) mode = 1;
