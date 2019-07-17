@@ -55,7 +55,7 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
         tw = view.findViewById(R.id.mixer_item_text);
         sb = view.findViewById(R.id.mixer_item_seek);
         ib = view.findViewById(R.id.mixer_item_delete);
-        final EditText et = view.findViewById(R.id.mixer_item_edit);
+        final TextView et = view.findViewById(R.id.mixer_item_edit);
 
         SpecMixerParcel state = sourceList.get(position);
 

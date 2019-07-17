@@ -3,28 +3,18 @@ package com.atomtex.spectrumgenerator;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,10 +36,6 @@ import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
-import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_DTO;
-import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_LINE_OWNERS;
-import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_PEAKS;
-import static com.atomtex.spectrumgenerator.SpectrumFragment.ARG_PEAKS_ENERGY;
 import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
 import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
@@ -96,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toggler = new Toggler(this, mViewModel);
 
         //если приложение только запустилось
-        if(mViewModel.isFirstTime) loadVars();
+        if (mViewModel.isFirstTime) loadVars();
 
         if (findViewById(R.id.nav_view) != null) {
             navigationView = findViewById(R.id.nav_view);
@@ -107,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mPrefIdenThreshold = 3;
 
-//        toggler.setDisplayMode(mViewModel.getDisplayMode());
-//        toggler.setButtonMode(mViewModel.getButtonMode());
         toggler.setTimeLayoutMode(mViewModel.getTimeLayoutMode());
         toggler.setAllVisibilities();
         toggler.setMixerLayoutMode(mViewModel.getMixerMode());
@@ -142,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.getMenu().findItem(R.id.nav_switch_2).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_3).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_4).setActionView(new Switch(this));
-        navigationView.getMenu().findItem(R.id.nav_switch_5).setActionView(new Switch(this));
+//        navigationView.getMenu().findItem(R.id.nav_switch_5).setActionView(new Switch(this));
 
         ((Switch) findViewById(R.id.switch1)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -158,46 +142,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_2).getActionView()).setOnCheckedChangeListener(this);
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_3).getActionView()).setOnCheckedChangeListener(this);
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_4).getActionView()).setOnCheckedChangeListener(this);
-        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setOnCheckedChangeListener(this);
+//        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setOnCheckedChangeListener(this);
 
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_1).getActionView()).setChecked(mViewModel.isRefVisible());
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_2).getActionView()).setChecked(mViewModel.isMixerVisible());
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_3).getActionView()).setChecked(mViewModel.isTimeVisible());
         ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_4).getActionView()).setChecked(mViewModel.isButtonVisible());
-        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setChecked(mViewModel.isMatrixVisible());
-
-
-
+//        ((Switch) navigationView.getMenu().findItem(R.id.nav_switch_5).getActionView()).setChecked(mViewModel.isMatrixVisible());
 
         manager = getSupportFragmentManager();
-        //Это чтобы при повороте устройства не создавать новый фрагмент:
-//        mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
-//        mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
-//        fragment3 = manager.findFragmentById(R.id.mixer_fragment);
         fragment4 = manager.findFragmentById(R.id.mixer_fragment_list_view_big);
 
         if (mViewModel.getReferenceFragment() == null) {
             mViewModel.setReferenceFragment(SpectrumFragment.newInstance(REFERENCE_SPECTRUM));
             manager.beginTransaction().replace(R.id.fragment_container1, mViewModel.getReferenceFragment()).commit();
-        } else mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
+
+        } else {
+            mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
+            //preferenceMixer();
+        }
 
         if (mViewModel.getGeneratedFragment() == null) {
             mViewModel.setGeneratedFragment(SpectrumFragment.newInstance(GENERATED_SPECTRUM));
             manager.beginTransaction().replace(R.id.fragment_container2, mViewModel.getGeneratedFragment()).commit();
-        } else mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
+        } else
+            mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
+        //else
+//        else mViewModel.getGeneratedFragment().update();
 
         if (fragment4 == null) {
             fragment4 = MixerListFragment.newInstance();
             manager.beginTransaction().replace(R.id.mixer_fragment_list_view_big, fragment4).commit();
         }
 
+
+//        if (iCanGenerate()) preferenceMixer();
 //        hideButtonMixer();
+
 
     }
 
     private void loadVars() {
         ArrayList<Boolean> b = saveLoad.loadBooleanArray(SHARED_PREFFERENCES);
-        if(b.size()>0){
+        if (b.size() > 0) {
             mViewModel.setRefVisibility(b.get(0));
             mViewModel.setMixerVisibility(b.get(1));
             mViewModel.setTimeVisibility(b.get(2));
@@ -219,11 +206,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.gen_button: toggleGenButton(); break;
-            case R.id.time_layout: toggler.setTimeLayoutMode(1); break;
-            case R.id.hide_time_button: hideTime(); break;
-            case R.id.mixer_fragment_list_view: toggler.setMixerLayoutMode(0); break;
-            case R.id.add_new_spectrum_2: openFile(); break;
+            case R.id.gen_button:
+                toggleGenButton();
+                break;
+            case R.id.time_layout:
+                toggler.setTimeLayoutMode(1);
+                break;
+            case R.id.hide_time_button:
+                hideTime();
+                break;
+            case R.id.mixer_fragment_list_view:
+                toggler.setMixerLayoutMode(0);
+                break;
+            case R.id.add_new_spectrum_2:
+                openFile();
+                break;
         }
     }
 
@@ -247,11 +244,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(buttonView.getId()==R.id.nav_switch_1) toggler.setReferenceFragmentMode(isChecked);
-        if(buttonView.getId()==R.id.nav_switch_2) toggler.setMixerMode(isChecked);
-        if(buttonView.getId()==R.id.nav_switch_3) toggler.setTimeMode(isChecked);
-        if(buttonView.getId()==R.id.nav_switch_4) toggler.setButtonsMode(isChecked);
-        if(buttonView.getId()==R.id.nav_switch_5) toggler.setMatrixMode(isChecked);
+        if (buttonView.getId() == R.id.nav_switch_1) toggler.setReferenceFragmentMode(isChecked);
+        if (buttonView.getId() == R.id.nav_switch_2) toggler.setMixerMode(isChecked);
+        if (buttonView.getId() == R.id.nav_switch_3) toggler.setTimeMode(isChecked);
+        if (buttonView.getId() == R.id.nav_switch_4) toggler.setButtonsMode(isChecked);
+//        if(buttonView.getId()==R.id.nav_switch_5) toggler.setMatrixMode(isChecked);
 
         saveVars();
     }
@@ -269,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
 //            mixerPreTeak(mViewModel.getRequiredTime()-1, mViewModel.getRequiredTime());
             startQuickMixer();
-        }else makeToast("Сначала загрузите файл спектра");
+        } else makeToast("Сначала загрузите файл спектра");
     }
 
     private void genMixer() {
-        if (iCanGenerate()){
+        if (iCanGenerate()) {
             //getParamFromTimeField();
             ////////////////////////////////////////
             // mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
@@ -281,8 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
 //            mViewModel.getTempDTO().setSpectrum(new int[1024]);//todo ??????
             startMixer();
-        }
-        else makeToast("Сначала загрузите файл спектра");
+        } else makeToast("Сначала загрузите файл спектра");
     }
 
 /*    private void genReferenceMixer() {
@@ -293,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public boolean iCanGenerate() {
 //        return !TextUtils.isEmpty(mViewModel.getPathForAts());// if not empty or not null
-        return mViewModel.getSourceList().size()>0;
+        return mViewModel.getSourceList().size() > 0;
     }
 
     /*public void getParamFromTimeField() {
@@ -336,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }*/
 
     private void toggleGenButton() {
-        if (mViewModel.isSecMode() && iCanGenerate()){
+        if (mViewModel.isSecMode() && iCanGenerate()) {
             if (mViewModel.isGenButtonIsPressed()) {
                 stop();
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -362,33 +358,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-                    Uri uri = data.getData();
-                    if (uri != null) {
-                        String pathHolder = uri.toString();
-                        Log.e(TAG, "PATH: = " + pathHolder);
-                        if (pathHolder.endsWith(".ats")) {
-                            mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
-                            mViewModel.setTempDTO(AtsReader.parseFile(pathHolder));
-                            openAtsFile(pathHolder);
-                            makeToast("Открытие...");
-                        }
-                        else if (pathHolder.endsWith(".spe")) {
-                            mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
-                            mViewModel.setTempDTO(SpeReader.parseFile(pathHolder));
-                            openSpeFile(pathHolder);
-                            makeToast("Открытие...");
-                        }
-                        else {
-                            makeToast("Неверный формат");
-                        }
-                    }
+            Uri uri = data.getData();
+            if (uri != null) {
+                String pathHolder = uri.toString();
+                Log.e(TAG, "PATH: = " + pathHolder);
+                if (pathHolder.endsWith(".ats")) {
+                    mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
+                    mViewModel.setTempDTO(AtsReader.parseFile(pathHolder));
+                    openAtsFile(pathHolder);
+                    makeToast("Открытие...");
+                } else if (pathHolder.endsWith(".spe")) {
+                    mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
+                    mViewModel.setTempDTO(SpeReader.parseFile(pathHolder));
+                    openSpeFile(pathHolder);
+                    makeToast("Открытие...");
+                } else {
+                    makeToast("Неверный формат");
+                }
+            }
         }
     }
 
     private String makeName() {
         String name = "Unknown";
 //        name = path.substring(path.length() - 10);
-        if(!nameForMixer.equals(""))name = nameForMixer;
+        if (!nameForMixer.equals("")) name = nameForMixer;
         return name;
     }
 
@@ -465,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             processIdenResult(nuc);
         }
         mViewModel.addNewSpectrum(dto, makeName());
-            nameForMixer = ""; //сброс
+        nameForMixer = ""; //сброс
 //        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
         preferenceMixer();
@@ -494,17 +488,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         processIdenResult(nuc);
 
 
-
-        if(isDrawable) {
+        if (isDrawable) {
             mViewModel.getGeneratedFragment().setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
             mViewModel.getGeneratedFragment().update();
         }
+
+
     }
 
     private void processIdenResult(NucIdent nuc) {
 
         List<Nuclide> nuclides = NucIdent.getNuclides();
         int numLines = nuc.getnLine();
+//        int numLines = 5;
 
         Log.e(TAG, "processIdenResult: NUM_LINES = " + numLines);
 
@@ -535,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 && line.getFactorsNoShield() > 0
                                 && line.getFactorsShield() > 0) {
                             lineOwners[index] = nuclide.getName() + " " + nuclide.getNumStr();
-                            if(nameForMixer.equals(""))nameForMixer = lineOwners[index];
+                            if (nameForMixer.equals("")) nameForMixer = lineOwners[index];
                         }
                     }
                 }
@@ -593,9 +589,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             openFile();
         } else if (id == R.id.nav_generate) {
             toggleGenButton();
-        } else if (id == R.id.nav_switch_5) {
+        } /*else if (id == R.id.nav_switch_5) {
 
-        } else if (id == R.id.nav_iden) {
+        }*/ else if (id == R.id.nav_iden) {
+            preferenceMixer();
 //            identificateNucl(mViewModel.getEmptyDto());
         }
 
@@ -608,12 +605,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final Handler handler = new Handler();
     Runnable runnable;
 
-    void startMixer(){
+    void startMixer() {
 //        final int cnt;
 //        if(mViewModel.getSourceList().size()==0)cnt=mViewModel.getRequiredTime()-1;
 //        else cnt = 0;
         handler.postDelayed(runnable = new Runnable() {
             int count = 0;//cnt;
+
             public void run() {
                 if (count++ < mViewModel.getRequiredTime()) {
 //                    mixerPreTeak(count, 1, true);
@@ -650,32 +648,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    private void updateGeneratedSpectrum() {
+        mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
+        mViewModel.getGeneratedFragment().update();
+    }
 
     public void preferenceMixer() {
         mViewModel.setEmptyDto(new SpecDTO(1024));
-        for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
-            if(parcel.isChecked()) {
+        for (SpecMixerParcel parcel : mViewModel.getSourceList()) {
+            if (parcel.isChecked()) {
                 SpecDTO dto = parcel.getReferenceDTO();
                 mViewModel.getEmptyDto().addSpectrumToCurrent(dto.getSpectrum(), parcel.getPercent());
-                if(dto.getMeasTim()[0]>mViewModel.getEmptyDto().getMeasTim()[0])mViewModel.getEmptyDto().setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
+                if (dto.getMeasTim()[0] > mViewModel.getEmptyDto().getMeasTim()[0])
+                    mViewModel.getEmptyDto().setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
                 //emptyDto.setMeasTim(new int[]{emptyDto.getMeasTim()[0]+dto.getMeasTim()[0],1});//в meas сохраняется сумма времен всех спектров
-//                dto.getMeasTim()[0] * 100 / parcel.getPercent());
-//                manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
-//                    mViewModel.getReferenceFragment().setNewValues(emptyDto, mPeakChannels, mPeakEnergies, mLineOwners);
-//                    mViewModel.getReferenceFragment().update();
             }
         }
-
         identificateNucl(mViewModel.getEmptyDto());
-
         mViewModel.getReferenceFragment().setNewValues(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners);
         mViewModel.getReferenceFragment().update();
 //        Log.e(TAG, "preferenceMixer: " + mPeakChannels.length + mPeakEnergies.length + mLineOwners.length);
         ////////////////manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
     }
 
-    void startQuickMixer()
-    {
+    void startQuickMixer() {
         for (int count = 0; count < mViewModel.getRequiredTime(); count++) {
             mixerPreTeak2(count, 1, false);
         }
@@ -683,11 +679,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mViewModel.setGenButtonIsPressed(false);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Drawable drawable = getDrawable(R.drawable.button_shape_selector);
-                genButton.setBackground(drawable);
+            genButton.setBackground(drawable);
         }
 //        manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-            mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
-            mViewModel.getGeneratedFragment().update();
+        mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
+        mViewModel.getGeneratedFragment().update();
     }
 
     void stop() {
@@ -696,11 +692,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(seekBar.getId()==R.id.seekBar) {
+        if (seekBar.getId() == R.id.seekBar) {
             delayText.setText(String.valueOf(seekBar.getProgress()));
             delayTimeTV.setText(String.valueOf(seekBar.getProgress()));
         }
-        if(seekBar.getId()==R.id.seekBar2){
+        if (seekBar.getId() == R.id.seekBar2) {
             timeText.setText(String.valueOf(seekBar.getProgress()));
             requiredTimeTV.setText(String.valueOf(seekBar.getProgress()));
         }
@@ -714,8 +710,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        if(seekBar.getId()==R.id.seekBar) mViewModel.setDelay(Integer.parseInt(String.valueOf(seekBar.getProgress())));
-        if(seekBar.getId()==R.id.seekBar2) mViewModel.setRequiredTime(Integer.parseInt(String.valueOf(seekBar.getProgress())));
+        if (seekBar.getId() == R.id.seekBar)
+            mViewModel.setDelay(Integer.parseInt(String.valueOf(seekBar.getProgress())));
+        if (seekBar.getId() == R.id.seekBar2)
+            mViewModel.setRequiredTime(Integer.parseInt(String.valueOf(seekBar.getProgress())));
     }
 
     @Override
@@ -732,5 +730,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         mViewModel.isFirstTime = false;
+        preferenceMixer();
+//        updateGeneratedSpectrum();
     }
 }

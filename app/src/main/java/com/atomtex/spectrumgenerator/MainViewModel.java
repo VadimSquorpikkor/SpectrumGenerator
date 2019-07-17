@@ -3,7 +3,8 @@ package com.atomtex.spectrumgenerator;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+
+import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,15 @@ public class MainViewModel extends AndroidViewModel {
     private boolean isSecMode = true;
     public boolean isFirstTime = true;
     SpecDTO emptyDto = new SpecDTO(1024);
+    LineChart mSpectrumChart;
+
+    public LineChart getmSpectrumChart() {
+        return mSpectrumChart;
+    }
+
+    public void setmSpectrumChart(LineChart mSpectrumChart) {
+        this.mSpectrumChart = mSpectrumChart;
+    }
 
     public SpecDTO getEmptyDto() {
         return emptyDto;
@@ -108,14 +118,24 @@ public class MainViewModel extends AndroidViewModel {
 
     private int mixerMode = 0;
     private int timeLayoutMode = 0;
-    private int fragmentFullMode = 0;
+    private boolean fragmentReqFullMode = false;
+    private boolean fragmentGenFullMode = false;
 
-    public int getFragmentFullMode() {
-        return fragmentFullMode;
+    public boolean getFragmentGenFullMode() {
+        return fragmentGenFullMode;
     }
 
-    public void setFragmentFullMode(int fragmentFullMode) {
-        this.fragmentFullMode = fragmentFullMode;
+    public void setFragmentGenFullMode(boolean fragmentGenFullMode) {
+        this.fragmentGenFullMode = fragmentGenFullMode;
+    }
+
+
+    public boolean getFragmentReqFullMode() {
+        return fragmentReqFullMode;
+    }
+
+    public void setFragmentReqFullMode(boolean fragmentReqFullMode) {
+        this.fragmentReqFullMode = fragmentReqFullMode;
     }
 
 

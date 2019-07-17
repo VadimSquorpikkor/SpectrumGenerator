@@ -25,6 +25,28 @@ public class SaveLoad {
         return loadBooleanArray(preferences);
     }
 
+    void saveDouble(double d, String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        saveDouble(d, preferences);
+    }
+
+    double loadDouble(String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        return loadDouble(preferences);
+    }
+
+    void saveBoolean(boolean b, String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        saveBoolean(b, preferences);
+    }
+
+    boolean loadBoolean(String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        return loadBoolean(preferences);
+    }
+
+//----------------------PRIVATE METHODS-------------------------------------------------------------
+
     private void saveBooleanArray(ArrayList<Boolean> list, SharedPreferences sPref) {
         int count = 0;
         SharedPreferences.Editor editor = sPref.edit();
@@ -47,4 +69,27 @@ public class SaveLoad {
         return list;
     }
 
+    private void saveDouble(double d, SharedPreferences sPref) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putFloat(SAVE_FIELD, (float) d);
+        editor.apply();
+    }
+
+    private double loadDouble(SharedPreferences sPref) {
+        double d = 0;
+        if (sPref.contains(SAVE_FIELD)) d = sPref.getFloat(SAVE_FIELD, 0);
+        return d;
+    }
+
+    private void saveBoolean(boolean b, SharedPreferences sPref) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putBoolean(SAVE_FIELD, b);
+        editor.apply();
+    }
+
+    private boolean loadBoolean(SharedPreferences sPref) {
+        boolean b = false;
+        if (sPref.contains(SAVE_FIELD)) b = sPref.getBoolean(SAVE_FIELD, false);
+        return b;
+    }
 }

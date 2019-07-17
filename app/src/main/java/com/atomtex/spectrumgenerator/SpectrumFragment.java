@@ -1,7 +1,6 @@
 package com.atomtex.spectrumgenerator;
 
 
-import android.app.FragmentTransaction;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -15,21 +14,17 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.chart.CustomLineChartRenderer;
 import com.atomtex.spectrumgenerator.chart.CustomOnChartGestureListener;
 import com.atomtex.spectrumgenerator.chart.CustomXAxisRenderer;
 import com.atomtex.spectrumgenerator.domain.NucIdent;
-import com.atomtex.spectrumgenerator.util.Util;
 import com.fangxu.allangleexpandablebutton.AllAngleExpandableButton;
 import com.fangxu.allangleexpandablebutton.ButtonData;
 import com.fangxu.allangleexpandablebutton.ButtonEventListener;
@@ -41,11 +36,9 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -202,6 +195,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     int impSum;
 
     MainViewModel mViewModel;
+    SaveLoad saveLoad;
 
     /*    */
 
@@ -220,7 +214,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     public SpectrumFragment() {
         Log.e(TAG, "new SpecFragment " + this + " created");
     }
-
 
 
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
@@ -270,7 +263,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 //        SpecDTO dto = AtsReader.parseFile("content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats");
         SpecDTO dto = new SpecDTO(1024);
         dto.setSpectrum(new int[1024]);
-        dto.setMeasTim(new int[]{1,1});
+        dto.setMeasTim(new int[]{1, 1});
         dto.setEnergy(new float[1024]);
 //content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats
 /*
@@ -307,18 +300,17 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         }
 
         //todo затычка для отображения в логарифме при апдейте графика. почему без затычки график сбрасывается в линейный -- хз
-        if (mStates[BUTTON_DATA_MODE]) {
+        if (mStates!=null&&mStates[BUTTON_DATA_MODE]) {
             mSpectrumChart.getAxisLeft().setGranularity(0.15f);
             for (Entry entry : mEntries) {
                 entry.setY(scaleCbr(entry.getY()));
             }
         }
 
+        //////////////////////////////if(fragmentID.equals("Эталонный спектр")) mViewModel.setmSpectrumChart(mSpectrumChart);
+
         updateChart();
     }
-
-
-
 
 
     public void updateInstance(SpectrumFragment fragment, SpecDTO dto, float[] peaks, float[] peakEnergies
@@ -401,13 +393,28 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
+        Log.e(TAG, "onCreateView: " + mSpectrumChart);
+
         final View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
         ButterKnife.bind(this, view);
 
-        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        int mode = mViewModel.getFragmentFullMode();
-        if(mode == 0) view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
-        if(mode == 1) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
+        mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        /////////////////////////////////if(mViewModel.getmSpectrumChart()!=null)mSpectrumChart=mViewModel.getmSpectrumChart();
+        saveLoad = new SaveLoad(getActivity());
+
+
+        boolean isFullMode = false;
+        if (fragmentID.equals("Эталонный спектр")) {
+            mViewModel.setFragmentReqFullMode(saveLoad.loadBoolean("Эталонный спектр"));
+            isFullMode = mViewModel.getFragmentReqFullMode();
+        }
+        if (fragmentID.equals("Сгенерированный спектр")) {
+            mViewModel.setFragmentGenFullMode(saveLoad.loadBoolean("Сгенерированный спектр"));
+            isFullMode = mViewModel.getFragmentGenFullMode();
+        }
+
+        if (!isFullMode) view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
+        if (isFullMode) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
 
         TextView frIDtext = view.findViewById(R.id.fragment_id);
         frIDtext.setText(fragmentID);
@@ -415,11 +422,24 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         view.findViewById(R.id.info_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int mode = 0;
-                if(mViewModel.getFragmentFullMode()==0) mode = 1;
-                mViewModel.setFragmentFullMode(mode);
-                if(mode == 0) view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
-                if(mode == 1) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
+                if (fragmentID.equals("Эталонный спектр")) {
+                    boolean isFullMode = false;
+                    if (!mViewModel.getFragmentReqFullMode()) isFullMode = true;
+                    mViewModel.setFragmentReqFullMode(isFullMode);
+                    if (!isFullMode)
+                        view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
+                    if (isFullMode) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
+                    saveLoad.saveBoolean(isFullMode, "Эталонный спектр");
+                }
+                if (fragmentID.equals("Сгенерированный спектр")) {
+                    boolean isFullMode = false;
+                    if (!mViewModel.getFragmentGenFullMode()) isFullMode = true;
+                    mViewModel.setFragmentGenFullMode(isFullMode);
+                    if (!isFullMode)
+                        view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
+                    if (isFullMode) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
+                    saveLoad.saveBoolean(isFullMode, "Сгенерированный спектр");
+                }
             }
         });
 
@@ -431,7 +451,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 //                    .substring(mSpecDTO.getFileName().lastIndexOf("spec_")));
 
         }
-
 
 
         final List<ButtonData> buttonDataList = new ArrayList<>();
@@ -470,13 +489,13 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     }
 
 
-
     /**
      * Creates a chart and draw the spectrum data on it.
      */
     private void updateChart() {
 //        mSpectrumChart = null;
 //        if (mSpectrumChart != null)mSpectrumChart.clear();
+        Log.e(TAG, "updateChart: " + mSpectrumChart);
         if (mSpectrumChart == null) {
             mSpectrumChart = new LineChart(getContext());
             XAxis xAxis = mSpectrumChart.getXAxis();

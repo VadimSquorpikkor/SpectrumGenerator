@@ -41,12 +41,12 @@
             app:actionLayout="@layout/layout_switch"
             android:icon="@drawable/baseline_dashboard_white_48dp"
         />
-        <item
+<!--        <item
             android:id="@+id/nav_switch_5"
             android:title="Матрица"
             app:actionLayout="@layout/layout_switch"
             android:icon="@drawable/baseline_dashboard_white_48dp"
-        />
+        />-->
         <item
             android:id="@+id/nav_iden"
             android:title="Идентификация"
