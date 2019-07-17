@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MainViewModel mViewModel;
     NavigationView navigationView;
 
-//    SpectrumFragment fragment1;//todo переместить в ViewModel
-//    SpectrumFragment fragment2;//todo переместить в ViewModel
-
-//    Fragment fragment3;//todo переместить в ViewModel
     Fragment fragment4;//todo переместить в ViewModel
 
     public static final String TAG = "TAG!!!";
@@ -122,42 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         genButton = findViewById(R.id.gen_button);
         timeText = findViewById(R.id.dialog_required_time_text);
         delayText = findViewById(R.id.dialog_delay_text);
-
-        timeText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setRequiredTime();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                setRequiredTime();
-            }
-        });
-
-        delayText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                setDelayTime();
-                Log.e(TAG, "onTextChanged: ");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                setDelayTime();
-                Log.e(TAG, "afterTextChanged: ");
-            }
-        });
 
         setRequiredTime();
         setDelayTime();
@@ -261,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.gen_button: toggleGenButton(); break;
             case R.id.time_layout: toggler.setTimeLayoutMode(1); break;
-            case R.id.hide_time_button: toggler.setTimeLayoutMode(0); break;
+            case R.id.hide_time_button: hideTime(); break;
             case R.id.mixer_fragment_list_view: toggler.setMixerLayoutMode(0); break;
             case R.id.add_new_spectrum_2: openFile(); break;
         }
@@ -269,6 +229,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void hideMixer() {
         toggler.setMixerLayoutMode(1);
+    }
+
+    private void hideTime() {
+        toggler.setTimeLayoutMode(0);
+        mViewModel.setDelay(Integer.parseInt(delayText.getText().toString()));
+        delayTimeTV.setText(delayText.getText());
+        mViewModel.setRequiredTime(Integer.parseInt(timeText.getText().toString()));
+        requiredTimeTV.setText(timeText.getText());
     }
 
     public void mixerButonMode() {
@@ -340,10 +308,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setRequiredTime() {
         requiredTimeTV.setText(String.valueOf(mViewModel.getRequiredTime()));
+        timeText.setText(String.valueOf(mViewModel.getRequiredTime()));
     }
 
     private void setDelayTime() {
         delayTimeTV.setText(String.valueOf(mViewModel.getDelay()));
+        delayText.setText(String.valueOf(mViewModel.getDelay()));
     }
 
     public void setTimeLayoutMode(int mode) {
@@ -683,14 +653,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void preferenceMixer() {
         mViewModel.setEmptyDto(new SpecDTO(1024));
-//        mViewModel.getEmptyDto();
-//        dto.setSpectrum(new int[1024]);
-//        dto.setMeasTim(new int[]{1,1});
-//        dto.setEnergy(new float[1024]);
-/*        mPeakChannels = new float[]{0};
-        mPeakEnergies = new float[]{0};
-        mLineOwners = new String[]{""};*/
-//        emptyDto.setMeasTim(new int[]{1,1});
         for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
             if(parcel.isChecked()) {
                 SpecDTO dto = parcel.getReferenceDTO();
@@ -704,18 +666,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-
-
-
-
-
-//        Log.e(TAG, "--------------------preferenceMixer: GET ENERGY length = " + mViewModel.getEmptyDto().getEnergy().length);
         identificateNucl(mViewModel.getEmptyDto());
 
-/*        mViewModel.getReferenceFragment().setNewValues(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners);
-        mViewModel.getReferenceFragment().update();*/
+        mViewModel.getReferenceFragment().setNewValues(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners);
+        mViewModel.getReferenceFragment().update();
 //        Log.e(TAG, "preferenceMixer: " + mPeakChannels.length + mPeakEnergies.length + mLineOwners.length);
-        manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
+        ////////////////manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
     }
 
     void startQuickMixer()
@@ -740,8 +696,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if(seekBar.getId()==R.id.seekBar) delayText.setText(String.valueOf(seekBar.getProgress()));
-        if(seekBar.getId()==R.id.seekBar2) timeText.setText(String.valueOf(seekBar.getProgress()));
+        if(seekBar.getId()==R.id.seekBar) {
+            delayText.setText(String.valueOf(seekBar.getProgress()));
+            delayTimeTV.setText(String.valueOf(seekBar.getProgress()));
+        }
+        if(seekBar.getId()==R.id.seekBar2){
+            timeText.setText(String.valueOf(seekBar.getProgress()));
+            requiredTimeTV.setText(String.valueOf(seekBar.getProgress()));
+        }
+
     }
 
     @Override

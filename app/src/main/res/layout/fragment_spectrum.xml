@@ -13,7 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="0dp">
+            android:paddingTop="0dp"
+            >
 
             <TextView
                 android:layout_width="match_parent"
@@ -113,13 +114,19 @@
 
 
 
-
         <FrameLayout
             android:id="@+id/graph_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/main_gradient"
             android:padding="2dp" />
+
+        <Button style="@style/show_button"
+            android:id="@+id/info_button"
+            android:layout_gravity="end"
+            android:layout_margin="5dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
 
         <com.fangxu.allangleexpandablebutton.AllAngleExpandableButton
             android:id="@+id/button_controls"

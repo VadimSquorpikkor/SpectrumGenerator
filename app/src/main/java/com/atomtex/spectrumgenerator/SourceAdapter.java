@@ -27,19 +27,21 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
     private List<SpecMixerParcel> sourceList;
     private MainViewModel mViewModel;
     private Fragment fragment;
+//    private SpectrumFragment prefFragment;
 
     private Switch sw;
     private TextView tw;
     private SeekBar sb;
     private ImageButton ib;
 
-    SourceAdapter(Context context, int resource, List<SpecMixerParcel> sourceList, MainViewModel mViewModel, Fragment fragment) {
+    SourceAdapter(Context context, int resource, List<SpecMixerParcel> sourceList, MainViewModel mViewModel, Fragment fragment/*, SpectrumFragment prefFragment*/) {
         super(context, resource, sourceList);
         this.sourceList = sourceList;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
         this.mViewModel = mViewModel;
         this.fragment = fragment;
+//        this.prefFragment = prefFragment;
     }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
@@ -65,8 +67,9 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.e(TAG, "onProgressChanged: ");
                 et.setText("" + seekBar.getProgress());
+                mViewModel.setPercentParcel(position, Integer.parseInt(toString().valueOf(seekBar.getProgress())));
+                ((MixerListFragment)fragment).updateRefFragment();
             }
 
             @Override

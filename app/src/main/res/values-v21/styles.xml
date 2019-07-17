@@ -66,6 +66,14 @@
         <item name="android:background">@drawable/baseline_expand_more_white_48dp</item>
     </style>
 
+    <style name="info_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_info_white_48dp</item>
+    </style>
+
+    <style name="info_button_black" parent="small_button">
+        <item name="android:background">@drawable/baseline_info_black_48dp</item>
+    </style>
+
     <style name="exp_less_button" parent="small_button">
         <item name="android:background">@drawable/baseline_expand_less_white_48dp</item>
     </style>

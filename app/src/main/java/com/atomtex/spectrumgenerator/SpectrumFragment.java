@@ -2,6 +2,7 @@ package com.atomtex.spectrumgenerator;
 
 
 import android.app.FragmentTransaction;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -200,6 +201,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
     int impSum;
 
+    MainViewModel mViewModel;
+
     /*    */
 
     /**
@@ -217,6 +220,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     public SpectrumFragment() {
         Log.e(TAG, "new SpecFragment " + this + " created");
     }
+
 
 
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
@@ -396,11 +400,28 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
+
+        final View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
         ButterKnife.bind(this, view);
+
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        int mode = mViewModel.getFragmentFullMode();
+        if(mode == 0) view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
+        if(mode == 1) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
 
         TextView frIDtext = view.findViewById(R.id.fragment_id);
         frIDtext.setText(fragmentID);
+
+        view.findViewById(R.id.info_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int mode = 0;
+                if(mViewModel.getFragmentFullMode()==0) mode = 1;
+                mViewModel.setFragmentFullMode(mode);
+                if(mode == 0) view.findViewById(R.id.chart_status).setVisibility(View.VISIBLE);
+                if(mode == 1) view.findViewById(R.id.chart_status).setVisibility(View.GONE);
+            }
+        });
 
         //Set name of spectrum file as an action bar title
         ActionBar supportActionBar = ((AppCompatActivity) mContext).getSupportActionBar(); //todo было FragmentActivity вместо AppCompatActivity
@@ -410,6 +431,8 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 //                    .substring(mSpecDTO.getFileName().lastIndexOf("spec_")));
 
         }
+
+
 
         final List<ButtonData> buttonDataList = new ArrayList<>();
 

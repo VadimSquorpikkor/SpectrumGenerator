@@ -108,6 +108,17 @@ public class MainViewModel extends AndroidViewModel {
 
     private int mixerMode = 0;
     private int timeLayoutMode = 0;
+    private int fragmentFullMode = 0;
+
+    public int getFragmentFullMode() {
+        return fragmentFullMode;
+    }
+
+    public void setFragmentFullMode(int fragmentFullMode) {
+        this.fragmentFullMode = fragmentFullMode;
+    }
+
+
 
     public int getMixerMode() {
         return mixerMode;
