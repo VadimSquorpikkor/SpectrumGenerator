@@ -129,7 +129,6 @@ public class MainViewModel extends AndroidViewModel {
         this.fragmentGenFullMode = fragmentGenFullMode;
     }
 
-
     public boolean getFragmentReqFullMode() {
         return fragmentReqFullMode;
     }
@@ -137,8 +136,6 @@ public class MainViewModel extends AndroidViewModel {
     public void setFragmentReqFullMode(boolean fragmentReqFullMode) {
         this.fragmentReqFullMode = fragmentReqFullMode;
     }
-
-
 
     public int getMixerMode() {
         return mixerMode;

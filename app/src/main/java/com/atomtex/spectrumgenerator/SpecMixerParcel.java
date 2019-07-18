@@ -8,30 +8,37 @@ public class SpecMixerParcel {
     private boolean isChecked = true;
     private String path;
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
+//----------------SETTERS & GETTERS ----------------------------------------------------------------
 
     public void setPercent(int percent) {
         this.percent = percent;
+    }
+
+    public int getPercent() {
+        return percent;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-
-    public boolean isChecked() {
-        return isChecked;
+    public String getName() {
+        return name;
     }
 
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public SpecDTO getReferenceDTO() {
+        return referenceDTO;
+    }
+
+//----------------CONSTRUCTOR-----------------------------------------------------------------------
 
     SpecMixerParcel(SpecDTO dto, String name) {
         this.referenceDTO = dto;
@@ -39,23 +46,4 @@ public class SpecMixerParcel {
         this.name = name;
         this.percent = 100;
     }
-
-
-
-
-    public SpecDTO getReferenceDTO() {
-        return referenceDTO;
-    }
-
-    public int getPercent() {
-        return percent;
-    }
-    public void addPercent(int percent) {
-        this.percent = percent;
-    }
-
-    public String getName() {
-        return name;
-    }
-
 }
