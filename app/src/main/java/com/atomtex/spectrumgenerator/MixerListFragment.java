@@ -51,7 +51,6 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                int pos = sourceList.get((int)id).getID();
-                Log.e(TAG, "onItemClick: " + (int)id);
             }
         });
 
@@ -81,10 +80,8 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         //((MainActivity)getActivity()).openAts(0) ;break;
-        Log.e(TAG, "onClick: ");
         if (v.getId() == R.id.add_new_spectrum)((MainActivity) getActivity()).openFile();
 
-//        if (v.getId() == R.id.hide_mixer_button) Log.e(TAG, "onClick: ");
     }
 
     public void updateAdapter() {

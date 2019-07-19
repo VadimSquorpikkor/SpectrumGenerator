@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,19 +28,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.atomtex.spectrumgenerator.domain.EnergyLine;
 import com.atomtex.spectrumgenerator.domain.NucIdent;
-import com.atomtex.spectrumgenerator.domain.Nuclide;
-import com.atomtex.spectrumgenerator.exception.ProcessException;
-import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
-import static com.atomtex.spectrumgenerator.domain.NucIdent.BAD_INDEX;
-import static com.atomtex.spectrumgenerator.domain.Nuclide.State.IDENTIFIED;
 
 /*  SpecDTO.class --> public void addSpectrumToCurrent(int[] spectrum) {*/
 
@@ -50,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FragmentManager manager;
     Toggler toggler;
     SaveLoad saveLoad;
+    IdentificateAndGenerate generator;
 
     Fragment fragment4;//todo (переместить в ViewModel) вообще хранить фрагменты в mainView -- плохая идея, надо вернуть фрагменты 1 и 2 обратно
 
@@ -62,15 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText timeText;
     EditText delayText;
 
-    //todo есть смысл переместить в viewModel
-    float[] mPeakChannels;
-    float[] mPeakEnergies;
-    String[] mLineOwners;
-    private int mPrefIdenThreshold;//todo не понятно, для чего нужно
-
-    String nameForMixer = "";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         saveLoad = new SaveLoad(this);
         mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         toggler = new Toggler(this, mViewModel);
+
 
         //если приложение только запустилось
         if (mViewModel.isFirstTime) loadVars();
@@ -90,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
-        mPrefIdenThreshold = 3;
 
         toggler.setTimeLayoutMode(mViewModel.getTimeLayoutMode());
         toggler.setAllVisibilities();
@@ -101,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         genButton = findViewById(R.id.gen_button);
         timeText = findViewById(R.id.dialog_required_time_text);
         delayText = findViewById(R.id.dialog_delay_text);
+
+        generator = new IdentificateAndGenerate(mViewModel, toggler, this, genButton);
+//        generator.setPrefIdenThreshold(3);
 
         setRequiredTime();
         setDelayTime();
@@ -127,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         timeText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 if(timeText.getText().toString().equals(""))timeText.setText("1");
@@ -139,11 +128,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         delayText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
-            public void afterTextChanged(Editable s) {//todo при наборе БОЛЬШЕ максимального для seekbar, становится максимальным
+            public void afterTextChanged(Editable s) {//todo при наборе БОЛЬШЕ максимального для seekBar, становится максимальным
                 if (delayText.getText().toString().matches("")) delayText.setText("1");
                 if (Integer.parseInt(delayText.getText().toString())<1001)((SeekBar)findViewById(R.id.seekBar)).setProgress(Integer.parseInt(delayText.getText().toString()));
                 delayText.setSelection(delayText.getText().length());
@@ -192,17 +181,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateNuclideStroke() {
-        String stroke = "";
+        StringBuilder stroke = new StringBuilder();
         String prefix = "";
-        if(mViewModel.getSourceList().size()==0)stroke = "Спектры не загружены";
+        if(mViewModel.getSourceList().size()==0) stroke = new StringBuilder("Спектры не загружены");
         else prefix = "Нет включенных спектров";
         for (SpecMixerParcel parcel : mViewModel.getSourceList()) {
             if (parcel.isChecked()) {
                 prefix = "";
-                stroke += parcel.getName() + " ";
+                stroke.append(parcel.getName()).append(" ");
             }
         }
-        ((TextView)findViewById(R.id.nuclide_stroke)).setText(prefix + stroke);
+        ((TextView)findViewById(R.id.nuclide_stroke)).setText((prefix + stroke));
     }
 
     private void loadVars() {
@@ -269,14 +258,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void gen() {
         if (iCanGenerate()) {
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
-            startQuickMixer();
+            generator.startQuickMixer();
         } else makeToast("Сначала загрузите файл спектра");
     }
 
     private void genMixer() {
         if (iCanGenerate()) {
             mViewModel.getTempDTO().setSpectrum(new int[mViewModel.getTempDTO().getSpectrum().length]);//todo ??????
-            startMixer();
+            if (mViewModel.getEmptyDto().getMeasTim()[0] != 0) {
+                toggler.setGenButtonMode(1, genButton);
+                generator.startMixer();
+            } else {
+                makeToast("Все спектры выключены! Нечего генерировать!");
+            }
         } else makeToast("Сначала загрузите файл спектра");
     }
 
@@ -298,23 +292,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void toggleGenButton() {
         if (mViewModel.isSecMode() && iCanGenerate()) {
             if (mViewModel.isGenButtonIsPressed()) {
-                stop();
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    Drawable drawable = getDrawable(R.drawable.button_shape_selector);
-                    genButton.setBackground(drawable);
-                }
-                genButton.setText("Генератор");
-                mViewModel.setGenButtonIsPressed(false);
-            } else {
-                genMixer();
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    Drawable drawable = getDrawable(R.drawable.my_button_shape_pressed);
-                    genButton.setBackground(drawable);
-                }
-                genButton.setText("Остановить");
-                mViewModel.setGenButtonIsPressed(true);
-            }
+                generator.stop();
+                toggler.setGenButtonMode(0, genButton);
+            } else genMixer();
         } else gen();
+    }
+
+    void preferenceMixer() {//todo когда в IdentificateAndGenerate будет нормальный конструктор, удалить метод, а в mainView вызывать метод напрямую из generator
+        generator.preferenceMixer();
     }
 
     @Override
@@ -331,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String makeName() {
         String name = "Unknown";
-        if (!nameForMixer.equals("")) name = nameForMixer;
+        if (!mViewModel.getNameForMixer().equals("")) name = mViewModel.getNameForMixer();
         return name;
     }
 
@@ -339,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void getDtoFromFile(String path) {//todo убрать pos
         Log.e(TAG, "--------------PATH = " + path);
         mViewModel.setPathForAts(path);
-        nameForMixer = ""; //сброс
+        mViewModel.setNameForMixer(""); //сброс
         SpecDTO dto;
         if (path.endsWith(".ats")) {
             mViewModel.setTempDTO(AtsReader.parseFile(path));
@@ -357,140 +342,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }
-            processIdenResult(nuc);
+        generator.identificateNucl(dto);
 
         mViewModel.addNewSpectrum(dto, makeName());
         updateNuclideStroke();
-        nameForMixer = ""; //сброс
+        mViewModel.setNameForMixer(""); //сброс
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
-        preferenceMixer();
+        generator.preferenceMixer();
         }
-    }
-
-    public void identificateNucl(SpecDTO dto) {
-//        dto.setMeasTim(new int[]{count, 1});
-        if (dto != null) {
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-
-            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }
-            processIdenResult(nuc);
-        }
-    }
-
-
-    //todo remove path
-    private void generateSpectrumTeak(SpecDTO refDto, SpecDTO tempDto, int spTime, int rqTime, int count, boolean isDrawable) {
-        tempDto.setMeasTim(new int[]{count, 1});//todo здесь вторая переменная перезаписывается, можно сделать, чтобы сохранялась, но пока не надо -- она все равно всегда 0
-        SpectrumGenerator mSpectrumGenerator = new SpectrumGenerator();
-//        dto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
-        tempDto.addSpectrumToCurrent(mSpectrumGenerator.generatedSpectrum(refDto.getSpectrum(), spTime, rqTime));
-        int[] spectrum = tempDto.getSpectrum();
-        float[] energy = tempDto.getEnergy();
-        float[] sigma = tempDto.getSigma();
-
-        NucIdent nuc = null;
-        try {
-            nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-        } catch (ProcessException e) {
-            e.printStackTrace();
-        }
-        processIdenResult(nuc);
-
-        if (isDrawable) {
-            mViewModel.getGeneratedFragment().setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
-            mViewModel.getGeneratedFragment().update();
-        }
-
-
-    }
-
-    private void processIdenResult(NucIdent nuc) {
-
-        List<Nuclide> nuclides = NucIdent.getNuclides();
-        int numLines = nuc.getnLine();
-//        int numLines = 5;
-
-        Log.e(TAG, "processIdenResult: NUM_LINES = " + numLines);
-
-        if (numLines > 0) {
-            float[] peaks = nuc.getNiChannels();
-            int[] energies = nuc.getEnergies();
-            float[] peakChannels = new float[numLines];
-            float[] peakEnergies = new float[numLines];
-            String[] lineOwners = new String[numLines];
-
-            int count = 0;
-
-            for (int i = 0; i < peaks.length; i++) {
-                if (peaks[i] > 0) {
-                    peakChannels[count] = peaks[i];
-                    peakEnergies[count] = energies[i];
-                    count++;
-                }
-            }
-
-            for (Nuclide nuclide : nuclides) {
-                if (nuclide.getState() == IDENTIFIED) {
-                    EnergyLine[] lines = nuclide.getEnergyLines();
-                    for (EnergyLine line : lines) {
-                        int index = line.getIndex();
-                        if (index != BAD_INDEX
-                                && line.getFactorsNoShield() > 0
-                                && line.getFactorsShield() > 0) {
-                            lineOwners[index] = nuclide.getName() + "-" + nuclide.getNumStr();
-                            if (nameForMixer.equals("")) nameForMixer = lineOwners[index];
-                        }
-                    }
-                }
-            }
-            mPeakChannels = peakChannels;
-            mPeakEnergies = peakEnergies;
-            mLineOwners = lineOwners;
-            Log.e(TAG, "identMixer: ch = " + mPeakChannels.length + ", ener = " + mPeakEnergies.length + ", lines = " + mLineOwners.length);
-        } else {
-            mPeakChannels = null;//todo было включено, но с включенной не определяется нуклид в методе identificateNucl, но определяется при генерации. нужно разобраться  и сделать так, чтобы работало при включенной
-        }
-
-//        return nuclides;
-    }
-
-    //todo вынести метод в отдельный класс (Controller)
-    public NucIdent nuclidesIdent(int channelNumber, int[] spectrum,  //todo was private
-                                  float[] sigma, float[] energy, int threshold) throws ProcessException {
-
-        NucIdent nuc = new NucIdent(channelNumber,
-                16, 20, 32, 24,
-                20, 20, 0, true);
-
-        nuc.setSpectrum(spectrum);
-        nuc.setSpectrumSigma(sigma);
-        nuc.setSpectrumEnergy(energy);
-
-        nuc.detectLines(threshold);
-
-        nuc.makeNuclideIdentification(threshold);
-
-        return nuc;
     }
 
     private void makeToast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+//        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+//        toast.getView().setBackgroundColor(Color.WHITE);
+        toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        /*View view = toast.getView();
+        view.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        TextView textView = view.findViewById(android.R.id.message);
+        textView.setTextSize(14);
+        textView.setTextColor(Color.BLACK);*/
+        toast.show();
     }
 
     @Override
@@ -504,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -524,96 +396,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-
-    final Handler handler = new Handler();
-    Runnable runnable;
-
-    void startMixer() {
-//        final int cnt;
-//        if(mViewModel.getSourceList().size()==0)cnt=mViewModel.getRequiredTime()-1;
-//        else cnt = 0;
-        handler.postDelayed(runnable = new Runnable() {
-            int count = 0;//cnt;
-            int reqTime = mViewModel.getRequiredTime();
-            public void run() {
-                if (count++ < reqTime) {
-//                    mixerPreTeak(count, 1, true);
-                    mixerPreTeak2(count, 1, true);
-                    genButton.setText(("Остановить ( " + count*100/reqTime + "% )"));
-                    handler.postDelayed(runnable, mViewModel.getDelay());
-                } else {
-//                    mViewModel.setTempDTO(new SpecDTO(1024));
-                    genButton.setText("Генератор");
-                    mViewModel.setGenButtonIsPressed(false);
-//                    mViewModel.setTempDTO(AtsReader.parseFile(mViewModel.getPathForAts()));
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        Drawable drawable = getDrawable(R.drawable.button_shape_selector);
-                        genButton.setBackground(drawable);
-                    }
-                }
-            }
-        }, 1);
-
-    }
-
-    //старая версия для раздельного складывания спектров -- в новой версии складываются доли уже сложенного спектра
-    /*private void mixerPreTeak(int count, int rqTimeOne, boolean isDrawable) {
-///////        if(mViewModel.getSourceList().size()==0)manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(REFERENCE_SPECTRUM)).commitAllowingStateLoss();
-        for (SpecMixerParcel parcel:mViewModel.getSourceList()) {
-            if(parcel.isChecked()) {
-                SpecDTO dto = parcel.getReferenceDTO();
-                generateSpectrumTeak(dto, mViewModel.getTempDTO(), dto.getMeasTim()[0] * 100 / parcel.getPercent(), rqTimeOne, count, isDrawable);
-            }
-        }
-    }*/
-
-    private void mixerPreTeak2(int count, int rqTimeOne, boolean isDrawable) {
-        generateSpectrumTeak(mViewModel.getEmptyDto(), mViewModel.getTempDTO(), mViewModel.getEmptyDto().getMeasTim()[0], rqTimeOne, count, isDrawable);
-    }
-
-
-    private void updateGeneratedSpectrum() {
-        mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
-        mViewModel.getGeneratedFragment().update();
-    }
-
-    public void preferenceMixer() {
-        mViewModel.setEmptyDto(new SpecDTO(1024));
-        for (SpecMixerParcel parcel : mViewModel.getSourceList()) {
-            if (parcel.isChecked()) {
-                SpecDTO dto = parcel.getReferenceDTO();
-                mViewModel.getEmptyDto().addSpectrumToCurrent(dto.getSpectrum(), parcel.getPercent());
-                if (dto.getMeasTim()[0] > mViewModel.getEmptyDto().getMeasTim()[0])
-                    mViewModel.getEmptyDto().setMeasTim(dto.getMeasTim());//в meas сохраняется максимальное время
-                //emptyDto.setMeasTim(new int[]{emptyDto.getMeasTim()[0]+dto.getMeasTim()[0],1});//в meas сохраняется сумма времен всех спектров
-            }
-        }
-        identificateNucl(mViewModel.getEmptyDto());
-        mViewModel.getReferenceFragment().setNewValues(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners);
-        mViewModel.getReferenceFragment().update();
-//        Log.e(TAG, "preferenceMixer: " + mPeakChannels.length + mPeakEnergies.length + mLineOwners.length);
-        ////////////////manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(mViewModel.getEmptyDto(), mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM)).commitAllowingStateLoss();
-    }
-
-    void startQuickMixer() {
-        for (int count = 0; count < mViewModel.getRequiredTime(); count++) {
-            mixerPreTeak2(count, 1, false);
-        }
-        genButton.setText("Генератор");
-        mViewModel.setGenButtonIsPressed(false);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            Drawable drawable = getDrawable(R.drawable.button_shape_selector);
-            genButton.setBackground(drawable);
-        }
-//        manager.beginTransaction().replace(R.id.fragment_container2, SpectrumFragment.newInstance(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners, "Сгенерированный спектр")).commitAllowingStateLoss();
-        mViewModel.getGeneratedFragment().setNewValues(mViewModel.getTempDTO(), mPeakChannels, mPeakEnergies, mLineOwners);
-        mViewModel.getGeneratedFragment().update();
-    }
-
-    void stop() {
-        handler.removeCallbacks(runnable);
-    }
-
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (seekBar.getId() == R.id.seekBar) {
@@ -624,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             timeText.setText(String.valueOf(seekBar.getProgress()));
             requiredTimeTV.setText(String.valueOf(seekBar.getProgress()));
         }
-
     }
 
     @Override
@@ -654,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         mViewModel.isFirstTime = false;
-        preferenceMixer();//это чтобы при повороте устройства восстанавливался эталонный спектр
+        generator.preferenceMixer();//это чтобы при повороте устройства восстанавливался эталонный спектр
     }
+
 }

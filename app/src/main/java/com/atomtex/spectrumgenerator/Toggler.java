@@ -2,7 +2,9 @@ package com.atomtex.spectrumgenerator;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.Button;
 
 public class Toggler {
 
@@ -106,6 +108,24 @@ public class Toggler {
 
 //--------------------------------------------------------------------------------------------------
 
+    void setGenButtonMode(int mode, Button genButton) {//0 - gray; 1 - orange
+        if (mode == 0) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Drawable drawable = context.getResources().getDrawable(R.drawable.button_shape_selector);
+                genButton.setBackground(drawable);
+            }
+            genButton.setText("Генератор");
+            mViewModel.setGenButtonIsPressed(false);
+        }
+        if (mode == 1) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Drawable drawable = context.getResources().getDrawable(R.drawable.my_button_shape_pressed);
+                genButton.setBackground(drawable);
+            }
+            genButton.setText("Остановить");
+            mViewModel.setGenButtonIsPressed(true);
+        }
 
+    }
 
 }

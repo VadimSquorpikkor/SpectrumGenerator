@@ -217,7 +217,7 @@ public class SpecDTO implements Parcelable {
         this.setSpectrum(new int[length]);
         this.setSigma(new float[length]);
         this.setEnergy(new float[length]);
-        this.setMeasTim(new int[]{1,1});
+        this.setMeasTim(new int[]{0,1});
 
     }
 

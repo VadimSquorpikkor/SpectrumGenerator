@@ -4,21 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.List;
-
-import static com.atomtex.spectrumgenerator.MainActivity.TAG;
 
 public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
 
@@ -28,11 +24,6 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
     private MainViewModel mViewModel;
     private Fragment fragment;
 //    private SpectrumFragment prefFragment;
-
-    private Switch sw;
-    private TextView tw;
-    private SeekBar sb;
-    private ImageButton ib;
 
     SourceAdapter(Context context, int resource, List<SpecMixerParcel> sourceList, MainViewModel mViewModel, Fragment fragment/*, SpectrumFragment prefFragment*/) {
         super(context, resource, sourceList);
@@ -51,10 +42,10 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
         @SuppressLint("ViewHolder")
         View view = inflater.inflate(this.layout, parent, false);
 
-        sw = view.findViewById(R.id.mixer_item_switch);
-        tw = view.findViewById(R.id.mixer_item_text);
-        sb = view.findViewById(R.id.mixer_item_seek);
-        ib = view.findViewById(R.id.mixer_item_delete);
+        Switch sw = view.findViewById(R.id.mixer_item_switch);
+        TextView tw = view.findViewById(R.id.mixer_item_text);
+        SeekBar sb = view.findViewById(R.id.mixer_item_seek);
+        ImageButton ib = view.findViewById(R.id.mixer_item_delete);
         final TextView et = view.findViewById(R.id.mixer_item_edit);
 
         SpecMixerParcel state = sourceList.get(position);

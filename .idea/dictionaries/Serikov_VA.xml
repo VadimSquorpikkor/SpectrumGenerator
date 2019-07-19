@@ -2,8 +2,12 @@
   <dictionary name="Serikov_VA">
     <words>
       <w>iden</w>
+      <w>identificate</w>
+      <w>nucl</w>
       <w>nuclide</w>
       <w>nuclides</w>
+      <w>prefferences</w>
+      <w>toggler</w>
     </words>
   </dictionary>
 </component>

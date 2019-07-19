@@ -212,7 +212,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
      */
 
     public SpectrumFragment() {
-        Log.e(TAG, "new SpecFragment " + this + " created");
+        /*Log.e(TAG, "new SpecFragment " + this + " created");*/
     }
 
 
@@ -393,7 +393,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 
-        Log.e(TAG, "onCreateView: " + mSpectrumChart);
+//        Log.e(TAG, "onCreateView: " + mSpectrumChart);
 
         final View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
         ButterKnife.bind(this, view);
@@ -493,7 +493,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
      * Creates a chart and draw the spectrum data on it.
      */
     private void updateChart() {
-        Log.e(TAG, "updateChart: " + mSpectrumChart);
+//        Log.e(TAG, "updateChart: " + mSpectrumChart);
         if (mSpectrumChart == null) {
             mSpectrumChart = new LineChart(getContext());
             XAxis xAxis = mSpectrumChart.getXAxis();
@@ -770,7 +770,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         }
 
         if (i == BUTTON_DATA_MODE) {
-            Log.e(TAG, "onButtonClicked: ");
             if (mStates[BUTTON_DATA_MODE]) {
                 mSpectrumChart.getAxisLeft().setGranularity(0.15f);
                 for (Entry entry : mEntries) {

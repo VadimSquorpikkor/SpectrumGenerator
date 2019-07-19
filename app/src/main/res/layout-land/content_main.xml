@@ -289,12 +289,11 @@
                         <EditText
                             android:id="@+id/dialog_required_time_text"
                             style="@style/text_centered"
-                            android:layout_width="45dp"
+                            android:layout_width="wrap_content"
                             android:digits="0123456789"
                             android:inputType="number"
                             android:maxLength="5"
                             android:text="100"
-                            android:selectAllOnFocus="true"
                             android:textColor="@color/colorOrange" />
 
                         <SeekBar
@@ -327,12 +326,11 @@
                         <EditText
                             android:id="@+id/dialog_delay_text"
                             style="@style/text_centered"
-                            android:layout_width="45dp"
+                            android:layout_width="wrap_content"
                             android:digits="0123456789"
                             android:inputType="number"
                             android:maxLength="5"
                             android:text="100"
-                            android:selectAllOnFocus="true"
                             android:textColor="@color/colorOrange" />
 
                         <SeekBar
@@ -341,7 +339,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
-                            android:max="1001"
+                            android:max="1000"
                             android:min="1" />
 
                         <TextView

@@ -26,15 +26,15 @@ public class MainViewModel extends AndroidViewModel {
     private int delay = 1;
     private boolean isSecMode = true;
     public boolean isFirstTime = true;
-    SpecDTO emptyDto = new SpecDTO(1024);
-    LineChart mSpectrumChart;
+    private SpecDTO emptyDto = new SpecDTO(1024);
+    private String nameForMixer = "";
 
-    public LineChart getmSpectrumChart() {
-        return mSpectrumChart;
+    public String getNameForMixer() {
+        return nameForMixer;
     }
 
-    public void setmSpectrumChart(LineChart mSpectrumChart) {
-        this.mSpectrumChart = mSpectrumChart;
+    public void setNameForMixer(String nameForMixer) {
+        this.nameForMixer = nameForMixer;
     }
 
     public SpecDTO getEmptyDto() {
