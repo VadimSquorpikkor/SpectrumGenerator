@@ -493,8 +493,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
      * Creates a chart and draw the spectrum data on it.
      */
     private void updateChart() {
-//        mSpectrumChart = null;
-//        if (mSpectrumChart != null)mSpectrumChart.clear();
         Log.e(TAG, "updateChart: " + mSpectrumChart);
         if (mSpectrumChart == null) {
             mSpectrumChart = new LineChart(getContext());

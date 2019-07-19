@@ -90,9 +90,12 @@
             android:elevation="15dp">
 
             <LinearLayout
-                android:padding="0dp"
+
                 style="@style/horizontal_layout"
-                android:gravity="center_vertical|right">
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|right"
+                android:padding="4dp"
+                >
 
                 <!--                <TextView
                                     android:layout_width="wrap_content"
@@ -104,6 +107,28 @@
                                     android:textSize="18sp">
 
                                 </TextView>-->
+
+                <LinearLayout style="@style/horizontal_layout"
+                    android:layout_weight="1"
+                    android:minHeight="30dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="2dp"
+                    android:background="@drawable/main_gradient"
+
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/nuclide_stroke"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/colorOrange"
+                        android:gravity="center_vertical"
+                        />
+
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/add_new_spectrum_2"
                     style="@style/horizontal_layout"
@@ -253,6 +278,7 @@
                         android:digits="0123456789"
                         android:inputType="number"
                         android:maxLength="5"
+                        android:selectAllOnFocus="true"
                         android:text="100"
                         android:textColor="@color/colorOrange" />
 
@@ -290,6 +316,7 @@
                         android:digits="0123456789"
                         android:inputType="number"
                         android:maxLength="5"
+                        android:selectAllOnFocus="true"
                         android:text="100"
                         android:textColor="@color/colorOrange" />
 

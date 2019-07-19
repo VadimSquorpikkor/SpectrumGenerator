@@ -14,6 +14,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     MainViewModel mViewModel;
     NavigationView navigationView;
+    FragmentManager manager;
+    Toggler toggler;
+    SaveLoad saveLoad;
 
     Fragment fragment4;//todo (переместить в ViewModel) вообще хранить фрагменты в mainView -- плохая идея, надо вернуть фрагменты 1 и 2 обратно
 
@@ -57,18 +62,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText timeText;
     EditText delayText;
 
+    //todo есть смысл переместить в viewModel
     float[] mPeakChannels;
     float[] mPeakEnergies;
     String[] mLineOwners;
+    private int mPrefIdenThreshold;//todo не понятно, для чего нужно
 
     String nameForMixer = "";
 
-    FragmentManager manager;
-    Toggler toggler;
-
-    SaveLoad saveLoad;
-
-    private int mPrefIdenThreshold;//todo не понятно, для чего нужно
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setRequiredTime();
         setDelayTime();
 
-//        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
-
         findViewById(R.id.gen_button).setOnClickListener(this);
         findViewById(R.id.time_layout).setOnClickListener(this);
-        findViewById(R.id.mixer_fragment_list_view).setOnClickListener(this);
+        findViewById(R.id.mixer_fragment_list_view).setOnClickListener(this);//show mixer
         findViewById(R.id.hide_time_button).setOnClickListener(this);
         findViewById(R.id.add_new_spectrum_2).setOnClickListener(this);
 
@@ -125,6 +124,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.getMenu().findItem(R.id.nav_switch_3).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_4).setActionView(new Switch(this));
 //        navigationView.getMenu().findItem(R.id.nav_switch_5).setActionView(new Switch(this));
+
+        timeText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(timeText.getText().toString().equals(""))timeText.setText("1");
+                if (Integer.parseInt(timeText.getText().toString())<501)((SeekBar)findViewById(R.id.seekBar2)).setProgress(Integer.parseInt(timeText.getText().toString()));
+                timeText.setSelection(timeText.getText().length());
+            }
+        });
+        delayText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {            }
+            @Override
+            public void afterTextChanged(Editable s) {//todo при наборе БОЛЬШЕ максимального для seekbar, становится максимальным
+                if (delayText.getText().toString().matches("")) delayText.setText("1");
+                if (Integer.parseInt(delayText.getText().toString())<1001)((SeekBar)findViewById(R.id.seekBar)).setProgress(Integer.parseInt(delayText.getText().toString()));
+                delayText.setSelection(delayText.getText().length());
+            }
+        });
 
         ((Switch) findViewById(R.id.switch1)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -167,6 +191,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void updateNuclideStroke() {
+        String stroke = "";
+        String prefix = "";
+        if(mViewModel.getSourceList().size()==0)stroke = "Спектры не загружены";
+        else prefix = "Нет включенных спектров";
+        for (SpecMixerParcel parcel : mViewModel.getSourceList()) {
+            if (parcel.isChecked()) {
+                prefix = "";
+                stroke += parcel.getName() + " ";
+            }
+        }
+        ((TextView)findViewById(R.id.nuclide_stroke)).setText(prefix + stroke);
+    }
+
     private void loadVars() {
         ArrayList<Boolean> b = saveLoad.loadBooleanArray(SHARED_PREFFERENCES);
         if (b.size() > 0) {
@@ -201,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void hideMixer() {
         toggler.setMixerLayoutMode(1);
+        updateNuclideStroke();
     }
 
     private void hideTime() {
@@ -285,40 +324,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Uri uri = data.getData();
             if (uri != null) {
                 String pathHolder = uri.toString();
-                Log.e(TAG, "PATH: = " + pathHolder);
-                if (pathHolder.endsWith(".ats")) {
-                    mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
-                    mViewModel.setTempDTO(AtsReader.parseFile(pathHolder));
-                    openAtsFile(pathHolder);
-                    makeToast("Открытие...");
-                } else if (pathHolder.endsWith(".spe")) {
-                    mViewModel.setPathForAts(pathHolder); //save ats path for specGenerator
-                    mViewModel.setTempDTO(SpeReader.parseFile(pathHolder));
-                    openSpeFile(pathHolder);
-                    makeToast("Открытие...");
-                } else {
-                    makeToast("Неверный формат");
-                }
+                getDtoFromFile(pathHolder);
             }
         }
     }
 
     private String makeName() {
         String name = "Unknown";
-//        name = path.substring(path.length() - 10);
         if (!nameForMixer.equals("")) name = nameForMixer;
         return name;
     }
 
-
-    //todo вынести метод в отдельный класс (Controller)
-    private void openAtsFile(String path) {//todo убрать pos
-
+    //переделанный openAtsFile
+    private void getDtoFromFile(String path) {//todo убрать pos
+        Log.e(TAG, "--------------PATH = " + path);
+        mViewModel.setPathForAts(path);
         nameForMixer = ""; //сброс
-        SpecDTO dto = AtsReader.parseFile(path);
+        SpecDTO dto;
+        if (path.endsWith(".ats")) {
+            mViewModel.setTempDTO(AtsReader.parseFile(path));
+            dto = AtsReader.parseFile(path);
+        }
+        else if (path.endsWith(".spe")) {
+            mViewModel.setTempDTO(SpeReader.parseFile(path));
+            dto = SpeReader.parseFile(path);
+        }
+        else {
+            makeToast("Неверный формат");
+            dto = null;
+        }
+        if (dto != null) {
+
         ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
-        if (dto != null) {
             int[] spectrum = dto.getSpectrum();
             float[] energy = dto.getEnergy();
             float[] sigma = dto.getSigma();
@@ -329,13 +367,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 e.printStackTrace();
             }
             processIdenResult(nuc);
-        }
 
         mViewModel.addNewSpectrum(dto, makeName());
+        updateNuclideStroke();
         nameForMixer = ""; //сброс
         mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
         preferenceMixer();
-        //////////////////////////////manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
+        }
     }
 
     public void identificateNucl(SpecDTO dto) {
@@ -353,35 +391,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             processIdenResult(nuc);
         }
-
     }
 
-    //todo объединить с ats
-    private void openSpeFile(String path) {//todo убрать pos
-        nameForMixer = ""; //сброс
-        SpecDTO dto = SpeReader.parseFile(path);
-        ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
-
-        if (dto != null) {
-            int[] spectrum = dto.getSpectrum();
-            float[] energy = dto.getEnergy();
-            float[] sigma = dto.getSigma();
-            NucIdent nuc = null;
-            try {
-                nuc = nuclidesIdent(spectrum.length, spectrum, sigma, energy, mPrefIdenThreshold);
-            } catch (ProcessException e) {
-                e.printStackTrace();
-            }
-            processIdenResult(nuc);
-        }
-        mViewModel.addNewSpectrum(dto, makeName());
-        nameForMixer = ""; //сброс
-//        ((TextView)findViewById(R.id.ref_spec_text)).setText(REFERENCE_SPECTRUM);
-        mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
-        preferenceMixer();
-        //////////////////////manager.beginTransaction().replace(R.id.fragment_container1, SpectrumFragment.newInstance(dto, mPeakChannels, mPeakEnergies, mLineOwners, REFERENCE_SPECTRUM, path)).commitAllowingStateLoss();
-
-    }
 
     //todo remove path
     private void generateSpectrumTeak(SpecDTO refDto, SpecDTO tempDto, int spTime, int rqTime, int count, boolean isDrawable) {
@@ -400,7 +411,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         processIdenResult(nuc);
-
 
         if (isDrawable) {
             mViewModel.getGeneratedFragment().setNewValues(tempDto, mPeakChannels, mPeakEnergies, mLineOwners);
@@ -435,7 +445,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
 
-
             for (Nuclide nuclide : nuclides) {
                 if (nuclide.getState() == IDENTIFIED) {
                     EnergyLine[] lines = nuclide.getEnergyLines();
@@ -444,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (index != BAD_INDEX
                                 && line.getFactorsNoShield() > 0
                                 && line.getFactorsShield() > 0) {
-                            lineOwners[index] = nuclide.getName() + " " + nuclide.getNumStr();
+                            lineOwners[index] = nuclide.getName() + "-" + nuclide.getNumStr();
                             if (nameForMixer.equals("")) nameForMixer = lineOwners[index];
                         }
                     }
@@ -505,10 +514,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             toggleGenButton();
         } /*else if (id == R.id.nav_switch_5) {
 
-        }*/ else if (id == R.id.nav_iden) {
+        }*/ /*else if (id == R.id.nav_iden) {
             preferenceMixer();
 //            identificateNucl(mViewModel.getEmptyDto());
-        }
+        }*/
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -525,11 +534,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        else cnt = 0;
         handler.postDelayed(runnable = new Runnable() {
             int count = 0;//cnt;
-
+            int reqTime = mViewModel.getRequiredTime();
             public void run() {
-                if (count++ < mViewModel.getRequiredTime()) {
+                if (count++ < reqTime) {
 //                    mixerPreTeak(count, 1, true);
                     mixerPreTeak2(count, 1, true);
+                    genButton.setText(("Остановить ( " + count*100/reqTime + "% )"));
                     handler.postDelayed(runnable, mViewModel.getDelay());
                 } else {
 //                    mViewModel.setTempDTO(new SpecDTO(1024));

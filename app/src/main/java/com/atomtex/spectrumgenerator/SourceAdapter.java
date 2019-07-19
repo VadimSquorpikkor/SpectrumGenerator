@@ -100,6 +100,13 @@ public class  SourceAdapter extends ArrayAdapter<SpecMixerParcel>{
             }
         });
 
+        tw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MixerListFragment)fragment).renameNucDialog(position);
+            }
+        });
+
         return view;
     }
 
