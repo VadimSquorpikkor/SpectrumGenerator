@@ -275,13 +275,14 @@
                         android:id="@+id/dialog_required_time_text"
                         style="@style/text_centered"
                         android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
                         android:digits="0123456789"
                         android:inputType="number"
                         android:maxLength="5"
-                        android:text="100"
                         android:padding="0dp"
-                        android:background="@android:color/transparent"
 
+                        android:text="100"
                         android:textColor="@color/colorOrange" />
 <!--                        android:selectAllOnFocus="true"-->
 

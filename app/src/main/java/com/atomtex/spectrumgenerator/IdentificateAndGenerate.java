@@ -58,7 +58,6 @@ public class IdentificateAndGenerate {
         }
     }
 
-    //todo вынести метод в отдельный класс (Controller)
     private NucIdent nuclidesIdent(int channelNumber, int[] spectrum,  //todo was private
                                   float[] sigma, float[] energy, int threshold) throws ProcessException {
 
