@@ -3,6 +3,8 @@ package com.atomtex.spectrumgenerator;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button genButton;
     EditText timeText;
     EditText delayText;
+
+    TextView versionTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         navigationView.getMenu().findItem(R.id.nav_switch_2).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_3).setActionView(new Switch(this));
         navigationView.getMenu().findItem(R.id.nav_switch_4).setActionView(new Switch(this));
+        versionTV = navigationView.getHeaderView(0).findViewById(R.id.version);
+        versionTV.setText(versionName());
+
 //        navigationView.getMenu().findItem(R.id.nav_switch_5).setActionView(new Switch(this));
 
         timeText.addTextChangedListener(new TextWatcher() {
@@ -178,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             fragment4 = MixerListFragment.newInstance();
             manager.beginTransaction().replace(R.id.mixer_fragment_list_view_big, fragment4).commit();
         }
+
+
+//        versionTV.setText("1");
     }
 
     public void updateNuclideStroke() {
@@ -192,6 +202,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         ((TextView)findViewById(R.id.nuclide_stroke)).setText((prefix + stroke));
+    }
+
+    private String versionName() {
+        String version = "Unknown";
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 
     private void loadVars() {

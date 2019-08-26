@@ -30,4 +30,20 @@
         android:layout_height="wrap_content"
         android:text="www.atomtex.com" />
 
+    <LinearLayout style="@style/horizontal_layout">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="Версия " />
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="1.0000" />
+
+    </LinearLayout>
+
+
 </LinearLayout>

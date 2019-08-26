@@ -279,6 +279,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         fragment.setArguments(args);
 
 
+
         return fragment;
     }
 
@@ -349,6 +350,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
                 mLineOwners = arguments.getStringArray(ARG_LINE_OWNERS);
 
                 fragmentID = arguments.getString("FR_ID");
+
 
 
             }
@@ -461,6 +463,10 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
 
         if (savedInstanceState == null) {
             mStates = new boolean[drawable.length];
+            //загружать сохраненный тип отображения линии
+            mStates[1] = saveLoad.loadBoolean(fragmentID+1);
+            mStates[2] = saveLoad.loadBoolean(fragmentID+2);
+
         } else {
             mStates = savedInstanceState.getBooleanArray(EXTRA_BUTTON_STATE);
             float[] prevHighlightArray = savedInstanceState.getFloatArray(EXTRA_HIGHLIGHTED);
@@ -760,7 +766,11 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
      */
     @Override
     public void onButtonClicked(int i) {
+        saveLoad.saveBoolean(!mStates[1], fragmentID+1);
+        saveLoad.saveBoolean(!mStates[2], fragmentID+2);
+
         boolean state = !mStates[i];
+        Log.e(TAG, "onButtonClicked mStates[i] = " + mStates[i]);
         mStates[i] = state;
         Drawable icon = buttonControls.getButtonDatas().get(i).getIcon();
         if (state) {
@@ -795,6 +805,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         } else {
             updateChart();
         }
+
     }
 
     @Override
