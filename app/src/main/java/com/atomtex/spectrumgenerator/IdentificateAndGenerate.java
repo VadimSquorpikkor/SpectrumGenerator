@@ -11,6 +11,7 @@ import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.atomtex.spectrumgenerator.exception.ProcessException;
 import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainActivity.TAG;
@@ -76,9 +77,19 @@ public class IdentificateAndGenerate {
         return nuc;
     }
 
+    private List<Nuclide> anyNuclideLibrary() {
+        List<Nuclide> innerList = NucIdent.getNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
+        List<Nuclide> outerList = mViewModel.getOuterLibrary();//загруженная библиотека
+        Log.e(TAG, "-----------anyNuclideLibrary: inner.size = " + innerList.size());
+        Log.e(TAG, "-----------anyNuclideLibrary: outer.size = " + outerList.size());
+        if (outerList.size()==0) return innerList;
+        else return outerList;
+//        return outerList;
+    }
+
     private void processIdenResult(NucIdent nuc) {
 
-        List<Nuclide> nuclides = NucIdent.getNuclides();
+        List<Nuclide> nuclides = anyNuclideLibrary();
         int numLines = nuc.getnLine();
 //        int numLines = 5;
 

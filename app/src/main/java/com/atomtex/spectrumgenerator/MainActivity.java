@@ -7,8 +7,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.domain.NucIdent;
+import com.atomtex.spectrumgenerator.util.NuclideLibraryReader;
 
 import java.util.ArrayList;
 
@@ -123,25 +126,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         timeText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
-                if(timeText.getText().toString().equals(""))timeText.setText("1");
-                if (Integer.parseInt(timeText.getText().toString())<501)((SeekBar)findViewById(R.id.seekBar2)).setProgress(Integer.parseInt(timeText.getText().toString()));
+                if (timeText.getText().toString().equals("")) timeText.setText("1");
+                if (Integer.parseInt(timeText.getText().toString()) < 501)
+                    ((SeekBar) findViewById(R.id.seekBar2)).setProgress(Integer.parseInt(timeText.getText().toString()));
                 timeText.setSelection(timeText.getText().length());
             }
         });
         delayText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {//todo при наборе БОЛЬШЕ максимального для seekBar, становится максимальным
                 if (delayText.getText().toString().matches("")) delayText.setText("1");
-                if (Integer.parseInt(delayText.getText().toString())<1001)((SeekBar)findViewById(R.id.seekBar)).setProgress(Integer.parseInt(delayText.getText().toString()));
+                if (Integer.parseInt(delayText.getText().toString()) < 1001)
+                    ((SeekBar) findViewById(R.id.seekBar)).setProgress(Integer.parseInt(delayText.getText().toString()));
                 delayText.setSelection(delayText.getText().length());
             }
         });
@@ -174,12 +187,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mViewModel.setReferenceFragment(SpectrumFragment.newInstance(REFERENCE_SPECTRUM));
             manager.beginTransaction().replace(R.id.fragment_container1, mViewModel.getReferenceFragment()).commit();
 
-        } else mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
+        } else
+            mViewModel.setReferenceFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container1));
 
         if (mViewModel.getGeneratedFragment() == null) {
             mViewModel.setGeneratedFragment(SpectrumFragment.newInstance(GENERATED_SPECTRUM));
             manager.beginTransaction().replace(R.id.fragment_container2, mViewModel.getGeneratedFragment()).commit();
-        } else  mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
+        } else
+            mViewModel.setGeneratedFragment((SpectrumFragment) manager.findFragmentById(R.id.fragment_container2));
 
         if (fragment4 == null) {
             fragment4 = MixerListFragment.newInstance();
@@ -193,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void updateNuclideStroke() {
         StringBuilder stroke = new StringBuilder();
         String prefix = "";
-        if(mViewModel.getSourceList().size()==0) stroke = new StringBuilder("Спектры не загружены");
+        if (mViewModel.getSourceList().size() == 0)
+            stroke = new StringBuilder("Спектры не загружены");
         else prefix = "Нет включенных спектров";
         for (SpecMixerParcel parcel : mViewModel.getSourceList()) {
             if (parcel.isChecked()) {
@@ -201,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 stroke.append(parcel.getName()).append(" ");
             }
         }
-        ((TextView)findViewById(R.id.nuclide_stroke)).setText((prefix + stroke));
+        ((TextView) findViewById(R.id.nuclide_stroke)).setText((prefix + stroke));
     }
 
     private String versionName() {
@@ -239,11 +255,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.gen_button: toggleGenButton(); break;
-            case R.id.time_layout: toggler.setTimeLayoutMode(1); break;
-            case R.id.hide_time_button: hideTime(); break;
-            case R.id.mixer_fragment_list_view: toggler.setMixerLayoutMode(0); break;
-            case R.id.add_new_spectrum_2: openFile(); break;
+            case R.id.gen_button:
+                toggleGenButton();
+                break;
+            case R.id.time_layout:
+                toggler.setTimeLayoutMode(1);
+                break;
+            case R.id.hide_time_button:
+                hideTime();
+                break;
+            case R.id.mixer_fragment_list_view:
+                toggler.setMixerLayoutMode(0);
+                break;
+            case R.id.add_new_spectrum_2:
+                openFile();
+                break;
         }
     }
 
@@ -274,6 +300,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setDataAndType(selectedUri, "*/*");
         startActivityForResult(intent, 1);//TODO request code сделать psf
+    }
+
+    public void openLibrary() {
+        Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setDataAndType(selectedUri, "*/*");
+        startActivityForResult(intent, 2);//TODO request code сделать psf
     }
 
     private void gen() {
@@ -330,8 +363,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Uri uri = data.getData();
             if (uri != null) {
                 String pathHolder = uri.toString();
-                getDtoFromFile(pathHolder);
+                if (requestCode == 1) getDtoFromFile(pathHolder);
+                if (requestCode == 2) getNuclFromFile(pathHolder);
             }
+        }
+    }
+
+    private void getNuclFromFile(String path) {
+        Log.e(TAG, "getNuclFromFile: " + path);
+        try {
+            mViewModel.setOuterLibrary(NuclideLibraryReader.getLibrary(path));
+        } catch (NuclideLibraryReader.NuclideLibraryException e) {
+            e.printStackTrace();
         }
     }
 
@@ -350,26 +393,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (path.endsWith(".ats")) {
             mViewModel.setTempDTO(AtsReader.parseFile(path));
             dto = AtsReader.parseFile(path);
-        }
-        else if (path.endsWith(".spe")) {
+        } else if (path.endsWith(".spe")) {
             mViewModel.setTempDTO(SpeReader.parseFile(path));
             dto = SpeReader.parseFile(path);
-        }
-        else {
+        } else {
             makeToast("Неверный формат");
             dto = null;
         }
         if (dto != null) {
 
-        ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
+            ((MixerListFragment) fragment4).updateAdapter();//чтобы во фрагменте появился item
 
-        generator.identificateNucl(dto);
+            generator.identificateNucl(dto);
 
-        mViewModel.addNewSpectrum(dto, makeName());
-        updateNuclideStroke();
-        mViewModel.setNameForMixer(""); //сброс
-        mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
-        generator.preferenceMixer();
+            mViewModel.addNewSpectrum(dto, makeName());
+            updateNuclideStroke();
+            mViewModel.setNameForMixer(""); //сброс
+            mViewModel.setSpectrumTime(dto.getMeasTim()[0]);//todo потом убрать, когда везде сделаю через getMeas[0]
+            generator.preferenceMixer();
         }
     }
 
@@ -377,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
 //        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 //        toast.getView().setBackgroundColor(Color.WHITE);
-        toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0);
         /*View view = toast.getView();
         view.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         TextView textView = view.findViewById(android.R.id.message);
@@ -401,16 +442,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_open_ats) {
-            openFile();
-        } else if (id == R.id.nav_generate) {
-            toggleGenButton();
-        } /*else if (id == R.id.nav_switch_5) {
-
-        }*/ /*else if (id == R.id.nav_iden) {
-            preferenceMixer();
-//            identificateNucl(mViewModel.getEmptyDto());
-        }*/
+        if (id == R.id.nav_open_ats) openFile();
+        if (id == R.id.nav_generate) toggleGenButton();
+        if (id == R.id.nav_library) openLibrary();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

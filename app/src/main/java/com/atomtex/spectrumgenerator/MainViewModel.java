@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
 
+import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.ArrayList;
@@ -28,6 +29,17 @@ public class MainViewModel extends AndroidViewModel {
     public boolean isFirstTime = true;
     private SpecDTO emptyDto = new SpecDTO(1024);
     private String nameForMixer = "";
+
+    public List<Nuclide> getOuterLibrary() {
+        return outerLibrary;
+    }
+
+    public void setOuterLibrary(List<Nuclide> outerLibrary) {
+        this.outerLibrary = outerLibrary;
+    }
+
+    private List<Nuclide> outerLibrary = new ArrayList<>();
+
 
     public String getNameForMixer() {
         return nameForMixer;

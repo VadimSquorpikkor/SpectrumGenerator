@@ -15,6 +15,10 @@
             android:title="Сгенерировать спектр"
             android:icon="@drawable/ic_toggle_line"/>
 
+        <item
+            android:id="@+id/nav_library"
+            android:title="Открыть библиотеку нуклидов"
+            android:icon="@drawable/baseline_local_library_white_48dp"/>
     </group>
     <group android:menuCategory="secondary">
         <item
