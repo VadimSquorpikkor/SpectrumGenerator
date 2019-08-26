@@ -33,8 +33,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.domain.NucIdent;
+import com.atomtex.spectrumgenerator.util.NuclideLibraryException;
 import com.atomtex.spectrumgenerator.util.NuclideLibraryReader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
@@ -371,12 +373,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getNuclFromFile(String path) {
         Log.e(TAG, "getNuclFromFile: " + path);
-        try {
-            mViewModel.setOuterLibrary(NuclideLibraryReader.getLibrary(path));
-        } catch (NuclideLibraryReader.NuclideLibraryException e) {
-            e.printStackTrace();
+            try {
+                mViewModel.setOuterLibrary(NuclideLibraryReader.getLibrary(path));
+            } catch (NuclideLibraryException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
     private String makeName() {
         String name = "Unknown";

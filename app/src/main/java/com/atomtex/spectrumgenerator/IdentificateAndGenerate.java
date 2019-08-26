@@ -82,6 +82,13 @@ public class IdentificateAndGenerate {
         List<Nuclide> outerList = mViewModel.getOuterLibrary();//загруженная библиотека
         Log.e(TAG, "-----------anyNuclideLibrary: inner.size = " + innerList.size());
         Log.e(TAG, "-----------anyNuclideLibrary: outer.size = " + outerList.size());
+        /*Nuclide first = outerList.get(0);
+        Log.e(TAG, "********NAME -- " + first.getName());
+        Log.e(TAG, "********numSTR -- " + first.getNumStr());
+        Log.e(TAG, "********linesNum -- " + first.getLinesNum());
+        Log.e(TAG, "********weight -- " + first.getWeight());
+        Log.e(TAG, "********ENERGY line size -- " + first.getEnergyLines().length);
+        Log.e(TAG, "********ENERGY line [0] energy -- " + first.getEnergyLines()[0].getEnergy());*/
         if (outerList.size()==0) return innerList;
         else return outerList;
 //        return outerList;
