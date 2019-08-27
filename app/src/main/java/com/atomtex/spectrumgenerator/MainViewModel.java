@@ -30,16 +30,15 @@ public class MainViewModel extends AndroidViewModel {
     private SpecDTO emptyDto = new SpecDTO(1024);
     private String nameForMixer = "";
 
-    public List<Nuclide> getOuterLibrary() {
-        return outerLibrary;
+    private String pathForLibrary;
+
+    public String getPathForLibrary() {
+        return pathForLibrary;
     }
 
-    public void setOuterLibrary(List<Nuclide> outerLibrary) {
-        this.outerLibrary = outerLibrary;
+    public void setPathForLibrary(String pathForLibrary) {
+        this.pathForLibrary = pathForLibrary;
     }
-
-    private List<Nuclide> outerLibrary = new ArrayList<>();
-
 
     public String getNameForMixer() {
         return nameForMixer;

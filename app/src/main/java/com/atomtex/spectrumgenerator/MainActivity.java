@@ -33,11 +33,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atomtex.spectrumgenerator.domain.NucIdent;
+import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.atomtex.spectrumgenerator.util.NuclideLibraryException;
 import com.atomtex.spectrumgenerator.util.NuclideLibraryReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.security.auth.login.LoginException;
 
 import static com.atomtex.spectrumgenerator.MainViewModel.GENERATED_SPECTRUM;
 import static com.atomtex.spectrumgenerator.MainViewModel.REFERENCE_SPECTRUM;
@@ -84,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             navigationView.setNavigationItemSelectedListener(this);
         }
 
-        NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
-
+//        NucIdent.setNuclides(AllNuclidesList.getAllNuclides());
 
         toggler.setTimeLayoutMode(mViewModel.getTimeLayoutMode());
         toggler.setAllVisibilities();
@@ -99,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         generator = new IdentificateAndGenerate(mViewModel, toggler, this, genButton);
 //        generator.setPrefIdenThreshold(3);
+//        NucIdent.setNuclides(AllNuclidesList.getAllNuclides());//todo не должно этого здесь быть, всё должно определяться в anyNuclideLibrary()
+        mViewModel.setPathForLibrary(saveLoad.loadString("lib_string"));
+        NucIdent.setNuclides(anyNuclideLibrary());
 
         setRequiredTime();
         setDelayTime();
@@ -366,21 +372,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (uri != null) {
                 String pathHolder = uri.toString();
                 if (requestCode == 1) getDtoFromFile(pathHolder);
-                if (requestCode == 2) getNuclFromFile(pathHolder);
+                if (requestCode == 2) getLibraryFromFile(pathHolder);
             }
         }
     }
 
-    private void getNuclFromFile(String path) {
-        Log.e(TAG, "getNuclFromFile: " + path);
-            try {
-                mViewModel.setOuterLibrary(NuclideLibraryReader.getLibrary(path));
-            } catch (NuclideLibraryException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public List<Nuclide> anyNuclideLibrary() {
+        List<Nuclide> nucList;
+        List<Nuclide> innerList = AllNuclidesList.getAllNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
+        List<Nuclide> savedList = libraryFromFile(mViewModel.getPathForLibrary());
+        Log.e(TAG, "***************anyNuclideLibrary path: " + mViewModel.getPathForLibrary());
+
+        Log.e(TAG, "***********savedList size = " + savedList.size());
+
+        if (savedList == null || savedList.size() == 0) {
+            Log.e(TAG, "*********INNER LIBRARY LOADED*********");
+            nucList = innerList;
+        } else {
+            Log.e(TAG, "*********SAVED LIBRARY LOADED*********");
+            nucList = savedList;
         }
+        NucIdent.setNuclides(nucList);
+        return nucList;
+    }
+
+    private List<Nuclide> libraryFromFile(String path) {
+//        content://com.android.externalstorage.documents/document/primary%3A_library.txt
+        List<Nuclide> savedList = new ArrayList<>();//сохраненная (загруженная ранее) библиотека
+
+//            savedList = NuclideLibraryReader.getLibrary(path);
+//            savedList = NuclideLibraryReader.getLibrary(path);
+        try {
+            savedList = NuclideLibraryReader.getLibrary(path);
+            saveLoad.saveString(path, "lib_string");
+            Log.e(TAG, "**************LOADED");
+        } catch (RuntimeException e) {
+            Log.e(TAG, "********ERROR***********");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return savedList;
+    }
+
+    private void getLibraryFromFile(String path) {
+        if (path.endsWith(".txt")) {
+            NucIdent.setNuclides(libraryFromFile(path));
+        }
+        else makeToast("Не тот формат!");
+    }
 
     private String makeName() {
         String name = "Unknown";
@@ -390,7 +430,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //переделанный openAtsFile
     private void getDtoFromFile(String path) {//todo убрать pos
-        Log.e(TAG, "--------------PATH = " + path);
+        Log.e(TAG, "--------------DTO PATH = " + path);
         mViewModel.setPathForAts(path);
         mViewModel.setNameForMixer(""); //сброс
         SpecDTO dto;

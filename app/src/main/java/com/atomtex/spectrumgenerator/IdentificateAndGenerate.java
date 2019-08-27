@@ -9,8 +9,11 @@ import com.atomtex.spectrumgenerator.domain.EnergyLine;
 import com.atomtex.spectrumgenerator.domain.NucIdent;
 import com.atomtex.spectrumgenerator.domain.Nuclide;
 import com.atomtex.spectrumgenerator.exception.ProcessException;
+import com.atomtex.spectrumgenerator.util.NuclideLibraryException;
+import com.atomtex.spectrumgenerator.util.NuclideLibraryReader;
 import com.atomtex.spectrumgenerator.util.SpectrumGenerator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +63,9 @@ public class IdentificateAndGenerate {
     }
 
     private NucIdent nuclidesIdent(int channelNumber, int[] spectrum,  //todo was private
-                                  float[] sigma, float[] energy, int threshold) throws ProcessException {
+                                   float[] sigma, float[] energy, int threshold) throws ProcessException {
 
+        Log.e(TAG, "---------------nuclidesIdent");
         NucIdent nuc = new NucIdent(channelNumber,
                 16, 20, 32, 24,
                 20, 20, 0, true);
@@ -77,30 +81,43 @@ public class IdentificateAndGenerate {
         return nuc;
     }
 
-    private List<Nuclide> anyNuclideLibrary() {
-        List<Nuclide> innerList = NucIdent.getNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
-        List<Nuclide> outerList = mViewModel.getOuterLibrary();//загруженная библиотека
-        Log.e(TAG, "-----------anyNuclideLibrary: inner.size = " + innerList.size());
-        Log.e(TAG, "-----------anyNuclideLibrary: outer.size = " + outerList.size());
-        /*Nuclide first = outerList.get(0);
-        Log.e(TAG, "********NAME -- " + first.getName());
-        Log.e(TAG, "********numSTR -- " + first.getNumStr());
-        Log.e(TAG, "********linesNum -- " + first.getLinesNum());
-        Log.e(TAG, "********weight -- " + first.getWeight());
-        Log.e(TAG, "********ENERGY line size -- " + first.getEnergyLines().length);
-        Log.e(TAG, "********ENERGY line [0] energy -- " + first.getEnergyLines()[0].getEnergy());*/
-        if (outerList.size()==0) return innerList;
-        else return outerList;
-//        return outerList;
-    }
+/*    public List<Nuclide> anyNuclideLibrary() {
+        List<Nuclide> nucList;
+        List<Nuclide> innerList = AllNuclidesList.getAllNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
+
+        List<Nuclide> savedList = new ArrayList<>();//сохраненная (загруженная ранее) библиотека
+
+        try {
+            savedList = NuclideLibraryReader.getLibrary(mViewModel.getPathForLibrary());
+        } catch (RuntimeException e) {
+            Log.e(TAG, "***************КОСЯК!!!!" + mViewModel.getPathForLibrary());
+        } catch (NuclideLibraryException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "**************LOADED");
+
+
+
+        if (savedList == null || savedList.size() == 0) {
+            Log.e(TAG, "*********INNER LIBRARY LOADED*********");
+            nucList = innerList;
+        } else {
+            Log.e(TAG, "*********SAVED LIBRARY LOADED*********");
+            nucList = savedList;
+        }
+        NucIdent.setNuclides(nucList);
+        return nucList;
+    }*/
 
     private void processIdenResult(NucIdent nuc) {
 
-        List<Nuclide> nuclides = anyNuclideLibrary();
-        int numLines = nuc.getnLine();
-//        int numLines = 5;
+//        List<Nuclide> nuclides = anyNuclideLibrary();
+        List<Nuclide> nuclides = NucIdent.getNuclides();
+//        List<Nuclide> nuclides = AllNuclidesList.getAllNuclides();
 
-//        Log.e(TAG, "processIdenResult: NUM_LINES = " + numLines);
+        int numLines = nuc.getnLine();
 
         if (numLines > 0) {
             float[] peaks = nuc.getNiChannels();
@@ -120,7 +137,9 @@ public class IdentificateAndGenerate {
             }
 
             for (Nuclide nuclide : nuclides) {
+                Log.e(TAG, "----------------------------nuclide name - " + nuclide.getNumStr());
                 if (nuclide.getState() == IDENTIFIED) {
+                    Log.e(TAG, "----------------------------nuclide IDENTIFIED - " + nuclide.getNumStr());
                     EnergyLine[] lines = nuclide.getEnergyLines();
                     for (EnergyLine line : lines) {
                         int index = line.getIndex();
@@ -128,7 +147,8 @@ public class IdentificateAndGenerate {
                                 && line.getFactorsNoShield() > 0
                                 && line.getFactorsShield() > 0) {
                             lineOwners[index] = nuclide.getName() + "-" + nuclide.getNumStr();
-                            if (mViewModel.getNameForMixer().equals("")) mViewModel.setNameForMixer(lineOwners[index]);
+                            if (mViewModel.getNameForMixer().equals(""))
+                                mViewModel.setNameForMixer(lineOwners[index]);
                         }
                     }
                 }
@@ -136,7 +156,7 @@ public class IdentificateAndGenerate {
             mPeakChannels = peakChannels;
             mPeakEnergies = peakEnergies;
             mLineOwners = lineOwners;
-//            Log.e(TAG, "identMixer: ch = " + mPeakChannels.length + ", ener = " + mPeakEnergies.length + ", lines = " + mLineOwners.length);
+            Log.e(TAG, "identMixer: ch = " + mPeakChannels.length + ", ener = " + mPeakEnergies.length + ", lines = " + mLineOwners.length);
         } else {
             mPeakChannels = null;//todo было включено, но с включенной не определяется нуклид в методе identificateNucl, но определяется при генерации. нужно разобраться  и сделать так, чтобы работало при включенной
         }
@@ -178,12 +198,13 @@ public class IdentificateAndGenerate {
     void startMixer() {
         handler.postDelayed(runnable = new Runnable() {
             int count = 0;//cnt;
-//            int reqTime = mViewModel.getRequiredTime(); // если черезх переменные -- тогда нельзя будет изменить параметры во время генерации
+
+            //            int reqTime = mViewModel.getRequiredTime(); // если черезх переменные -- тогда нельзя будет изменить параметры во время генерации
 //            int delay = mViewModel.getDelay(); // если черезх переменные -- тогда нельзя будет изменить параметры во время генерации
             public void run() {
                 if (count++ < mViewModel.getRequiredTime()) {
                     mixerPreTeak2(count, 1, true);
-                    genButton.setText(("Остановить ( " + count*100/mViewModel.getRequiredTime() + "% )"));
+                    genButton.setText(("Остановить ( " + count * 100 / mViewModel.getRequiredTime() + "% )"));
                     handler.postDelayed(runnable, mViewModel.getDelay());
                 } else {
                     toggler.setGenButtonMode(0, genButton);

@@ -45,6 +45,16 @@ public class SaveLoad {
         return loadBoolean(preferences);
     }
 
+    void saveString(String s, String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        saveString(s, preferences);
+    }
+
+    String loadString(String prefName) {
+        preferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE);
+        return loadString(preferences);
+    }
+
 //----------------------PRIVATE METHODS-------------------------------------------------------------
 
     private void saveBooleanArray(ArrayList<Boolean> list, SharedPreferences sPref) {
@@ -91,5 +101,19 @@ public class SaveLoad {
         boolean b = false;
         if (sPref.contains(SAVE_FIELD)) b = sPref.getBoolean(SAVE_FIELD, false);
         return b;
+    }
+
+    private void saveString(String s, SharedPreferences sPref) {
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putString(SAVE_FIELD, s);
+        editor.apply();
+    }
+
+    private String loadString(SharedPreferences sPref) {
+        String s = "";
+        if (sPref.contains(SAVE_FIELD)) {
+            s = sPref.getString(SAVE_FIELD, "");
+        }
+        return s;
     }
 }

@@ -25,12 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.atomtex.spectrumgenerator.MainActivity.TAG;
+import static com.atomtex.spectrumgenerator.domain.Nuclide.State.UNIDENTIFIED;
 import static com.balsikandar.crashreporter.CrashReporter.getContext;
 
 public final class NuclideLibraryReader {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static List<Nuclide> getLibrary(String path) throws NuclideLibraryException, IOException {
+    public static List<Nuclide> getLibrary(String path) throws IOException {
         Log.e(TAG, "getLibrary: STARTS " + path);
         List<Nuclide> list = new ArrayList<>();
         List<Charset> charsets = new ArrayList<>();
@@ -47,7 +48,9 @@ public final class NuclideLibraryReader {
         for (Charset charset : charsets) {
             try {
                 if (scheme != null && scheme.equals("content")) {
-                    inputStream = getContext().getContentResolver().openInputStream(uri);
+                    inputStream = getContext().
+                            getContentResolver().
+                            openInputStream(uri);
                 } else {
                     File file = new File(path);
                     inputStream = new FileInputStream(file);
@@ -57,16 +60,11 @@ public final class NuclideLibraryReader {
             }
 
 
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(
                     inputStream, charset));
 
-                Log.e(TAG, "********getLibrary: CHARSET");
                 String firstLine = reader.readLine();
-            Log.e(TAG, "getLibrary: " + firstLine);
-//            Log.e(TAG, "getLibrary: " + reader.readLine());
-//            Log.e(TAG, "getLibrary: " + reader.readLine());
-//            Log.e(TAG, "getLibrary: " + reader.readLine());
 //            int nuclNum = Integer.parseInt(reader.readLine().trim());
             int nuclNum = Integer.parseInt(firstLine);
             for (int i = 0; i < nuclNum; i++) {
@@ -81,6 +79,7 @@ public final class NuclideLibraryReader {
                 String res = name.toUpperCase() + "_" + num;
 //                    nuclide.setSound(SoundEvent.valueOf(res));
 
+                nuclide.setState(UNIDENTIFIED);//todo добавил
                 int linesNum = Integer.parseInt(string[1]);
                 nuclide.setLinesNum(linesNum);
 
@@ -101,13 +100,13 @@ public final class NuclideLibraryReader {
             }
 
         }
-        Nuclide first = list.get(0);
-        Log.e(TAG, "********NAME -- " + first.getName());
-        Log.e(TAG, "********numSTR -- " + first.getNumStr());
-        Log.e(TAG, "********linesNum -- " + first.getLinesNum());
-        Log.e(TAG, "********weight -- " + first.getWeight());
-        Log.e(TAG, "********ENERGY line size -- " + first.getEnergyLines().length);
-        Log.e(TAG, "********ENERGY line [0] energy -- " + first.getEnergyLines()[0].getEnergy());
+//        Nuclide first = list.get(0);
+//        Log.e(TAG, "********NAME -- " + first.getName());
+//        Log.e(TAG, "********numSTR -- " + first.getNumStr());
+//        Log.e(TAG, "********linesNum -- " + first.getLinesNum());
+//        Log.e(TAG, "********weight -- " + first.getWeight());
+//        Log.e(TAG, "********ENERGY line size -- " + first.getEnergyLines().length);
+//        Log.e(TAG, "********ENERGY line [0] energy -- " + first.getEnergyLines()[0].getEnergy());
 
         return list;
     }
