@@ -42,8 +42,16 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/open_library"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-
+            <ImageView style="@style/library_button"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/add_new_spectrum"

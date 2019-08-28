@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void openLibrary() {
         Uri selectedUri = Uri.parse(Environment.getExternalStorageDirectory().toString());
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setDataAndType(selectedUri, "*/*");
         startActivityForResult(intent, 2);//TODO request code сделать psf
     }
@@ -381,15 +381,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<Nuclide> nucList;
         List<Nuclide> innerList = AllNuclidesList.getAllNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
         List<Nuclide> savedList = libraryFromFile(mViewModel.getPathForLibrary());
-        Log.e(TAG, "***************anyNuclideLibrary path: " + mViewModel.getPathForLibrary());
-
-        Log.e(TAG, "***********savedList size = " + savedList.size());
-
-        if (savedList == null || savedList.size() == 0) {
-            Log.e(TAG, "*********INNER LIBRARY LOADED*********");
+        Log.e(TAG, "**************savedLibrary size = " + savedList.size());
+        if (savedList.size() == 0) {
+            Log.e(TAG, "**************INNER LIBRARY LOADED*********");
             nucList = innerList;
         } else {
-            Log.e(TAG, "*********SAVED LIBRARY LOADED*********");
+            Log.e(TAG, "**************SAVED LIBRARY LOADED*********");
             nucList = savedList;
         }
         NucIdent.setNuclides(nucList);
@@ -397,25 +394,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private List<Nuclide> libraryFromFile(String path) {
-//        content://com.android.externalstorage.documents/document/primary%3A_library.txt
         List<Nuclide> savedList = new ArrayList<>();//сохраненная (загруженная ранее) библиотека
-
-//            savedList = NuclideLibraryReader.getLibrary(path);
-//            savedList = NuclideLibraryReader.getLibrary(path);
         try {
             savedList = NuclideLibraryReader.getLibrary(path);
             saveLoad.saveString(path, "lib_string");
-            Log.e(TAG, "**************LOADED");
+            Log.e(TAG, "**************БИБЛИОТЕКА ЗАГРУЗИЛАСЬ******************************");
         } catch (RuntimeException e) {
-            Log.e(TAG, "********ERROR***********");
+            Log.e(TAG, "**************RUNTIME EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ***********");
             e.printStackTrace();
+            Log.e(TAG, "", e);
         } catch (IOException e) {
+            Log.e(TAG, "**************IO EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ****************");
             e.printStackTrace();
         }
         return savedList;
     }
 
-    private void getLibraryFromFile(String path) {
+    public void getLibraryFromFile(String path) {
         if (path.endsWith(".txt")) {
             NucIdent.setNuclides(libraryFromFile(path));
         }
@@ -430,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //переделанный openAtsFile
     private void getDtoFromFile(String path) {//todo убрать pos
-        Log.e(TAG, "--------------DTO PATH = " + path);
         mViewModel.setPathForAts(path);
         mViewModel.setNameForMixer(""); //сброс
         SpecDTO dto;

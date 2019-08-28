@@ -86,6 +86,10 @@
         <item name="android:background">@drawable/baseline_visibility_off_white_48dp</item>
     </style>
 
+    <style name="library_button" parent="small_button">
+        <item name="android:background">@drawable/baseline_local_library_white_48dp</item>
+    </style>
+
     <style name="down_arrow" parent="small_button">
         <item name="android:background">@drawable/baseline_arrow_drop_down_white_short</item>
         <item name="android:layout_width">116dp</item>

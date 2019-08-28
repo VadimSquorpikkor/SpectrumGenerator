@@ -1,8 +1,12 @@
 package com.atomtex.spectrumgenerator;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -60,10 +64,6 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
                 ((MainActivity) getActivity()).hideMixer();
             }
         });
-
-
-
-
     }
 
     @Override
@@ -72,16 +72,15 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
         v = inflater.inflate(R.layout.fragment_mixer_list, null);
         mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);//todo in newInstance?
         v.findViewById(R.id.add_new_spectrum).setOnClickListener(this);
+        v.findViewById(R.id.open_library).setOnClickListener(this);
         return v;
-
-
     }
 
     @Override
     public void onClick(View v) {
         //((MainActivity)getActivity()).openAts(0) ;break;
-        if (v.getId() == R.id.add_new_spectrum)((MainActivity) getActivity()).openFile();
-
+        if (v.getId() == R.id.add_new_spectrum) ((MainActivity) getActivity()).openFile();
+        if (v.getId() == R.id.open_library) ((MainActivity) getActivity()).openLibrary();
     }
 
     public void updateAdapter() {
@@ -89,7 +88,6 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
         ((MainActivity) getActivity()).preferenceMixer();
         lvMain.setAdapter(sourceAdapter);//обновить адаптер после добавления новых элементов*/
     }
-
 
 
     void deleteDialog(final int position) {
@@ -101,7 +99,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
             public void onClick(DialogInterface dialog, int whichButton) {
                 mViewModel.getSourceList().remove(position);
                 updateAdapter();
-                ((MainActivity)getActivity()).preferenceMixer();
+                ((MainActivity) getActivity()).preferenceMixer();
                 dialog.cancel();
             }
         });
@@ -121,7 +119,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
 //        alert.setMessage("Удалить " + mViewModel.getSourceList().get(position).getName() + " из списка?");
         LinearLayout container = new LinearLayout(getActivity());
         container.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(20, 20, 20, 20);
 
         final EditText edit = new EditText(getActivity());
@@ -141,7 +139,7 @@ public class MixerListFragment extends Fragment implements View.OnClickListener 
 
     public void updateRefFragment() {
 
-        ((MainActivity)getActivity()).preferenceMixer();
+        ((MainActivity) getActivity()).preferenceMixer();
 //        ((MainActivity) getActivity()).identificateNuc(mViewModel.getEmptyDto());
     }
 }
