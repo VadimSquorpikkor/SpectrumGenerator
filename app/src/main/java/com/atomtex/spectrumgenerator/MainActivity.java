@@ -380,6 +380,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public List<Nuclide> anyNuclideLibrary() {
         List<Nuclide> nucList;
         List<Nuclide> innerList = AllNuclidesList.getAllNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
+        List<Nuclide> savedList = new ArrayList<>();
+        if (!mViewModel.getPathForLibrary().equals("")) {
+
+            try {
+                savedList = NuclideLibraryReader.getLibrary(mViewModel.getPathForLibrary());
+                Log.e(TAG, "**************БИБЛИОТЕКА ЗАГРУЗИЛАСЬ******************************");
+            } catch (RuntimeException e) {
+                Log.e(TAG, "**************RUNTIME EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ***********");
+                e.printStackTrace();
+                Log.e(TAG, "", e);
+            } catch (IOException e) {
+                Log.e(TAG, "**************IO EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ****************");
+                e.printStackTrace();
+                makeToast("Библиотека не найдена. Будет загружена библиотека по-умолчанию");
+                saveLoad.saveString("", "lib_string");  //если потеряется SAVED библиотека, чтобы каждый
+                //раз не выскакивал тост с "библиотека не найдена<...>"
+            }
+            Log.e(TAG, "**************savedLibrary size = " + savedList.size());
+            if (savedList.size() == 0) {
+                makeToast("Пустая библиотека. Будет загружена библиотека по-умолчанию");
+                Log.e(TAG, "**************INNER LIBRARY LOADED*********");
+                nucList = innerList;
+                saveLoad.saveString("", "lib_string");
+            } else {
+                Log.e(TAG, "**************SAVED LIBRARY LOADED*********");
+                nucList = savedList;
+            }
+            NucIdent.setNuclides(nucList);
+        } else {
+            Log.e(TAG, "**************INNER LIBRARY LOADED*********");
+            nucList = innerList;
+        }
+        return nucList;
+    }
+
+    public void getLibraryFromFile(String path) {
+        List<Nuclide> nucList = new ArrayList<>();
+        if (path.endsWith(".txt")) {
+            try {
+                nucList = NuclideLibraryReader.getLibrary(path);
+                saveLoad.saveString(path, "lib_string");
+                Log.e(TAG, "**************БИБЛИОТЕКА ЗАГРУЗИЛАСЬ******************************");
+                makeToast("Библиотека загружена");
+            } catch (RuntimeException e) {
+                Log.e(TAG, "**************RUNTIME EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ***********");
+                e.printStackTrace();
+                Log.e(TAG, "", e);
+                makeToast("Что-то пошло не так...");
+                makeToast("Библиотека не загрузилась");
+            } catch (IOException e) {
+                Log.e(TAG, "**************IO EXCEPTION ПРИ ОТКРЫТИИ БИБЛИОТЕКИ****************");
+                e.printStackTrace();
+                makeToast("Что-то пошло не так...");
+                makeToast("Библиотека не загрузилась");
+            }
+            if (nucList.size() == 0) {
+                makeToast("Пустая библиотека. Будет загружена библиотека по-умолчанию");
+                saveLoad.saveString("", "lib_string");
+                nucList = AllNuclidesList.getAllNuclides();
+                Log.e(TAG, "**************INNER LIBRARY LOADED*********");
+            }
+            NucIdent.setNuclides(nucList);
+        } else makeToast("Не тот формат!");
+    }
+
+/*
+        //Старая версия загрузки библиотеки. ПОКА НЕ УДАЛЯТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        public List<Nuclide> anyNuclideLibrary() {
+        List<Nuclide> nucList;
+        List<Nuclide> innerList = AllNuclidesList.getAllNuclides();//библиотека, встроенная в приложение//todo при старте загружать иннерБиблиотеку в мэйнВью, и при генерации данные будут браться из мВ, а не из класса (как АутерЛайбрари)
         List<Nuclide> savedList = libraryFromFile(mViewModel.getPathForLibrary());
         Log.e(TAG, "**************savedLibrary size = " + savedList.size());
         if (savedList.size() == 0) {
@@ -392,6 +463,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NucIdent.setNuclides(nucList);
         return nucList;
     }
+
 
     private List<Nuclide> libraryFromFile(String path) {
         List<Nuclide> savedList = new ArrayList<>();//сохраненная (загруженная ранее) библиотека
@@ -415,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             NucIdent.setNuclides(libraryFromFile(path));
         }
         else makeToast("Не тот формат!");
-    }
+    }*/
 
     private String makeName() {
         String name = "Unknown";

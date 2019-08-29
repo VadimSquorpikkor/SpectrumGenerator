@@ -409,6 +409,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         if (fragmentID.equals("Эталонный спектр")) {
             mViewModel.setFragmentReqFullMode(saveLoad.loadBoolean("Эталонный спектр"));
             isFullMode = mViewModel.getFragmentReqFullMode();
+
         }
         if (fragmentID.equals("Сгенерированный спектр")) {
             mViewModel.setFragmentGenFullMode(saveLoad.loadBoolean("Сгенерированный спектр"));
@@ -466,6 +467,9 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             //загружать сохраненный тип отображения линии
             mStates[1] = saveLoad.loadBoolean(fragmentID+1);
             mStates[2] = saveLoad.loadBoolean(fragmentID+2);
+            Log.e(TAG, "--------------------------------------------------------------");
+            Log.e(TAG, fragmentID + " (1) = " + mStates[1]);
+            Log.e(TAG, fragmentID + " (2) = " + mStates[2]);
 
         } else {
             mStates = savedInstanceState.getBooleanArray(EXTRA_BUTTON_STATE);
@@ -766,11 +770,9 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
      */
     @Override
     public void onButtonClicked(int i) {
-        saveLoad.saveBoolean(!mStates[1], fragmentID+1);
-        saveLoad.saveBoolean(!mStates[2], fragmentID+2);
+
 
         boolean state = !mStates[i];
-        Log.e(TAG, "onButtonClicked mStates[i] = " + mStates[i]);
         mStates[i] = state;
         Drawable icon = buttonControls.getButtonDatas().get(i).getIcon();
         if (state) {
@@ -805,7 +807,15 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         } else {
             updateChart();
         }
+        saveLoad.saveBoolean(mStates[1], fragmentID+1);
+        saveLoad.saveBoolean(mStates[2], fragmentID+2);
 
+/*        Log.e(TAG, "............." + fragmentID + " (" + i + ")........." + mStates[i] + ".....................");
+//        Log.e(TAG, "//-----------------------------------------------------------------");
+        Log.e(TAG, "//          Эталонный спектр (1) -- " + saveLoad.loadBoolean("Эталонный спектр1"));
+        Log.e(TAG, "//          Эталонный спектр (2) -- " + saveLoad.loadBoolean("Эталонный спектр2"));
+        Log.e(TAG, "//          Сгенерированный спектр (1) -- " + saveLoad.loadBoolean("Сгенерированный спектр1"));
+        Log.e(TAG, "//          Сгенерированный спектр (2) -- " + saveLoad.loadBoolean("Сгенерированный спектр2"));*/
     }
 
     @Override

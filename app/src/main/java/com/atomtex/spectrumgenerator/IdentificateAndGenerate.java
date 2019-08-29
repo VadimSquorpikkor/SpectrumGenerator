@@ -137,9 +137,9 @@ public class IdentificateAndGenerate {
             }
 
             for (Nuclide nuclide : nuclides) {
-                Log.e(TAG, "----------------------------nuclide name - " + nuclide.getNumStr());
+//                Log.e(TAG, "----------------------------nuclide name - " + nuclide.getNumStr());
                 if (nuclide.getState() == IDENTIFIED) {
-                    Log.e(TAG, "----------------------------nuclide IDENTIFIED - " + nuclide.getNumStr());
+//                    Log.e(TAG, "----------------------------nuclide IDENTIFIED - " + nuclide.getNumStr());
                     EnergyLine[] lines = nuclide.getEnergyLines();
                     for (EnergyLine line : lines) {
                         int index = line.getIndex();
