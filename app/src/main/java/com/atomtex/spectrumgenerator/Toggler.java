@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
 
-public class Toggler {
+class Toggler {
 
     private Context context;
     private MainViewModel mViewModel;
@@ -46,59 +46,37 @@ public class Toggler {
         setDisplayMode(mode);
     }*/
 
-    public void setDisplayMode(int mode) {
-        switch (mode) {
-            case 0:
-                ((Activity)context).findViewById(R.id.fragment_container1).setVisibility(View.VISIBLE);
-                ((Activity)context).findViewById(R.id.fragment_container2).setVisibility(View.VISIBLE);
-                break;
-            case 1:
-                ((Activity)context).findViewById(R.id.fragment_container1).setVisibility(View.VISIBLE);
-                ((Activity)context).findViewById(R.id.fragment_container2).setVisibility(View.GONE);
-                break;
-            case 2:
-                ((Activity)context).findViewById(R.id.fragment_container1).setVisibility(View.GONE);
-                ((Activity)context).findViewById(R.id.fragment_container2).setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
-
-    public void setTimeLayoutMode(int mode) {
+    void setTimeLayoutMode(int mode) {
         toggleStuff(R.id.time_layout_small, R.id.time_layout_big, mode);
     }
 
-    public void setMixerLayoutMode(int mode) {
+    void setMixerLayoutMode(int mode) {
         toggleStuff(R.id.mixer_fragment_list_view_big, R.id.mixer_fragment_list_view_small, mode);
     }
 
 //--------------------------------------------------------------------------------------------------
 
-    public void setReferenceFragmentMode(boolean isOn) {
+    void setReferenceFragmentMode(boolean isOn) {
         toggleStuff(R.id.fragment_container1, isOn);
         mViewModel.setRefVisibility(isOn);
     }
 
-    public void setMixerMode(boolean isOn) {
+    void setMixerMode(boolean isOn) {
         toggleStuff(R.id.mixer_fragment_list_view, isOn);
         mViewModel.setMixerVisibility(isOn);
     }
 
-    public void setTimeMode(boolean isOn) {
+    void setTimeMode(boolean isOn) {
         toggleStuff(R.id.time_layout, isOn);
         mViewModel.setTimeVisibility(isOn);
     }
 
-    public void setButtonsMode(boolean isOn) {
+    void setButtonsMode(boolean isOn) {
         toggleStuff(R.id.button_layout, isOn);
         mViewModel.setButtonVisibility(isOn);
     }
 
-    public void setMatrixMode(boolean isOn) {
-
-    }
-
-    public void setAllVisibilities() {
+    void setAllVisibilities() {
         toggleStuff(R.id.fragment_container1, mViewModel.isRefVisible());
         toggleStuff(R.id.mixer_fragment_list_view, mViewModel.isMixerVisible());
         toggleStuff(R.id.time_layout, mViewModel.isTimeVisible());

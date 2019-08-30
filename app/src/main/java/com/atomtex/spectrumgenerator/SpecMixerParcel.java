@@ -3,18 +3,17 @@ package com.atomtex.spectrumgenerator;
 public class SpecMixerParcel {
 
     private SpecDTO referenceDTO;
-    private int percent = 100;
-    private String name = "Empty";
-    private boolean isChecked = true;
-    private String path;
+    private int percent;
+    private String name;
+    private boolean isChecked;
 
 //----------------SETTERS & GETTERS ----------------------------------------------------------------
 
-    public void setPercent(int percent) {
+    void setPercent(int percent) {
         this.percent = percent;
     }
 
-    public int getPercent() {
+    int getPercent() {
         return percent;
     }
 
@@ -26,15 +25,15 @@ public class SpecMixerParcel {
         return name;
     }
 
-    public void setChecked(boolean checked) {
+    void setChecked(boolean checked) {
         isChecked = checked;
     }
 
-    public boolean isChecked() {
+    boolean isChecked() {
         return isChecked;
     }
 
-    public SpecDTO getReferenceDTO() {
+    SpecDTO getReferenceDTO() {
         return referenceDTO;
     }
 

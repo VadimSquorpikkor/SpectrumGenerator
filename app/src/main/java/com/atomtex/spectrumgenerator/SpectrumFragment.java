@@ -216,6 +216,7 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     }
 
 
+//region OLD NEW_INSTANCE
     public static SpectrumFragment newInstance(SpecDTO dto, float[] peaks, float[] peakEnergies
             , String[] lineOwners) {
         Bundle args = new Bundle();
@@ -254,31 +255,23 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
         fragment.setArguments(args);
         return fragment;
     }
+//endregion
 
     public static SpectrumFragment newInstance(String fragmentID) {
 
         SpectrumFragment fragment = new SpectrumFragment();
         Bundle args = new Bundle();
-        //todo затычки
-//        SpecDTO dto = AtsReader.parseFile("content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats");
         SpecDTO dto = new SpecDTO(1024);
         dto.setSpectrum(new int[1024]);
         dto.setMeasTim(new int[]{1, 1});
         dto.setEnergy(new float[1024]);
-//content://com.android.externalstorage.documents/document/primary%3A_spectra%2FCo-60.ats
-/*
-        fragment.mSpecDTO = dto;
-        fragment.fragmentID = fragmentID;
-*/
-        //
+
         args.putParcelable(ARG_DTO, dto);
         args.putFloatArray(ARG_PEAKS, null);
         args.putFloatArray(ARG_PEAKS_ENERGY, null);
         args.putStringArray(ARG_LINE_OWNERS, null);
         args.putString("FR_ID", fragmentID);
         fragment.setArguments(args);
-
-
 
         return fragment;
     }
@@ -307,9 +300,6 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
                 entry.setY(scaleCbr(entry.getY()));
             }
         }
-
-        //////////////////////////////if(fragmentID.equals("Эталонный спектр")) mViewModel.setmSpectrumChart(mSpectrumChart);
-
         updateChart();
     }
 
@@ -394,14 +384,10 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-
-//        Log.e(TAG, "onCreateView: " + mSpectrumChart);
-
         final View view = inflater.inflate(R.layout.fragment_spectrum, container, false); //todo так было
         ButterKnife.bind(this, view);
 
         mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        /////////////////////////////////if(mViewModel.getmSpectrumChart()!=null)mSpectrumChart=mViewModel.getmSpectrumChart();
         saveLoad = new SaveLoad(getActivity());
 
 
@@ -467,9 +453,9 @@ public class SpectrumFragment extends Fragment implements ButtonEventListener, O
             //загружать сохраненный тип отображения линии
             mStates[1] = saveLoad.loadBoolean(fragmentID+1);
             mStates[2] = saveLoad.loadBoolean(fragmentID+2);
-            Log.e(TAG, "--------------------------------------------------------------");
-            Log.e(TAG, fragmentID + " (1) = " + mStates[1]);
-            Log.e(TAG, fragmentID + " (2) = " + mStates[2]);
+//            Log.e(TAG, "--------------------------------------------------------------");
+//            Log.e(TAG, fragmentID + " (1) = " + mStates[1]);
+//            Log.e(TAG, fragmentID + " (2) = " + mStates[2]);
 
         } else {
             mStates = savedInstanceState.getBooleanArray(EXTRA_BUTTON_STATE);

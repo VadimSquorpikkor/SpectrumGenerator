@@ -118,6 +118,24 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="NavigationDrawerStyle">
+        <item name="android:textSize">15sp</item>
+
+        <!-- item size in menu-->
+        <item name="android:listPreferredItemHeightSmall">20dp</item>
+        <item name="listPreferredItemHeightSmall">40dp</item>
+        <!-- item padding left in menu-->
+        <item name="android:listPreferredItemPaddingLeft">8dp</item>
+        <item name="listPreferredItemPaddingLeft">8dp</item>
+
+        <item name="android:paddingBottom">18dp</item>
+        <!-- item padding right in menu-->
+        <item name="android:listPreferredItemPaddingRight">8dp</item>
+        <item name="listPreferredItemPaddingRight">8dp</item>
+
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <!--<item name="android:textStyle">bold</item>-->
+    </style>
 
 
 </resources>

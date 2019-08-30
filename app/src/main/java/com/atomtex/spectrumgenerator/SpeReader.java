@@ -24,7 +24,7 @@ import static com.balsikandar.crashreporter.CrashReporter.getContext;
  *
  * @author stanislav.kleinikov@gmail.com
  */
-public class SpeReader {
+class SpeReader {
 
     /**
      * Read data from a file according the given path using different encoding
@@ -32,7 +32,7 @@ public class SpeReader {
      * @param path to a file
      * @return the object representation of a data from the file or null in case of error
      */
-    public static SpecDTO parseFile(String path) {
+    static SpecDTO parseFile(String path) {
 
         List<Charset> charsets = new ArrayList<>();
 
@@ -200,19 +200,20 @@ public class SpeReader {
 
     //-------------------Methods to parse specific data from file---------------------
 
-    /**
-     * The method is not used current version
-     *
-     * @since 1.0
+
+    /*
+      The method is not used current version
+
+      @since 1.0
      */
-    @Deprecated
+/*    @Deprecated
     private static float[] parseEnerFit(BufferedReader reader) throws IOException {
         float[] result = new float[2];
         String[] splittedLine = reader.readLine().trim().split(" ");
         result[0] = Float.parseFloat(splittedLine[0]);
         result[1] = Float.parseFloat(splittedLine[1]);
         return result;
-    }
+    }*/
 
     /**
      * Read information about spectrum accumulation time

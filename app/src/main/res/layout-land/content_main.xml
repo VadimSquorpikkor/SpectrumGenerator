@@ -154,14 +154,14 @@
                         android:layout_width="wrap_content"
                         android:layout_marginRight="5dp">
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="right|center_vertical"
                             android:layout_marginRight="5dp"
                             android:text="Добавить спектр">
 
-                        </TextView>
+                        </TextView>-->
 
                         <ImageView
                             style="@style/add_new_button" />
@@ -215,7 +215,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="Задержка, мс: " />
+                        android:text="Задержка, мс: "
+                        android:textSize="12sp"
+                        />
 
                     <TextView
                         android:id="@+id/delay_time_main"
@@ -236,7 +238,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="Время набора, с: " />
+                        android:text="Время набора, с: "
+                        android:textSize="12sp"
+                        />
 
                     <TextView
                         android:id="@+id/requiredTime"

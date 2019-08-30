@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-public class SaveLoad {
+class SaveLoad {
 
     private final String SAVE_FIELD = "setting";
     private Context context;
