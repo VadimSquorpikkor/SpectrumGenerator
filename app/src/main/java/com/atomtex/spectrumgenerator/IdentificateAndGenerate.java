@@ -65,7 +65,7 @@ public class IdentificateAndGenerate {
     private NucIdent nuclidesIdent(int channelNumber, int[] spectrum,  //todo was private
                                    float[] sigma, float[] energy, int threshold) throws ProcessException {
 
-        Log.e(TAG, "---------------nuclidesIdent");
+        Log.e(TAG, "---------------nuclidesIdent SIGMA = " + sigma);
         NucIdent nuc = new NucIdent(channelNumber,
                 16, 20, 32, 24,
                 20, 20, 0, true);

@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     IdentificateAndGenerate generator;
 
     Fragment fragment4;//todo (переместить в ViewModel) вообще хранить фрагменты в mainView -- плохая идея, надо вернуть фрагменты 1 и 2 обратно
+    //todo возможно нужно хранить в MVM данные фрагмента, а не сам фрагмент, тогда при повороте экрана активити пусть сама занимается восстановлением фрагмента, данными фрагмента пусть занимается сам фрагмент (через MVM)
 
     public static final String TAG = "TAG!!!";
     public static final String SHARED_PREFFERENCES = "sPref";
@@ -497,6 +498,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //переделанный openAtsFile
     private void getDtoFromFile(String path) {//todo убрать pos
+        Log.e(TAG, "getDtoFromFile: " + path);
         mViewModel.setPathForAts(path);
         mViewModel.setNameForMixer(""); //сброс
         SpecDTO dto;
